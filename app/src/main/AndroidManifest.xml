@@ -11,9 +11,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainScreen" />
-        <activity android:name=".LoginScreen"
-            android:label="Login"/>
+        <activity android:name=".Editprofile"/>
+        <activity
+            android:name=".AboutUs"
+            android:label="About Us"
+            android:parentActivityName=".MainScreen" />
+        <activity
+            android:name=".Setting"
+            android:label="Setting"
+            android:parentActivityName=".MainScreen" />
+        <activity
+            android:name=".Profile"
+            android:label="Profile" />
+        <activity android:name=".MainScreen"
+            android:theme="@style/AppThemeNoActionBar"/>
+        <activity
+            android:name=".LoginScreen"
+            android:label="Login" />
         <activity
             android:name=".Splash"
             android:theme="@style/AppThemeNoActionBar">

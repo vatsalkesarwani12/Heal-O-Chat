@@ -7,4 +7,22 @@
         app:showAsAction="always"
         />
 
+    <item
+        android:id="@+id/profile"
+        android:title="Profile"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/setting"
+        android:title="Setting"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/aboutus"
+        android:title="About Us"
+        app:showAsAction="never"
+        />
+
 </menu>
