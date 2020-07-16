@@ -1,8 +1,10 @@
-package com.vatsal.kesarwani.therapy;
+package com.vatsal.kesarwani.therapy.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.vatsal.kesarwani.therapy.R;
 
 public class Editprofile extends AppCompatActivity {
 

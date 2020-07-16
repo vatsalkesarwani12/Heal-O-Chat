@@ -1,4 +1,4 @@
-package com.vatsal.kesarwani.therapy;
+package com.vatsal.kesarwani.therapy.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.vatsal.kesarwani.therapy.R;
 
 public class Splash extends AppCompatActivity {
 
@@ -24,9 +25,9 @@ public class Splash extends AppCompatActivity {
             @Override
             public void run() {
                 if(mAuth.getCurrentUser()==null)
-                    startActivity(new Intent(getApplicationContext(),LoginScreen.class));
+                    startActivity(new Intent(getApplicationContext(), LoginScreen.class));
                 else
-                    startActivity(new Intent(getApplicationContext(),MainScreen.class));
+                    startActivity(new Intent(getApplicationContext(), MainScreen.class));
             }
         },2000);
     }

@@ -1,4 +1,4 @@
-package com.vatsal.kesarwani.therapy;
+package com.vatsal.kesarwani.therapy.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,8 +13,8 @@ import android.view.MenuItem;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.zip.Inflater;
+import com.vatsal.kesarwani.therapy.Adapter.MyAdapter;
+import com.vatsal.kesarwani.therapy.R;
 
 public class MainScreen extends AppCompatActivity {
 
@@ -64,11 +64,11 @@ public class MainScreen extends AppCompatActivity {
                 return true;
 
             case R.id.profile:
-                startActivity(new Intent(getApplicationContext(),Profile.class));
+                startActivity(new Intent(getApplicationContext(), Profile.class));
                 return true;
 
             case R.id.setting:
-                startActivity(new Intent(getApplicationContext(),Setting.class));
+                startActivity(new Intent(getApplicationContext(), Setting.class));
                 return true;
 
             case R.id.aboutus:

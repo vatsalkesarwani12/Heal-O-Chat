@@ -1,4 +1,4 @@
-package com.vatsal.kesarwani.therapy;
+package com.vatsal.kesarwani.therapy.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +22,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.tapadoo.alerter.Alerter;
+import com.vatsal.kesarwani.therapy.R;
 
 import es.dmoral.toasty.Toasty;
 

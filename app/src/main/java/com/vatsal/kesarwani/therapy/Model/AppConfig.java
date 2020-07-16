@@ -1,6 +1,6 @@
-package com.vatsal.kesarwani.therapy;
+package com.vatsal.kesarwani.therapy.Model;
 
-class AppConfig {
+public class AppConfig {
 
     final public static String SHARED_PREF="com.vatsal.kesarwani.theraphy.SHARED_PREF";
     final public static String PROFILE_VISIBILITY="com.vatsal.kesarwani.theraphy.PROFILE_VISIBILITY";

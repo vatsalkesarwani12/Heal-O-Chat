@@ -1,4 +1,4 @@
-package com.vatsal.kesarwani.therapy;
+package com.vatsal.kesarwani.therapy.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +7,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+
+import com.vatsal.kesarwani.therapy.Model.AppConfig;
+import com.vatsal.kesarwani.therapy.R;
 
 public class Setting extends AppCompatActivity {
 

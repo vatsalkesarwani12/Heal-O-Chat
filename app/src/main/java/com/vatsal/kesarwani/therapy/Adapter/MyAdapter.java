@@ -1,4 +1,4 @@
-package com.vatsal.kesarwani.therapy;
+package com.vatsal.kesarwani.therapy.Adapter;
 
 import android.content.Context;
 
@@ -11,7 +11,7 @@ import com.vatsal.kesarwani.therapy.Fragment.CureFragment;
 import com.vatsal.kesarwani.therapy.Fragment.PostFragment;
 import com.vatsal.kesarwani.therapy.Fragment.ChatFragment;
 
-class MyAdapter extends FragmentPagerAdapter {
+public class MyAdapter extends FragmentPagerAdapter {
 
     private Context myContext;
     int totalTabs;
