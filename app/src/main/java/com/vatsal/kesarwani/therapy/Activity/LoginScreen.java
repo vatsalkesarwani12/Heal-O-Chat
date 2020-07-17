@@ -3,11 +3,14 @@ package com.vatsal.kesarwani.therapy.Activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -17,11 +20,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.tapadoo.alerter.Alerter;
+import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
 
 import es.dmoral.toasty.Toasty;
@@ -32,8 +37,8 @@ public class LoginScreen extends AppCompatActivity {
     private Button google;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient ;
-    private GoogleSignInOptions gso;
     private static final String TAG = "LoginScreen";
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +98,11 @@ public class LoginScreen extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             Toasty.success(LoginScreen.this,""+mAuth.getCurrentUser().getDisplayName(),Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(getApplicationContext(),MainScreen.class));
+                            if (!sharedPreferences.getString(AppConfig.PROFILE_STATE,"com.vatsal.kesarwani.theraphy.PROFILE_STATE")
+                                    .equals("com.vatsal.kesarwani.theraphy.PROFILE_STATE"))
+                                startActivity(new Intent(getApplicationContext(),MainScreen.class));
+                            else
+                                startActivity(new Intent(getApplicationContext(), Editprofile.class));
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -114,12 +123,13 @@ public class LoginScreen extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
         google=findViewById(R.id.google);
         // Configure Google Sign In
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        sharedPreferences=getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
     }
 
     @Override
