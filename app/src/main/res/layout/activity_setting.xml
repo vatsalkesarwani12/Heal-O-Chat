@@ -11,11 +11,44 @@
         android:id="@+id/profile_visibility_setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Profile Visibility"
+        android:text="@string/profile_visibility"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="45dp"
         tools:layout_editor_absoluteX="57dp"
         tools:layout_editor_absoluteY="46dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+    <Switch
+        android:id="@+id/call_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/allow_call_from_others"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="15dp"
+        tools:layout_editor_absoluteX="57dp"
+        tools:layout_editor_absoluteY="46dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+    <TextView
+        android:id="@+id/delete_profile_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_profile"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"/>
+
+    <TextView
+        android:id="@+id/delete_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_account"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"/>
+
 </LinearLayout>

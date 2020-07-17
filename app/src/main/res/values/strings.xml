@@ -8,4 +8,8 @@
     <string name="about_me">About Me</string>
     <string name="description">Description</string>
     <string name="save_changes">Save changes</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_profile">Delete Profile</string>
+    <string name="allow_call_from_others">Allow Call From Others</string>
+    <string name="profile_visibility">Profile Visibility</string>
 </resources>

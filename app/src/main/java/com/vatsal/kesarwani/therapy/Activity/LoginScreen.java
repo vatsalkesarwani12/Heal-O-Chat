@@ -51,7 +51,10 @@ public class LoginScreen extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (mAuth.getCurrentUser()!=null){
+        if (mAuth.getCurrentUser()!=null && sharedPreferences.getString(AppConfig.PROFILE_STATE,"com.vatsal.kesarwani.theraphy.PROFILE_STATE").equals("com.vatsal.kesarwani.theraphy.PROFILE_STATE")){
+            startActivity(new Intent(getApplicationContext(),Editprofile.class));
+        }
+        else if(mAuth.getCurrentUser()!=null){
             startActivity(new Intent(getApplicationContext(),MainScreen.class));
         }
 

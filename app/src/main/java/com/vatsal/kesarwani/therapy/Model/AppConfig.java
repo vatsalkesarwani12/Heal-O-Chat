@@ -7,5 +7,11 @@ public class AppConfig {
     final public static String PROFILE_STATE="com.vatsal.kesarwani.theraphy.PROFILE_STATE";
     final public static String CALL_STATE="com.vatsal.kesarwani.theraphy.CALL_STATE";
     final public static String PROFILE_DP="com.vatsal.kesarwani.theraphy.PROFILE_DP";
+    final public static String NAME="NAME";
+    final public static String AGE="AGE";
+    final public static String SEX="SEX";
+    final public static String NUMBER="NUMBER";
+    final public static String ABOUT="ABOUT";
+    final public static String DESCRIPTION="DESCRIPTION";
 
 }
