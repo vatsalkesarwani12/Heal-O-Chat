@@ -27,15 +27,13 @@ public class MyAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                PostFragment postFragment = new PostFragment();
-                return postFragment;
+                return new PostFragment();
             case 1:
-                CureFragment cureFragment = new CureFragment();
-                return cureFragment;
+                return new CureFragment();
             case 2:
-                ChatFragment chatFragment = new ChatFragment();
-                return chatFragment;
-            default:return null;
+                return new ChatFragment();
+            default:
+                return null;
         }
     }
 
