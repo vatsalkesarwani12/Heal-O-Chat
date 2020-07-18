@@ -82,18 +82,20 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
     @Override
     protected void onStart() {
         super.onStart();
-        fullname.setText(intent.getStringExtra(AppConfig.NAME));
-        age.setText(intent.getStringExtra(AppConfig.AGE));
-        contact.setText(intent.getStringExtra(AppConfig.NUMBER));
-        about.setText(intent.getStringExtra(AppConfig.ABOUT));
-        description.setText(intent.getStringExtra(AppConfig.DESCRIPTION));
-        if (intent.getStringExtra(AppConfig.SEX).equals("Male")){
-            state=1;
+        if (!sharedPreferences.getString(AppConfig.PROFILE_STATE,"com.vatsal.kesarwani.theraphy.PROFILE_STATE").equals("com.vatsal.kesarwani.theraphy.PROFILE_STATE")) {
+            fullname.setText(intent.getStringExtra(AppConfig.NAME));
+            age.setText(intent.getStringExtra(AppConfig.AGE));
+            contact.setText(intent.getStringExtra(AppConfig.NUMBER));
+            about.setText(intent.getStringExtra(AppConfig.ABOUT));
+            description.setText(intent.getStringExtra(AppConfig.DESCRIPTION));
+            if (intent.getStringExtra(AppConfig.SEX).equals("Male")) {
+                state = 1;
+            }
+            if (intent.getStringExtra(AppConfig.SEX).equals("Female")) {
+                state = 2;
+            }
+            sex.setSelection(state);
         }
-        if (intent.getStringExtra(AppConfig.SEX).equals("Female")){
-            state=2;
-        }
-        sex.setSelection(state);
     }
 
     private void syncData() {
