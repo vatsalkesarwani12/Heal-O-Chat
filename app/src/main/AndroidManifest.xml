@@ -11,8 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.Editprofile"
-            android:label="Edit Profile"/>
+        <activity android:name=".Activity.CureProfile"></activity>
+        <activity
+            android:name=".Activity.Editprofile"
+            android:label="Edit Profile" />
         <activity
             android:name=".Activity.AboutUs"
             android:label="About Us"
@@ -24,8 +26,9 @@
         <activity
             android:name=".Activity.Profile"
             android:label="Profile" />
-        <activity android:name=".Activity.MainScreen"
-            android:theme="@style/AppThemeNoActionBar"/>
+        <activity
+            android:name=".Activity.MainScreen"
+            android:theme="@style/AppThemeNoActionBar" />
         <activity
             android:name=".Activity.LoginScreen"
             android:label="Login" />

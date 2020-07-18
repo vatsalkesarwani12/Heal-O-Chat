@@ -103,11 +103,14 @@ public class CureFragment extends Fragment {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 map=document.getData();
                                 Log.d(TAG, Objects.requireNonNull(map.get(AppConfig.NAME)).toString());
-                                list.add(new CureModel(
-                                        Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
-                                        Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString(),
-                                        Objects.requireNonNull(map.get(AppConfig.SEX)).toString())
-                                );
+                                if((boolean)map.get(AppConfig.VISIBLE)) {
+                                    list.add(new CureModel(
+                                            Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
+                                            Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString(),
+                                            Objects.requireNonNull(map.get(AppConfig.SEX)).toString(),
+                                            document.getId())
+                                    );
+                                }
                             }
                             adapter.notifyDataSetChanged();
                         }

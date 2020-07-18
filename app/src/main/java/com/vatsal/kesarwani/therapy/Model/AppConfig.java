@@ -13,5 +13,7 @@ public class AppConfig {
     final public static String NUMBER="NUMBER";
     final public static String ABOUT="ABOUT";
     final public static String DESCRIPTION="DESCRIPTION";
+    final public static String CAN_CALL="CAN_CALL";
+    final public static String VISIBLE="VISIBLE";
 
 }

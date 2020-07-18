@@ -44,7 +44,7 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
     private int count=4;
     private SharedPreferences sharedPreferences;
     private FirebaseAuth mAuth;
-    private Map<String ,String> userData;
+    private Map<String ,Object> userData;
     private static final String TAG = "Editprofile";
     private Intent intent;
     private int state=0;
@@ -72,6 +72,8 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
                 userData.put(AppConfig.NUMBER,sc);
                 userData.put(AppConfig.ABOUT,sabout);
                 userData.put(AppConfig.DESCRIPTION,sdes);
+                userData.put(AppConfig.CAN_CALL,true);
+                userData.put(AppConfig.VISIBLE,true);
 
                 syncData();
             }

@@ -12,17 +12,22 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
 
+import java.util.Map;
 import java.util.Objects;
+
+import es.dmoral.toasty.Toasty;
 
 public class Setting extends AppCompatActivity {
 
@@ -48,6 +53,41 @@ public class Setting extends AppCompatActivity {
                     sharedPreferences.edit()
                             .putString(AppConfig.PROFILE_VISIBILITY,"true")
                             .apply();
+                    db.collection("User")
+                            .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                            .update(AppConfig.VISIBLE,true)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toasty.success(Setting.this,"Profile Visible", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toasty.warning(Setting.this,"Try Again Later",Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+                else {
+                    sharedPreferences.edit()
+                            .putString(AppConfig.PROFILE_VISIBILITY,"false")
+                            .apply();
+                    db.collection("User")
+                            .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                            .update(AppConfig.VISIBLE,false)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toasty.success(Setting.this,"Profile Hidden", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toasty.warning(Setting.this,"Try Again Later",Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 }
             }
         });
@@ -59,6 +99,41 @@ public class Setting extends AppCompatActivity {
                     sharedPreferences.edit()
                             .putString(AppConfig.CALL_STATE,"true")
                             .apply();
+                    db.collection("User")
+                            .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                            .update(AppConfig.CAN_CALL,true)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toasty.success(Setting.this,"Other can call you", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toasty.warning(Setting.this,"Try Again Later",Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+                else {
+                    sharedPreferences.edit()
+                            .putString(AppConfig.CALL_STATE,"false")
+                            .apply();
+                    db.collection("User")
+                            .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                            .update(AppConfig.CAN_CALL,false)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toasty.success(Setting.this,"Other cannot call you", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toasty.warning(Setting.this,"Try Again Later",Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 }
             }
         });
@@ -144,5 +219,25 @@ public class Setting extends AppCompatActivity {
         deleteAcc=findViewById(R.id.delete_setting);
         db=FirebaseFirestore.getInstance();
         mAuth=FirebaseAuth.getInstance();
+
+        db.collection("User")
+                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            assert document != null;
+                            if (document.exists()) {
+                                Map<String, Object> map = document.getData();
+                                assert map != null;
+                                prof_visib.setChecked((boolean) map.get(AppConfig.VISIBLE));
+                                call.setChecked((boolean) map.get(AppConfig.CAN_CALL));
+                            }
+                        }
+                    }
+                });
+
     }
 }
