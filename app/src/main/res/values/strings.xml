@@ -12,4 +12,7 @@
     <string name="delete_profile">Delete Profile</string>
     <string name="allow_call_from_others">Allow Call From Others</string>
     <string name="profile_visibility">Profile Visibility</string>
+    <string name="post_description">Post Description</string>
+    <string name="post">Post</string>
+    <string name="post_image">Post Image</string>
 </resources>

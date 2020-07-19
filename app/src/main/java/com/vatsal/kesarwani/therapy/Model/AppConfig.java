@@ -15,5 +15,8 @@ public class AppConfig {
     final public static String DESCRIPTION="DESCRIPTION";
     final public static String CAN_CALL="CAN_CALL";
     final public static String VISIBLE="VISIBLE";
+    final public static String POST_DESCRIPTION = "POST_DESCRIPTION";
+    final public static String POST_IMAGE="POST_IMAGE";
+    final public static String POST_BY="POST_BY";
 
 }

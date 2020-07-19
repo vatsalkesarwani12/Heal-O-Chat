@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.AddPost"></activity>
+        <activity android:name=".Activity.AddPost"
+            android:label="Post"/>
         <activity android:name=".Activity.CureProfile" />
         <activity
             android:name=".Activity.Editprofile"

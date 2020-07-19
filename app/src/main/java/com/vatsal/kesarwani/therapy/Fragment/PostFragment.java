@@ -1,5 +1,6 @@
 package com.vatsal.kesarwani.therapy.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.vatsal.kesarwani.therapy.Activity.AddPost;
 import com.vatsal.kesarwani.therapy.R;
 
 /**
@@ -25,6 +28,8 @@ public class PostFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private FloatingActionButton addpost;
 
     public PostFragment() {
         // Required empty public constructor
@@ -61,6 +66,14 @@ public class PostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_post, container, false);
+        View root = inflater.inflate(R.layout.fragment_post, container, false);
+        addpost=root.findViewById(R.id.add_post);
+        addpost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), AddPost.class));
+            }
+        });
+        return root;
     }
 }
