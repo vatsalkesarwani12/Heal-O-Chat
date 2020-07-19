@@ -2,6 +2,7 @@ package com.vatsal.kesarwani.therapy.Adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -20,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.vatsal.kesarwani.therapy.Activity.CureProfile;
 import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 
@@ -63,6 +65,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                 .into(holder.postImage);
                     }
                 });
+
+        holder.by.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent(context, CureProfile.class);
+                intent.putExtra("mail",list.get(position).getBy());
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

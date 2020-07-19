@@ -13,7 +13,6 @@
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:layout_marginTop="60dp"
-        android:src="@drawable/ic_female"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
