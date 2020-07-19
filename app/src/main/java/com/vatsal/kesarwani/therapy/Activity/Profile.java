@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,13 +15,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
 
@@ -109,13 +114,29 @@ public class Profile extends AppCompatActivity {
                                 }
                                 intent.putExtra(AppConfig.DESCRIPTION,sdes);
 
-                                if (sharedPreferences.getString(AppConfig.PROFILE_DP,"com.vatsal.kesarwani.theraphy.PROFILE_DP").equals("com.vatsal.kesarwani.theraphy.PROFILE_DP")){
+                                if (!sharedPreferences.getString(AppConfig.PROFILE_DP,"com.vatsal.kesarwani.theraphy.PROFILE_DP").equals("com.vatsal.kesarwani.theraphy.PROFILE_DP") &&
+                                Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString().length()>5){
+                                    StorageReference sr= FirebaseStorage.getInstance().getReference();
+                                    sr.child(Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString())
+                                            .getDownloadUrl()
+                                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+                                                    Glide.with(Profile.this)
+                                                            .load(uri)
+                                                            .into(profile);
+                                                }
+                                            });
+                                    intent.putExtra(AppConfig.POST_IMAGE, Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString());
+                                }
+                                else {
                                     if(Objects.requireNonNull(map.get(AppConfig.SEX)).toString().equals("Male")){
                                         profile.setImageDrawable(getResources().getDrawable(R.drawable.ic_male));
                                     }
                                     else if (Objects.requireNonNull(map.get(AppConfig.SEX)).toString().equals("Female")){
                                         profile.setImageDrawable(getResources().getDrawable(R.drawable.ic_female));
                                     }
+                                    intent.putExtra(AppConfig.POST_IMAGE,"");
                                 }
                                 progressBar.setVisibility(View.GONE);
                                 profile.setVisibility(View.VISIBLE);

@@ -1,11 +1,14 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +19,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,11 +28,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
@@ -48,6 +58,9 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
     private static final String TAG = "Editprofile";
     private Intent intent;
     private int state=0;
+    private String filePath;
+    private File file;
+    private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +68,7 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
         setContentView(R.layout.activity_editprofile);
 
         init();
+        userData.put(AppConfig.PROFILE_DISPLAY,"");
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,7 +79,9 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
                 sharedPreferences.edit()
                         .putString(AppConfig.PROFILE_STATE,count+"")
                         .apply();
-
+                if (Objects.requireNonNull(userData.get(AppConfig.PROFILE_DISPLAY)).toString().length()<5) {
+                    userData.put(AppConfig.PROFILE_DISPLAY, "");
+                }
                 userData.put(AppConfig.NAME,sfn);
                 userData.put(AppConfig.AGE,Integer.parseInt(sa)+"");
                 userData.put(AppConfig.SEX,ss);
@@ -79,6 +95,61 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
             }
         });
 
+        profiledp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImagePicker.Companion.with(Editprofile.this)
+                        .crop()	    			//Crop image(Optional), Check Customization for more option
+                        .compress(1024)			//Final image size will be less than 1 MB(Optional)
+                        .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
+                        .start();
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            //Image Uri will not be null for RESULT_OK
+            assert data != null;
+            final Uri fileUri = data.getData();
+            profiledp.setImageURI(fileUri);
+
+
+            assert fileUri != null;
+            StorageReference sr=FirebaseStorage.getInstance().getReference();
+            sr.child("PROFILES/"+fileUri.getLastPathSegment())
+                    .putFile(fileUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            userData.put(AppConfig.PROFILE_DISPLAY,"PROFILES/"+fileUri.getLastPathSegment());
+                            sharedPreferences.edit()
+                                    .putString(AppConfig.PROFILE_DP,"Set")
+                                    .apply();
+                            Toasty.success(Editprofile.this,"Display Profile Updated",Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toasty.error(Editprofile.this,"Unable to post",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+
+            //You can get File object from intent
+            file = ImagePicker.Companion.getFile(data);
+
+            //You can also get File Path from intent
+            filePath = ImagePicker.Companion.getFilePath(data);
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            Toast.makeText(this, ImagePicker.Companion.getError(data), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -90,19 +161,34 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
             contact.setText(intent.getStringExtra(AppConfig.NUMBER));
             about.setText(intent.getStringExtra(AppConfig.ABOUT));
             description.setText(intent.getStringExtra(AppConfig.DESCRIPTION));
-            if (intent.getStringExtra(AppConfig.SEX).equals("Male")) {
+            if (Objects.equals(intent.getStringExtra(AppConfig.SEX), "Male")) {
                 state = 1;
             }
-            if (intent.getStringExtra(AppConfig.SEX).equals("Female")) {
+            if (Objects.equals(intent.getStringExtra(AppConfig.SEX), "Female")) {
                 state = 2;
             }
             sex.setSelection(state);
+
+            if (Objects.requireNonNull(intent.getStringExtra(AppConfig.POST_IMAGE)).length()>5) {
+                StorageReference sr = FirebaseStorage.getInstance().getReference();
+                userData.put(AppConfig.PROFILE_DISPLAY,intent.getStringExtra(AppConfig.POST_IMAGE));
+                sr.child(Objects.requireNonNull(intent.getStringExtra(AppConfig.POST_IMAGE)))
+                        .getDownloadUrl()
+                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Glide.with(Editprofile.this)
+                                        .load(uri)
+                                        .into(profiledp);
+                            }
+                        });
+            }
         }
     }
 
     private void syncData() {
         db.collection("User")
-                .document(mAuth.getCurrentUser().getEmail())
+                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .set(userData)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

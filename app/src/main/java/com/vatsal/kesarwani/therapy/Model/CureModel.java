@@ -5,12 +5,14 @@ public class CureModel {
     private String desc;
     private String sex;
     private String mail;
+    private String uri;
 
-    public CureModel(String name, String desc, String sex,String mail) {
+    public CureModel(String name, String desc, String sex,String mail ,String uri) {
         this.name = name;
         this.desc = desc;
         this.sex = sex;
         this.mail = mail;
+        this.uri = uri;
     }
 
     public String getName() {
@@ -43,5 +45,13 @@ public class CureModel {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 }

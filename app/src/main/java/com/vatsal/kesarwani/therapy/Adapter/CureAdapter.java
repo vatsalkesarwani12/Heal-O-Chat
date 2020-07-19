@@ -2,6 +2,7 @@ package com.vatsal.kesarwani.therapy.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +13,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Activity.CureProfile;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.CureModel;
 import com.vatsal.kesarwani.therapy.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
@@ -43,15 +48,29 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final CureAdapter.ViewHolder holder, final int position) {
         holder.name.setText(list.get(position).getName());
         holder.desc.setText(list.get(position).getDesc());
-        if (Objects.equals(list.get(position).getSex(), "Male")) {
-            Glide.with(context)
-                    .load(R.drawable.ic_male)
-                    .into(holder.dp);
+        if (list.get(position).getUri().length()<5) {
+            if (Objects.equals(list.get(position).getSex(), "Male")) {
+                Glide.with(context)
+                        .load(R.drawable.ic_male)
+                        .into(holder.dp);
+            } else {
+                Glide.with(context)
+                        .load(R.drawable.ic_female)
+                        .into(holder.dp);
+            }
         }
-        else {
-            Glide.with(context)
-                    .load(R.drawable.ic_female)
-                    .into(holder.dp);
+        else{
+            StorageReference sr= FirebaseStorage.getInstance().getReference();
+            sr.child(list.get(position).getUri())
+                    .getDownloadUrl()
+                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Glide.with(context)
+                                    .load(uri)
+                                    .into(holder.dp);
+                        }
+                    });
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

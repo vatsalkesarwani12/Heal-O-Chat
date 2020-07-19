@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -12,11 +13,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
 
@@ -88,11 +93,25 @@ public class CureProfile extends AppCompatActivity {
                                     description.setVisibility(View.GONE);
                                 }
 
-                                if (Objects.requireNonNull(map.get(AppConfig.SEX)).toString().equals("Male")) {
-                                    profile.setImageDrawable(getResources().getDrawable(R.drawable.ic_male));
+                                if (Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString().length()<5) {
+                                    if (Objects.requireNonNull(map.get(AppConfig.SEX)).toString().equals("Male")) {
+                                        profile.setImageDrawable(getResources().getDrawable(R.drawable.ic_male));
+                                    } else if (Objects.requireNonNull(map.get(AppConfig.SEX)).toString().equals("Female")) {
+                                        profile.setImageDrawable(getResources().getDrawable(R.drawable.ic_female));
+                                    }
                                 }
-                                else if (Objects.requireNonNull(map.get(AppConfig.SEX)).toString().equals("Female")) {
-                                    profile.setImageDrawable(getResources().getDrawable(R.drawable.ic_female));
+                                else {
+                                    StorageReference sr= FirebaseStorage.getInstance().getReference();
+                                    sr.child(Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString())
+                                            .getDownloadUrl()
+                                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+                                                    Glide.with(CureProfile.this)
+                                                            .load(uri)
+                                                            .into(profile);
+                                                }
+                                            });
                                 }
                                 progressBar.setVisibility(View.GONE);
                                 profile.setVisibility(View.VISIBLE);
