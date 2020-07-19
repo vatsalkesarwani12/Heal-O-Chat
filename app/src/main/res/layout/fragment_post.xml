@@ -6,10 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".Fragment.PostFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/post_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Post Fragment" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_post"
@@ -20,6 +21,5 @@
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"/>
-
 
 </FrameLayout>

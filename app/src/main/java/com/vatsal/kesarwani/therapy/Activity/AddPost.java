@@ -62,8 +62,10 @@ public class AddPost extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!file.exists())
+                if (file==null) {
+                    Toasty.warning(AddPost.this,"Select a Image to Post",Toast.LENGTH_SHORT).show();
                     return;
+                }
                 dataUpload();
             }
         });

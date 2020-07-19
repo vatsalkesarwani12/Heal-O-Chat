@@ -15,4 +15,7 @@
     <string name="post_description">Post Description</string>
     <string name="post">Post</string>
     <string name="post_image">Post Image</string>
+    <string name="post_message">Post Message</string>
+    <string name="post_by">Post By</string>
+    <string name="_00_likes">00 Likes</string>
 </resources>
