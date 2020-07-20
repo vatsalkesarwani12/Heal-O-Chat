@@ -18,4 +18,5 @@
     <string name="post_message">Post Message</string>
     <string name="post_by">Post By</string>
     <string name="_00_likes">00 Likes</string>
+    <string name="send">send</string>
 </resources>

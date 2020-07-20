@@ -14,8 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.vatsal.kesarwani.therapy.Activity.ChatActivity;
 import com.vatsal.kesarwani.therapy.Activity.CureProfile;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.CureModel;
@@ -73,12 +78,23 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
                     });
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.dp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent =new Intent(context, CureProfile.class);
                 intent.putExtra("mail",list.get(position).getMail());
                 Log.d("ID: ",list.get(position).getMail());
+                context.startActivity(intent);
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent =new Intent(context, ChatActivity.class);
+                intent.putExtra("mail",list.get(position).getMail());
+                intent.putExtra("name",list.get(position).getName());
                 context.startActivity(intent);
             }
         });
