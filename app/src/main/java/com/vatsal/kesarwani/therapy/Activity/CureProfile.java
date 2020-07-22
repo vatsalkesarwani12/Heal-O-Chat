@@ -2,12 +2,17 @@ package com.vatsal.kesarwani.therapy.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,6 +27,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.rpc.Code;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
 
@@ -33,14 +39,16 @@ import es.dmoral.toasty.Toasty;
 
 public class CureProfile extends AppCompatActivity {
 
-    private TextView name, age, sex, contact, about, description;
-    private String sn, sa, ss, sc, sabout, sdes;
+    private TextView name, age, sex, about, description;
+    private ImageButton contact, message;
+    private String sn, sa, ss, sc, sabout, sdes, uid;
     private CircleImageView profile;
     private ProgressBar progressBar;
     private LinearLayout profileData;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
-    private Intent intent;
+    private Intent intent,intent2;
+    private int CODE =1;
     private static final String TAG = "CureProfile";
 
     @Override
@@ -54,8 +62,59 @@ public class CureProfile extends AppCompatActivity {
         profileData.setVisibility(View.GONE);
         contact.setVisibility(View.GONE);
 
+        contact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent2 = new Intent(Intent.ACTION_CALL);
+                intent2.setData(Uri.parse(sc));
+                checkPermission(Manifest.permission.CALL_PHONE,
+                        CODE);
+            }
+        });
+
+        message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent1 =new Intent(getApplicationContext(), ChatActivity.class);
+                intent1.putExtra("mail",intent.getStringExtra("mail"));
+                intent1.putExtra("name",intent.getStringExtra("name"));
+                intent1.putExtra("uid",intent.getStringExtra("uid"));
+                startActivity(intent1);
+            }
+        });
+
         synData();
     }
+
+    // Function to check and request permission
+    public void checkPermission(String permission, int requestCode)
+    {
+
+        // Checking if permission is not granted
+        if (ContextCompat.checkSelfPermission(CureProfile.this, permission) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(CureProfile.this, new String[] { permission }, requestCode);
+        }
+        else{
+            startActivity(intent2);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions,grantResults);
+
+        if (requestCode == CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(CureProfile.this, "Call Permission Granted", Toast.LENGTH_SHORT).show();
+                startActivity(intent2);
+            }
+            else {
+                Toast.makeText(CureProfile.this, "Call Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     private void synData() {
         db.collection("User")
@@ -72,22 +131,23 @@ public class CureProfile extends AppCompatActivity {
                                 assert map != null;
 
                                 name.setText(Objects.requireNonNull(map.get(AppConfig.NAME)).toString());
+                                sn=Objects.requireNonNull(map.get(AppConfig.NAME)).toString();
 
-                                age.setText(Objects.requireNonNull(map.get(AppConfig.AGE)).toString());
+                                age.setText("Age: "+Objects.requireNonNull(map.get(AppConfig.AGE)).toString());
 
-                                sex.setText(Objects.requireNonNull(map.get(AppConfig.SEX)).toString());
+                                sex.setText("Sex: "+Objects.requireNonNull(map.get(AppConfig.SEX)).toString());
 
-                                contact.setText(Objects.requireNonNull(map.get(AppConfig.NUMBER)).toString());
+                                sc="tel:"+Objects.requireNonNull(map.get(AppConfig.NUMBER)).toString();
                                 if ((boolean) map.get(AppConfig.CAN_CALL))
                                 contact.setVisibility(View.VISIBLE);
 
-                                about.setText(Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString());
+                                about.setText("About: "+Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString());
                                 sabout = Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString();
                                 if (sabout.length() == 0) {
                                     about.setVisibility(View.GONE);
                                 }
 
-                                description.setText(Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString());
+                                description.setText("Description: "+Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString());
                                 sdes = Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString();
                                 if (sdes.length() == 0) {
                                     description.setVisibility(View.GONE);
@@ -136,5 +196,6 @@ public class CureProfile extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         intent = getIntent();
+        message=findViewById(R.id.message_profile);
     }
 }

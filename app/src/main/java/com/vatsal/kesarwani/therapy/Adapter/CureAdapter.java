@@ -78,17 +78,19 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
                     });
         }
 
-        holder.dp.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent =new Intent(context, CureProfile.class);
                 intent.putExtra("mail",list.get(position).getMail());
+                intent.putExtra("name",list.get(position).getName());
+                intent.putExtra("uid",list.get(position).getUID());
                 Log.d("ID: ",list.get(position).getMail());
                 context.startActivity(intent);
             }
         });
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        /*holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -98,7 +100,7 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
                 intent.putExtra("uid",list.get(position).getUID());
                 context.startActivity(intent);
             }
-        });
+        });*/
     }
 
     @Override

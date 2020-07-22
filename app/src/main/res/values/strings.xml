@@ -22,4 +22,10 @@
     <string name="you">you</string>
     <string name="other">other</string>
     <string name="enter_message">Enter Message</string>
+    <string name="sex">sex</string>
+    <string name="about">About</string>
+    <string name="contact">contact</string>
+    <string name="call">call</string>
+    <string name="message">message</string>
+    <string name="name">name</string>
 </resources>

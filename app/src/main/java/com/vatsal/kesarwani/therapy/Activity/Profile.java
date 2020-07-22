@@ -88,26 +88,26 @@ public class Profile extends AppCompatActivity {
                                 sn=Objects.requireNonNull(map.get(AppConfig.NAME)).toString();
                                 intent.putExtra(AppConfig.NAME,sn);
 
-                                age.setText(Objects.requireNonNull(map.get(AppConfig.AGE)).toString());
+                                age.setText("Age: "+Objects.requireNonNull(map.get(AppConfig.AGE)).toString());
                                 sa=Objects.requireNonNull(map.get(AppConfig.AGE)).toString();
                                 intent.putExtra(AppConfig.AGE,sa);
 
-                                sex.setText(Objects.requireNonNull(map.get(AppConfig.SEX)).toString());
+                                sex.setText("Sex: "+Objects.requireNonNull(map.get(AppConfig.SEX)).toString());
                                 ss=Objects.requireNonNull(map.get(AppConfig.SEX)).toString();
                                 intent.putExtra(AppConfig.SEX,ss);
 
-                                contact.setText(Objects.requireNonNull(map.get(AppConfig.NUMBER)).toString());
+                                contact.setText("Contact: "+Objects.requireNonNull(map.get(AppConfig.NUMBER)).toString());
                                 sc=Objects.requireNonNull(map.get(AppConfig.NUMBER)).toString();
                                 intent.putExtra(AppConfig.NUMBER,sc);
 
-                                about.setText(Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString());
+                                about.setText("About: "+Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString());
                                 sabout=Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString();
                                 if(sabout.length()==0){
                                     about.setVisibility(View.GONE);
                                 }
                                 intent.putExtra(AppConfig.ABOUT,sabout);
 
-                                description.setText(Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString());
+                                description.setText("Description: "+Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString());
                                 sdes=Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString();
                                 if (sdes.length()==0){
                                     description.setVisibility(View.GONE);
