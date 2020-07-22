@@ -1,5 +1,7 @@
 package com.vatsal.kesarwani.therapy.Fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -55,6 +57,7 @@ public class CureFragment extends Fragment {
     private FirebaseFirestore db;
     private static final String TAG = "CureFragment";
     private ArrayList<CureModel> list;
+    private SharedPreferences sharedPreferences;
 
     public CureFragment() {
         // Required empty public constructor
@@ -94,6 +97,7 @@ public class CureFragment extends Fragment {
         final View root = inflater.inflate(R.layout.fragment_cure, container, false);
         init(root);
 
+
         db.collection("User")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -104,14 +108,16 @@ public class CureFragment extends Fragment {
                                 map=document.getData();
                                 Log.d(TAG, Objects.requireNonNull(map.get(AppConfig.NAME)).toString());
                                 if((boolean)map.get(AppConfig.VISIBLE)) {
-                                    list.add(new CureModel(
-                                            Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
-                                            Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString(),
-                                            Objects.requireNonNull(map.get(AppConfig.SEX)).toString(),
-                                            document.getId(),
-                                            Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
-                                            Objects.requireNonNull(map.get(AppConfig.UID)).toString())
-                                    );
+                                    if(!Objects.requireNonNull(map.get(AppConfig.NAME)).toString().equals(sharedPreferences.getString(AppConfig.USERNAME,""))) {
+                                        list.add(new CureModel(
+                                                Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
+                                                Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString(),
+                                                Objects.requireNonNull(map.get(AppConfig.SEX)).toString(),
+                                                document.getId(),
+                                                Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
+                                                Objects.requireNonNull(map.get(AppConfig.UID)).toString())
+                                        );
+                                    }
                                 }
                             }
                             adapter.notifyDataSetChanged();
@@ -138,6 +144,7 @@ public class CureFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         mAuth=FirebaseAuth.getInstance();
         db=FirebaseFirestore.getInstance();
+        sharedPreferences=root.getContext().getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
     }
 
 }

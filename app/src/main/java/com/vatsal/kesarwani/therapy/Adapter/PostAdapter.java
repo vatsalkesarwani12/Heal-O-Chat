@@ -18,14 +18,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Activity.CureProfile;
+import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.microedition.khronos.opengles.GL;
 
@@ -51,9 +57,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        holder.likes.setText(list.get(position).getLikes()+" Likes");
+        //holder.likes.setText(list.get(position).getLikes()+" Likes");
         holder.message.setText(list.get(position).getMessage());
-        holder.by.setText(list.get(position).getBy());
+
+        FirebaseFirestore.getInstance().collection("User")
+                .document(list.get(position).getBy())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        holder.by.setText(Objects.requireNonNull(Objects.requireNonNull(task.getResult()).get(AppConfig.NAME)).toString());
+                    }
+                });
+
 
         StorageReference sr= FirebaseStorage.getInstance().getReference();
         sr.child(list.get(position).getUri())
@@ -83,11 +99,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView postImage;
-        private TextView likes,by,message;
+        private TextView by,message;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             postImage=itemView.findViewById(R.id.postImage);
-            likes=itemView.findViewById(R.id.likes);
+            //likes=itemView.findViewById(R.id.likes);
             by=itemView.findViewById(R.id.postBy);
             message=itemView.findViewById(R.id.postMessage);
         }

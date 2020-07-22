@@ -92,6 +92,10 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
                 userData.put(AppConfig.VISIBLE,true);
                 userData.put(AppConfig.UID, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
 
+                sharedPreferences.edit()
+                        .putString(AppConfig.USERNAME,sfn)
+                        .apply();
+
                 syncData();
             }
         });
