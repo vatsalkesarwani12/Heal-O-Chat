@@ -90,6 +90,7 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
                 userData.put(AppConfig.DESCRIPTION,sdes);
                 userData.put(AppConfig.CAN_CALL,true);
                 userData.put(AppConfig.VISIBLE,true);
+                userData.put(AppConfig.UID, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
 
                 syncData();
             }

@@ -4,7 +4,10 @@ public class MessageModel {
     private String user;
     private String mssg;
 
-    public MessageModel(String user, String mssg) {
+    public MessageModel() {
+    }
+
+    public MessageModel(String mssg, String user) {
         this.user = user;
         this.mssg = mssg;
     }

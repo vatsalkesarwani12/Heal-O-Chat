@@ -52,6 +52,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         final String[] sname = new String[1];
         final String[] sdp = new String[1];
+        final String[] uid = new String[1];
 
         //holder.profname.setText(list.get(position).getMail());
 
@@ -70,6 +71,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                                 assert map != null;
                                 sname[0] = Objects.requireNonNull(map.get(AppConfig.NAME)).toString();
                                 sdp[0] = Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString();
+                                uid[0] = Objects.requireNonNull(map.get(AppConfig.UID)).toString();
                                 holder.profname.setText(sname[0]);
 
                                 StorageReference sr= FirebaseStorage.getInstance().getReference();
@@ -111,6 +113,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 Intent intent=new Intent(context, ChatActivity.class);
                 intent.putExtra("mail",list.get(position).getMail());
                 intent.putExtra("name", sname[0]);
+                intent.putExtra("uid",uid[0]);
                 context.startActivity(intent);
             }
         });
@@ -121,7 +124,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView dp;
         private TextView profname;
         public ViewHolder(@NonNull View itemView) {

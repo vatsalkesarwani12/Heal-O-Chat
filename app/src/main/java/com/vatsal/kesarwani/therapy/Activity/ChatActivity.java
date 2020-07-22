@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +17,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,7 +43,7 @@ import es.dmoral.toasty.Toasty;
 
 public class ChatActivity extends AppCompatActivity {
     private Intent intent;
-    private String mail, name, mssg;
+    private String mail, name, mssg,uid;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private Map<String, String> map;
@@ -48,6 +55,9 @@ public class ChatActivity extends AppCompatActivity {
     private ArrayList<MessageModel> list;
     private Map<String,Object> map2=new HashMap<>();
     private static final String TAG = "ChatActivity";
+    private FirebaseDatabase db1;
+    private DatabaseReference dr;
+    private ChildEventListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +66,7 @@ public class ChatActivity extends AppCompatActivity {
         init();
         Objects.requireNonNull(getSupportActionBar()).setTitle(name);
 
-        db.collection("User")
+        /*db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")
                 .document(mail)
@@ -76,10 +86,10 @@ public class ChatActivity extends AppCompatActivity {
                             adapter.notifyDataSetChanged();
                         }
                     }
-                });
+                });*/
 
         db.collection("User")
-                .document(Objects.requireNonNull(mAuth.getCurrentUser().getEmail()))
+                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")
                 .document(mail)
                 .set(map2)
@@ -110,10 +120,65 @@ public class ChatActivity extends AppCompatActivity {
                 text.setText("");
                 map.put("user", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
                 map.put("mssg", mssg);
-                update();
-                adapterUpdate();
+                //update();
+                //adapterUpdate();
+
+                post();
             }
         });
+
+        listener =new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Log.d(TAG, snapshot.getValue()+"" );
+                MessageModel model= snapshot.getValue(MessageModel.class);
+                //if (model!=null) {
+                    list.add(model);
+                    adapter.notifyDataSetChanged();
+                //}
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addChildEventListener(listener);
+
+    }
+
+    private void post(){
+
+        /*list.add(new MessageModel(mssg,Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()));
+        adapter.notifyDataSetChanged();*/
+
+        dr.child(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()))
+                .child(uid)
+                .push()
+                .setValue(map);
+
+        dr.child(uid)
+                .child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
+                .push()
+                .setValue(map);
+    }
+
+    private void listener(){
 
     }
 
@@ -187,8 +252,10 @@ public class ChatActivity extends AppCompatActivity {
     private void init() {
         intent = getIntent();
         map=new HashMap<>();
+        map1=new HashMap<>();
         mail = intent.getStringExtra("mail");
         name = intent.getStringExtra("name");
+        uid = intent.getStringExtra("uid");
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         send = findViewById(R.id.send);
@@ -198,5 +265,8 @@ public class ChatActivity extends AppCompatActivity {
         adapter = new MessageAdapter(this, list);
         chats.setAdapter(adapter);
         map2.put("first",1);
+        db1=FirebaseDatabase.getInstance();
+        dr=db1.getReference();
+
     }
 }

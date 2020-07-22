@@ -109,7 +109,8 @@ public class CureFragment extends Fragment {
                                             Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString(),
                                             Objects.requireNonNull(map.get(AppConfig.SEX)).toString(),
                                             document.getId(),
-                                            Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString())
+                                            Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
+                                            Objects.requireNonNull(map.get(AppConfig.UID)).toString())
                                     );
                                 }
                             }

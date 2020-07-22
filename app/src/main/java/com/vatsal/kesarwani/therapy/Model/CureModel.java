@@ -6,13 +6,15 @@ public class CureModel {
     private String sex;
     private String mail;
     private String uri;
+    private String UID;
 
-    public CureModel(String name, String desc, String sex,String mail ,String uri) {
+    public CureModel(String name, String desc, String sex, String mail, String uri, String UID) {
         this.name = name;
         this.desc = desc;
         this.sex = sex;
         this.mail = mail;
         this.uri = uri;
+        this.UID = UID;
     }
 
     public String getName() {
@@ -53,5 +55,13 @@ public class CureModel {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getUID() {
+        return UID;
+    }
+
+    public void setUID(String UID) {
+        this.UID = UID;
     }
 }

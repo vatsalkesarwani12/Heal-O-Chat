@@ -95,6 +95,7 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
                 Intent intent =new Intent(context, ChatActivity.class);
                 intent.putExtra("mail",list.get(position).getMail());
                 intent.putExtra("name",list.get(position).getName());
+                intent.putExtra("uid",list.get(position).getUID());
                 context.startActivity(intent);
             }
         });
