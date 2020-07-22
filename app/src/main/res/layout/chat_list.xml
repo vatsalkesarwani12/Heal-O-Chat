@@ -1,31 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="80dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
+    android:layout_marginStart="6dp"
+    android:layout_marginEnd="6dp"
     android:gravity="center_vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="5dp"
+    android:layout_marginTop="4dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/chat_profile_dp"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        app:civ_border_width="1dp"
-        android:src="@drawable/ic_male"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/chat_profile_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/chat_profile_dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_toEndOf="@+id/chat_profile_dp"
-        android:text="Name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/chat_profile_dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_male"
+                android:layout_marginStart="2dp"/>
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/chat_profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/chat_profile_dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_toEndOf="@+id/chat_profile_dp"
+                android:text="Name"
+                android:layout_marginEnd="2dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+        </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
