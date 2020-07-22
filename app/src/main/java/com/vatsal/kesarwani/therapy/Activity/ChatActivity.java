@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -48,7 +49,7 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private Map<String, String> map;
     private Map<String, Object> map1;
-    private Button send;
+    private ImageButton send;
     private EditText text;
     private RecyclerView chats;
     private MessageAdapter adapter;

@@ -19,4 +19,7 @@
     <string name="post_by">Post By</string>
     <string name="_00_likes">00 Likes</string>
     <string name="send">send</string>
+    <string name="you">you</string>
+    <string name="other">other</string>
+    <string name="enter_message">Enter Message</string>
 </resources>

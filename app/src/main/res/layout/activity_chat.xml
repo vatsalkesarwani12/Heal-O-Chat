@@ -11,31 +11,51 @@
             android:id="@+id/chats"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="60dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            android:layout_above="@+id/card_mssg"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/message_list"/>
 
-        <LinearLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_mssg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:cardBackgroundColor="#129A7F"
+        app:cardCornerRadius="20dp"
+        android:layout_marginTop="1dp">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:weightSum="100"
-            android:layout_marginBottom="3dp">
+            android:layout_height="50dp"
+            android:layout_marginBottom="1dp">
 
             <EditText
+                android:background="@android:color/transparent"
                 android:id="@+id/text_to_send"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="80"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="40dp"
+                android:textSize="18dp"
+                android:layout_marginStart="10dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
+                android:hint="@string/enter_message"/>
 
-            <Button
+            <ImageButton
+                android:src="@drawable/ic_outline_send_24"
+                android:background="#00000000"
                 android:id="@+id/send"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="20"
                 android:text="@string/send"
-                android:layout_gravity="center_vertical"/>
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="8dp"
+                android:layout_centerVertical="true"/>
 
-        </LinearLayout>
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>
