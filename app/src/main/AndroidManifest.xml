@@ -37,7 +37,7 @@
             android:theme="@style/AppThemeNoActionBar" />
         <activity
             android:name=".Activity.LoginScreen"
-            android:label="Login" />
+            android:label="Welcome" />
         <activity
             android:name=".Activity.Splash"
             android:theme="@style/AppThemeNoActionBar">
@@ -47,6 +47,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

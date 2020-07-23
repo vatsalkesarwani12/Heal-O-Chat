@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dp"
+    android:layout_margin="12dp"
     app:cardCornerRadius="5dp">
 
     <LinearLayout
@@ -40,7 +40,6 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="10dp"
-            android:text="@string/post_by"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <TextView
@@ -53,7 +52,6 @@
             android:layout_marginBottom="10dp"
             android:layout_weight="27"
             android:scrollbars="vertical"
-            android:text="@string/post_message"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     </LinearLayout>

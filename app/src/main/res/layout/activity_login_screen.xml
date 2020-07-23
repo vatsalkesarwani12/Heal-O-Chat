@@ -5,15 +5,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.LoginScreen">
+    tools:context=".Activity.LoginScreen"
+    android:background="#EEFFFC">
 
     <Button
         android:id="@+id/google"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/common_google_signin_btn_icon_dark"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/button"
+        android:drawableStart="@drawable/googleg_standard_color_18"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:text="  Sign In With Google  "
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:fontFamily="@font/amaranth_bold_italic"
+        android:text="Namaste  🙏"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:fontFamily="@font/amaranth_bold_italic"
+        android:text="Heal-O-Chat is social media app where you can chat with people who are less motivated in life and have lost all hopes. This platform will help people to share post , chat with people ."
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="40dp"
+        android:fontFamily="@font/amaranth_bold_italic"
+        android:gravity="center"
+        android:text="Get in and Give and Gain Help"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

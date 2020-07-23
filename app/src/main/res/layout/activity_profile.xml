@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.Profile">
+    tools:context=".Activity.Profile"
+    android:background="#EEFFFC">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/edit_profile"
@@ -47,7 +48,6 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
-            android:text="@string/name"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
@@ -66,7 +66,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/age"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="@android:color/black" />
 
@@ -76,7 +75,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/sex"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="@android:color/black" />
 
@@ -90,7 +88,6 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
-            android:text="@string/about"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@android:color/black"
             android:textStyle="italic|normal" />
@@ -108,7 +105,6 @@
                 android:id="@+id/contact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/contact"
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="@android:color/black" />
@@ -122,7 +118,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="16dp"
-            android:text="@string/description"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@android:color/black" />

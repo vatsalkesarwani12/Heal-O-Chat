@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Activity.Setting">
+    tools:context=".Activity.Setting"
+    android:background="#EEFFFC">
 
     <Switch
         android:id="@+id/profile_visibility_setting"
