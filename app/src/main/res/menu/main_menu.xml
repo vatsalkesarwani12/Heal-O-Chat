@@ -17,7 +17,7 @@
 
     <item
         android:id="@+id/aboutus"
-        android:title="About Us"
+        android:title="About"
         app:showAsAction="never"
         />
 

@@ -23,7 +23,7 @@
             android:label="Edit Profile" />
         <activity
             android:name=".Activity.AboutUs"
-            android:label="About Us"
+            android:label="About Developer"
             android:parentActivityName=".Activity.MainScreen" />
         <activity
             android:name=".Activity.Setting"
