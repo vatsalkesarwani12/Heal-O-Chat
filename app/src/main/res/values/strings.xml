@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Therapy</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="full_name">Full Name</string>
     <string name="age">Age</string>

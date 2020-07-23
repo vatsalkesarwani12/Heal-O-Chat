@@ -8,6 +8,7 @@ public class AppConfig {
     final public static String CALL_STATE="com.vatsal.kesarwani.theraphy.CALL_STATE";
     final public static String PROFILE_DP="com.vatsal.kesarwani.theraphy.PROFILE_DP";
     final public static String USERNAME="com.vatsal.kesarwani.theraphy.USERNAME";
+    final public static String SPLASH=0+"";
     final public static String UID="UID";
     final public static String NAME="NAME";
     final public static String AGE="AGE";

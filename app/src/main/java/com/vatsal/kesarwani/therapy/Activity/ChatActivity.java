@@ -188,7 +188,7 @@ public class ChatActivity extends AppCompatActivity {
         list.clear();
         adapter.notifyDataSetChanged();
 
-        //TODO need modification
+
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")

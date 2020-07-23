@@ -49,6 +49,8 @@ public class Profile extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private Intent intent;
 
+    //TODO list of post
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
