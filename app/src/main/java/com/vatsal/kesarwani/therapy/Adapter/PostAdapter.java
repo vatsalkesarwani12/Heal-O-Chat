@@ -31,6 +31,7 @@ import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.microedition.khronos.opengles.GL;
@@ -57,8 +58,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        //holder.likes.setText(list.get(position).getLikes()+" Likes");
         holder.message.setText(list.get(position).getMessage());
+        final int[] x = {list.get(position).getLikes()};
+        holder.likes.setText(x[0] +" Likes");
 
         FirebaseFirestore.getInstance().collection("User")
                 .document(list.get(position).getBy())
@@ -90,6 +92,34 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 context.startActivity(intent);
             }
         });
+        holder.like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                x[0]++;
+
+                FirebaseFirestore.getInstance().collection("Posts")
+                        .document(list.get(position).getId())
+                        .update(AppConfig.LIKES,x[0])
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    holder.likes.setText(x[0] +" Likes");
+                                    Log.d("ClickRecycler",list.get(position).getBy());
+                                    list.get(position).setClicked(true);
+                                    list.get(position).setLikes(x[0]);
+                                }
+                            }
+                        });
+            }
+        });
+
+        if (list.get(position).isClicked()){
+            holder.like.setVisibility(View.GONE);
+            holder.liked.setVisibility(View.VISIBLE);
+        }
+
+
     }
 
     @Override
@@ -97,15 +127,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView postImage;
-        private TextView by,message;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private ImageView postImage ,like ,liked;
+        private TextView by,message,likes;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             postImage=itemView.findViewById(R.id.postImage);
-            //likes=itemView.findViewById(R.id.likes);
+            likes=itemView.findViewById(R.id.likes);
             by=itemView.findViewById(R.id.postBy);
             message=itemView.findViewById(R.id.postMessage);
+            like=itemView.findViewById(R.id.like);
+            liked=itemView.findViewById(R.id.liked);
         }
     }
 }

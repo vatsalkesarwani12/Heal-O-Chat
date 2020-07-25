@@ -30,6 +30,7 @@ import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -105,7 +106,7 @@ public class PostFragment extends Fragment {
                 startActivity(new Intent(getContext(), AddPost.class));
             }
         });
-
+        list.clear();
         db.collection("Posts")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -115,11 +116,14 @@ public class PostFragment extends Fragment {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 map=document.getData();
                                 list.add(new PostModel(Objects.requireNonNull(map.get(AppConfig.POST_IMAGE)).toString(),
-                                        0,
+                                        Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.LIKES)).toString()),
                                         Objects.requireNonNull(map.get(AppConfig.POST_DESCRIPTION)).toString(),
-                                        Objects.requireNonNull(map.get(AppConfig.POST_BY)).toString()));
+                                        Objects.requireNonNull(map.get(AppConfig.POST_BY)).toString(),
+                                        document.getId(),
+                                        false));
 
                             }
+                            Collections.shuffle(list);
                             adapter.notifyDataSetChanged();
                         }
                         else{

@@ -5,7 +5,7 @@
     <string name="age">Age</string>
     <string name="contact_number">Contact Number</string>
     <string name="about_me">About Me</string>
-    <string name="description">Description</string>
+    <string name="description">Describe Your Mental Situation</string>
     <string name="save_changes">Save changes</string>
     <string name="delete_account">Delete Account</string>
     <string name="delete_profile">Delete Profile</string>
@@ -30,8 +30,12 @@
     <string name="vatsal_kesarwani">Vatsal Kesarwani</string>
     <string name="plazzy99">plazzy99</string>
     <string name="android_developer_java_competitive_programmer_loves_to_talk_on_tech">Android Developer | Java | Competitive Programmer | Loves to Talk On Tech 😁</string>
-    <string name="follow_me">Follow Me</string>
+    <string name="follow_me">Contact Me</string>
     <string name="linkedin">linkedin</string>
     <string name="github">github</string>
     <string name="twitter">twitter</string>
+    <string name="profile_cover">profile cover</string>
+    <string name="personal_info">Personal Info</string>
+    <string name="edit_you_profile">Edit Your Profile</string>
+    <string name="how_do_you_feel">How do you feel</string>
 </resources>

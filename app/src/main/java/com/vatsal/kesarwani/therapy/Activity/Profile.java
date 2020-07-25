@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -37,9 +39,10 @@ import es.dmoral.toasty.Toasty;
 
 public class Profile extends AppCompatActivity {
 
-    private FloatingActionButton editProfile;
+    private Button editProfile;
     private TextView name,age,sex,contact,about,description;
     private String sn,sa,ss,sc,sabout,sdes;
+    private ImageView cover;
     private CircleImageView profile;
     private ProgressBar progressBar;
     private LinearLayout profileData;
@@ -54,7 +57,7 @@ public class Profile extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_profile1);
 
         init();
         progressBar.setVisibility(View.VISIBLE);
@@ -102,14 +105,14 @@ public class Profile extends AppCompatActivity {
                                 sc=Objects.requireNonNull(map.get(AppConfig.NUMBER)).toString();
                                 intent.putExtra(AppConfig.NUMBER,sc);
 
-                                about.setText("About: "+Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString());
+                                about.setText(Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString());
                                 sabout=Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString();
                                 if(sabout.length()==0){
                                     about.setVisibility(View.GONE);
                                 }
                                 intent.putExtra(AppConfig.ABOUT,sabout);
 
-                                description.setText("Description: "+Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString());
+                                description.setText(Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString());
                                 sdes=Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString();
                                 if (sdes.length()==0){
                                     description.setVisibility(View.GONE);
@@ -127,6 +130,10 @@ public class Profile extends AppCompatActivity {
                                                     Glide.with(Profile.this)
                                                             .load(uri)
                                                             .into(profile);
+
+                                                    Glide.with(Profile.this)
+                                                            .load(uri)
+                                                            .into(cover);
                                                 }
                                             });
                                     intent.putExtra(AppConfig.POST_IMAGE, Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString());
@@ -156,6 +163,7 @@ public class Profile extends AppCompatActivity {
         name=findViewById(R.id.fullname);
         age=findViewById(R.id.age);
         sex=findViewById(R.id.sex);
+        cover=findViewById(R.id.profile_cover);
         contact=findViewById(R.id.contact);
         about=findViewById(R.id.about);
         description=findViewById(R.id.description);

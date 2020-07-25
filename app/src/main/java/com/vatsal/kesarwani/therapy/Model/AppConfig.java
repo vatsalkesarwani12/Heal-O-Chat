@@ -22,5 +22,5 @@ public class AppConfig {
     final public static String POST_IMAGE="POST_IMAGE";
     final public static String POST_BY="POST_BY";
     final public static String PROFILE_DISPLAY="PROFILE_DISPLAY";
-
+    final public static String LIKES="LIKES";
 }

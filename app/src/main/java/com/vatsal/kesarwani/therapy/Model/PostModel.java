@@ -5,12 +5,16 @@ public class PostModel {
     private int likes;
     private String message;
     private String by;
+    private String id;
+    private boolean clicked;
 
-    public PostModel(String uri, int likes, String message, String by) {
+    public PostModel(String uri, int likes, String message, String by,String id,boolean clicked) {
         this.uri = uri;
         this.likes = likes;
         this.message = message;
         this.by = by;
+        this.id=id;
+        this.clicked=clicked;
     }
 
     public String getUri() {
@@ -43,5 +47,21 @@ public class PostModel {
 
     public void setBy(String by) {
         this.by = by;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public boolean isClicked() {
+        return clicked;
+    }
+
+    public void setClicked(boolean clicked) {
+        this.clicked = clicked;
     }
 }

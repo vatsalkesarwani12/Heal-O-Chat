@@ -111,6 +111,7 @@ public class AddPost extends AppCompatActivity {
         final Map<String,Object> map=new HashMap<>();
         map.put(AppConfig.POST_DESCRIPTION,sdes);
         map.put(AppConfig.POST_BY,Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()));
+        map.put(AppConfig.LIKES,0);
         sr.child("Images/"+uri.getLastPathSegment())
                 .putFile(uri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
