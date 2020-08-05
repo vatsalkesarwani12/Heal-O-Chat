@@ -55,27 +55,32 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
         holder.desc.setText(list.get(position).getDesc());
         if (list.get(position).getUri().length()<5) {
             if (Objects.equals(list.get(position).getSex(), "Male")) {
-                Glide.with(context)
+                Glide.with(context.getApplicationContext())
                         .load(R.drawable.ic_male)
                         .into(holder.dp);
             } else {
-                Glide.with(context)
+                Glide.with(context.getApplicationContext())
                         .load(R.drawable.ic_female)
                         .into(holder.dp);
             }
         }
         else{
             StorageReference sr= FirebaseStorage.getInstance().getReference();
-            sr.child(list.get(position).getUri())
-                    .getDownloadUrl()
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Glide.with(context)
-                                    .load(uri)
-                                    .into(holder.dp);
-                        }
-                    });
+            try {
+                sr.child(list.get(position).getUri())
+                        .getDownloadUrl()
+                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Glide.with(context.getApplicationContext())
+                                        .load(uri)
+                                        .into(holder.dp);
+                            }
+                        });
+            }
+            finally {
+
+            }
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

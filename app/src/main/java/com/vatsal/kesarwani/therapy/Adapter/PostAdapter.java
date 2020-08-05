@@ -84,16 +84,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             name[1]= Objects.requireNonNull(task.getResult().get(AppConfig.UID)).toString();
                             holder.by.setText(Objects.requireNonNull(Objects.requireNonNull(task.getResult()).get(AppConfig.NAME)).toString());
                             if(!Objects.requireNonNull(task.getResult().get(AppConfig.PROFILE_DISPLAY)).toString().isEmpty()) {
-                                sr.child(Objects.requireNonNull(task.getResult().get(AppConfig.PROFILE_DISPLAY)).toString())
-                                        .getDownloadUrl()
-                                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                            @Override
-                                            public void onSuccess(Uri uri) {
-                                                Glide.with(context)
-                                                        .load(uri)
-                                                        .into(holder.post_profile_dp);
-                                            }
-                                        });
+                                try {
+                                    sr.child(Objects.requireNonNull(task.getResult().get(AppConfig.PROFILE_DISPLAY)).toString())
+                                            .getDownloadUrl()
+                                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+                                                    Glide.with(context.getApplicationContext())
+                                                            .load(uri)
+                                                            .into(holder.post_profile_dp);
+                                                }
+                                            });
+                                }
+                                finally {
+
+                                }
                             }
                         }
 
@@ -112,7 +117,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Glide.with(context).load(uri)
+                        Glide.with(context.getApplicationContext()).load(uri)
                                 .into(holder.postImage);
                     }
                 });

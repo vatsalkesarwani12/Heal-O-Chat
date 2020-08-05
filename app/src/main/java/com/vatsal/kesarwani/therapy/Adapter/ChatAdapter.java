@@ -76,27 +76,32 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
                                 StorageReference sr= FirebaseStorage.getInstance().getReference();
                                 if (sdp[0].length()>5) {
-                                    sr.child(sdp[0])
-                                            .getDownloadUrl()
-                                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                @Override
-                                                public void onSuccess(Uri uri) {
-                                                    Glide.with(context)
-                                                            .load(uri)
-                                                            .into(holder.dp);
-                                                }
-                                            });
+                                    try {
+                                        sr.child(sdp[0])
+                                                .getDownloadUrl()
+                                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                    @Override
+                                                    public void onSuccess(Uri uri) {
+                                                        Glide.with(context.getApplicationContext())
+                                                                .load(uri)
+                                                                .into(holder.dp);
+                                                    }
+                                                });
+                                    }
+                                    finally {
+
+                                    }
                                 }
                                 else
                                 {
                                     if (map.get(AppConfig.SEX).equals("Male")){
-                                        Glide.with(context)
+                                        Glide.with(context.getApplicationContext())
                                                 .load(R.drawable.ic_male)
                                                 .into(holder.dp);
                                     }
                                     else
                                     {
-                                        Glide.with(context)
+                                        Glide.with(context.getApplicationContext())
                                                 .load(R.drawable.ic_female)
                                                 .into(holder.dp);
                                     }
