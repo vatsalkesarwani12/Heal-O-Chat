@@ -20,6 +20,8 @@ import java.util.Objects;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
     Context context;
     ArrayList<MessageModel> list;
+    final int YOU=1;
+    final int OTHER =2;
 
     public MessageAdapter(Context context, ArrayList<MessageModel> list) {
         this.context = context;
@@ -29,20 +31,28 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.message_list,parent,false);
-        return new ViewHolder(v);
+        if (viewType == YOU) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_list, parent, false);
+            return new ViewHolder(v);
+        }
+        else {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_list_other, parent, false);
+            return new ViewHolder(v);
+        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if(list.get(position).getUser().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail())){
-            holder.cardOther.setVisibility(View.GONE);
+        /*if(list.get(position).getUser().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail())){
+            //holder.cardOther.setVisibility(View.GONE);
             holder.you.setText(list.get(position).getMssg());
         }
         else {
-            holder.cardYou.setVisibility(View.GONE);
+            //holder.cardYou.setVisibility(View.GONE);
             holder.other.setText(list.get(position).getMssg());
-        }
+        }*/
+
+        holder.mssg.setText(list.get(position).getMssg());
     }
 
     @Override
@@ -50,15 +60,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private CardView cardYou,cardOther;
-        private TextView you,other;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        //private CardView cardYou,cardOther;
+        private TextView mssg;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            cardYou=itemView.findViewById(R.id.card_you);
-            cardOther=itemView.findViewById(R.id.card_other);
-            you=itemView.findViewById(R.id.you);
-            other=itemView.findViewById(R.id.other);
+            /*cardYou=itemView.findViewById(R.id.card_you);
+            cardOther=itemView.findViewById(R.id.card_other);*/
+            mssg=itemView.findViewById(R.id.mssg);
+
         }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        FirebaseAuth mAuth=FirebaseAuth.getInstance();
+        if(list.get(position).getUser().equals(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail())){
+            return YOU;
+        }
+        else return OTHER;
     }
 }

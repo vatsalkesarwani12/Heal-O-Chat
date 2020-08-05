@@ -40,6 +40,35 @@ public class MainScreen extends AppCompatActivity {
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()){
+                    case 0 :
+                        viewPager.setCurrentItem(0);
+                        break;
+
+                    case 1 :
+                        viewPager.setCurrentItem(1);
+                        break;
+
+                    case 2 :
+                        viewPager.setCurrentItem(2);
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
     }
 
     private void init() {

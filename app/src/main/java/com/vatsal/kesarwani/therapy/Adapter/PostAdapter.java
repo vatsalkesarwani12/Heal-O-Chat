@@ -36,12 +36,15 @@ import java.util.Objects;
 
 import javax.microedition.khronos.opengles.GL;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     Context context;
     ArrayList<PostModel> list;
+    final int LIKE = 1;
+    final int DISLIKE = 0;
 
     public PostAdapter(Context context, ArrayList<PostModel> list) {
         this.context = context;
@@ -51,8 +54,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.post_list,parent,false);
-        return new ViewHolder(v);
+        if (viewType == DISLIKE) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_list, parent, false);
+            return new ViewHolder(v);
+        }
+        else {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_list_like, parent, false);
+            return new ViewHolder(v);
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -61,6 +70,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.message.setText(list.get(position).getMessage());
         final int[] x = {list.get(position).getLikes()};
         holder.likes.setText(x[0] +" Likes");
+        final StorageReference sr= FirebaseStorage.getInstance().getReference();
+        final String[] name = new String[2];
 
         FirebaseFirestore.getInstance().collection("User")
                 .document(list.get(position).getBy())
@@ -68,12 +79,34 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        holder.by.setText(Objects.requireNonNull(Objects.requireNonNull(task.getResult()).get(AppConfig.NAME)).toString());
+                        if (task.isSuccessful() && task.getResult()!=null) {
+                            name[0]=Objects.requireNonNull(Objects.requireNonNull(task.getResult()).get(AppConfig.NAME)).toString();
+                            name[1]= Objects.requireNonNull(task.getResult().get(AppConfig.UID)).toString();
+                            holder.by.setText(Objects.requireNonNull(Objects.requireNonNull(task.getResult()).get(AppConfig.NAME)).toString());
+                            if(!Objects.requireNonNull(task.getResult().get(AppConfig.PROFILE_DISPLAY)).toString().isEmpty()) {
+                                sr.child(Objects.requireNonNull(task.getResult().get(AppConfig.PROFILE_DISPLAY)).toString())
+                                        .getDownloadUrl()
+                                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                Glide.with(context)
+                                                        .load(uri)
+                                                        .into(holder.post_profile_dp);
+                                            }
+                                        });
+                            }
+                        }
+
                     }
                 });
 
+        holder.more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo report user
+            }
+        });
 
-        StorageReference sr= FirebaseStorage.getInstance().getReference();
         sr.child(list.get(position).getUri())
                 .getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -89,6 +122,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             public void onClick(View v) {
                 Intent intent =new Intent(context, CureProfile.class);
                 intent.putExtra("mail",list.get(position).getBy());
+                intent.putExtra("name",name[0]);
+                intent.putExtra("uid",name[1]);
                 context.startActivity(intent);
             }
         });
@@ -114,10 +149,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
 
-        if (list.get(position).isClicked()){
+        /*if (list.get(position).isClicked()){
             holder.like.setVisibility(View.GONE);
             holder.liked.setVisibility(View.VISIBLE);
-        }
+        }*/
 
 
     }
@@ -128,8 +163,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView postImage ,like ,liked;
+        private ImageView postImage ,like ,liked ,more;
         private TextView by,message,likes;
+        private CircleImageView post_profile_dp;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             postImage=itemView.findViewById(R.id.postImage);
@@ -138,6 +174,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             message=itemView.findViewById(R.id.postMessage);
             like=itemView.findViewById(R.id.like);
             liked=itemView.findViewById(R.id.liked);
+            post_profile_dp=itemView.findViewById(R.id.post_profile_dp);
+            more=itemView.findViewById(R.id.post_more);
         }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (list.get(position).isClicked()){
+            return LIKE;
+        }
+        else return DISLIKE;
     }
 }

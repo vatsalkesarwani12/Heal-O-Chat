@@ -5,7 +5,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -142,6 +144,8 @@ public class PostFragment extends Fragment {
         sr=FirebaseStorage.getInstance().getReference();
         db=FirebaseFirestore.getInstance();
         postRecycler=root.findViewById(R.id.post_recycler);
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(postRecycler);
         adapter=new PostAdapter(getContext(),list);
         postRecycler.setAdapter(adapter);
     }

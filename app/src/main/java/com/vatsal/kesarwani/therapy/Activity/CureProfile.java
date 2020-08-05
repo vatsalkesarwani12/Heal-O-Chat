@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ public class CureProfile extends AppCompatActivity {
     private ImageButton contact, message;
     private String sn, sa, ss, sc, sabout, sdes, uid;
     private CircleImageView profile;
+    private ImageView cover;
     private ProgressBar progressBar;
     private LinearLayout profileData;
     private FirebaseFirestore db;
@@ -54,7 +56,7 @@ public class CureProfile extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cure_profile);
+        setContentView(R.layout.activity_cure_profile1);
 
         init();
         progressBar.setVisibility(View.VISIBLE);
@@ -141,13 +143,13 @@ public class CureProfile extends AppCompatActivity {
                                 if ((boolean) map.get(AppConfig.CAN_CALL))
                                 contact.setVisibility(View.VISIBLE);
 
-                                about.setText("About: "+Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString());
+                                about.setText(Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString());
                                 sabout = Objects.requireNonNull(map.get(AppConfig.ABOUT)).toString();
                                 if (sabout.length() == 0) {
                                     about.setVisibility(View.GONE);
                                 }
 
-                                description.setText("Description: "+Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString());
+                                description.setText(Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString());
                                 sdes = Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString();
                                 if (sdes.length() == 0) {
                                     description.setVisibility(View.GONE);
@@ -170,6 +172,10 @@ public class CureProfile extends AppCompatActivity {
                                                     Glide.with(CureProfile.this)
                                                             .load(uri)
                                                             .into(profile);
+
+                                                    Glide.with(CureProfile.this)
+                                                            .load(uri)
+                                                            .into(cover);
                                                 }
                                             });
                                 }
@@ -197,5 +203,6 @@ public class CureProfile extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         intent = getIntent();
         message=findViewById(R.id.message_profile);
+        cover =findViewById(R.id.profile_cover);
     }
 }

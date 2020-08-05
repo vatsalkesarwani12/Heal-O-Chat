@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -59,6 +60,7 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseDatabase db1;
     private DatabaseReference dr;
     private ChildEventListener listener;
+    private ValueEventListener valueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,11 +130,31 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        listener =new ChildEventListener() {
+        valueEventListener=new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                list.clear();
+                for (DataSnapshot snapshott : snapshot.getChildren()){
+                    MessageModel model1=snapshott.getValue(MessageModel.class);
+                    list.add(model1);
+                }
+                chats.scrollToPosition(list.size() - 1);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addValueEventListener(valueEventListener);
+
+        /*listener =new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Log.d(TAG, snapshot.getValue()+"" );
                 MessageModel model= snapshot.getValue(MessageModel.class);
+                Log.d(TAG, model.toString());
                 //if (model!=null) {
                     list.add(model);
                     adapter.notifyDataSetChanged();
@@ -159,7 +181,7 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         };
-        dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addChildEventListener(listener);
+        dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addChildEventListener(listener);*/
 
     }
 
@@ -262,6 +284,7 @@ public class ChatActivity extends AppCompatActivity {
         send = findViewById(R.id.send);
         text = findViewById(R.id.text_to_send);
         chats = findViewById(R.id.chats);
+        chats.setHasFixedSize(true);
         list = new ArrayList<>();
         adapter = new MessageAdapter(this, list);
         chats.setAdapter(adapter);

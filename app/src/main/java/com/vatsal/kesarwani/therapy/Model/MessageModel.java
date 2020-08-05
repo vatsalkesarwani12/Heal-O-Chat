@@ -27,4 +27,12 @@ public class MessageModel {
     public void setMssg(String mssg) {
         this.mssg = mssg;
     }
+
+    @Override
+    public String toString() {
+        return "MessageModel{" +
+                "user='" + user + '\'' +
+                ", mssg='" + mssg + '\'' +
+                '}';
+    }
 }
