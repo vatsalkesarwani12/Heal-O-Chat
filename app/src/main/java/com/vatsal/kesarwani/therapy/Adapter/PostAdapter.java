@@ -100,6 +100,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
                                 }
                             }
+                            else if(Objects.requireNonNull(task.getResult().get(AppConfig.PROFILE_DISPLAY)).toString().length()<5){
+                                if (Objects.requireNonNull(task.getResult().get(AppConfig.SEX)).toString().equals("Male"))
+                                    holder.post_profile_dp.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_male));
+                                else
+                                    holder.post_profile_dp.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_female));
+                            }
                         }
 
                     }

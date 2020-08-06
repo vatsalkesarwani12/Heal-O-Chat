@@ -58,6 +58,7 @@ public class AddPost extends AppCompatActivity {
                 imagePicker();
             }
         });
+        post.setEnabled(true);
 
         post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,6 +67,7 @@ public class AddPost extends AppCompatActivity {
                     Toasty.warning(AddPost.this,"Select a Image to Post",Toast.LENGTH_SHORT).show();
                     return;
                 }
+                post.setEnabled(false);
                 dataUpload();
             }
         });
@@ -131,6 +133,7 @@ public class AddPost extends AppCompatActivity {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Toasty.error(AddPost.this,"Unable to post",Toast.LENGTH_SHORT).show();
+                                        post.setEnabled(true);
                                     }
                                 });
                     }
@@ -139,7 +142,7 @@ public class AddPost extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toasty.error(AddPost.this,"Unable to upload",Toast.LENGTH_SHORT).show();
-
+                        post.setEnabled(true);
                     }
                 });
 
@@ -148,6 +151,12 @@ public class AddPost extends AppCompatActivity {
         map.put(AppConfig.POST_IMAGE,file);*/
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        post.setEnabled(true);
     }
 
     private void init(){
