@@ -12,8 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/card_mssg"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/message_list"/>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_mssg"

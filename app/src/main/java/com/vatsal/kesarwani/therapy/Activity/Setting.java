@@ -2,6 +2,7 @@ package com.vatsal.kesarwani.therapy.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +44,7 @@ public class Setting extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
@@ -140,7 +142,7 @@ public class Setting extends AppCompatActivity {
             }
         });
         
-        delete.setOnClickListener(new View.OnClickListener() {
+        /*delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 state=0;
@@ -153,7 +155,7 @@ public class Setting extends AppCompatActivity {
             public void onClick(View v) {
                 deleteAccount();
             }
-        });
+        });*/
     }
 
     private void deleteAccount(){

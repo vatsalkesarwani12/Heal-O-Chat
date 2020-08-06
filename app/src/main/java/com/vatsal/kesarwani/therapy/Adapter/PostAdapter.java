@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,13 +113,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     }
                 });
 
-        holder.more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //todo report user
-            }
-        });
-
         sr.child(list.get(position).getUri())
                 .getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -174,7 +169,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView postImage ,like ,liked ,more;
+        private ImageView postImage ,like ,liked ;
         private TextView by,message,likes;
         private CircleImageView post_profile_dp;
         public ViewHolder(@NonNull View itemView) {
@@ -186,7 +181,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             like=itemView.findViewById(R.id.like);
             liked=itemView.findViewById(R.id.liked);
             post_profile_dp=itemView.findViewById(R.id.post_profile_dp);
-            more=itemView.findViewById(R.id.post_more);
         }
     }
 

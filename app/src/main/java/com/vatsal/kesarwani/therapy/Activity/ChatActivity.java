@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -64,6 +65,7 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         init();
@@ -106,7 +108,7 @@ public class ChatActivity extends AppCompatActivity {
         db.collection("User")
                 .document(mail)
                 .collection("Chat")
-                .document(mAuth.getCurrentUser().getEmail())
+                .document(Objects.requireNonNull(mAuth.getCurrentUser().getEmail()))
                 .set(map2)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
