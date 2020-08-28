@@ -36,7 +36,7 @@ public class Setting extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
     private Switch prof_visib,call;
-    private TextView delete,deleteAcc;
+    private TextView delete, deleteAcc, blockedUser;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private static final String TAG = "Setting";
@@ -139,6 +139,13 @@ public class Setting extends AppCompatActivity {
                                 }
                             });
                 }
+            }
+        });
+
+        blockedUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),BlockActivity.class));
             }
         });
         
@@ -245,6 +252,7 @@ public class Setting extends AppCompatActivity {
         deleteAcc=findViewById(R.id.delete_setting);
         db=FirebaseFirestore.getInstance();
         mAuth=FirebaseAuth.getInstance();
+        blockedUser= findViewById(R.id.block_user_setting);
 
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))

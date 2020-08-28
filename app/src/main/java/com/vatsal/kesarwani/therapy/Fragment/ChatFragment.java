@@ -124,9 +124,11 @@ public class ChatFragment extends Fragment {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
                                 map=document.getData();
                                 Log.d("IDCollection", document.getId());
-                                list.add(new ChatModel(
-                                        document.getId()
-                                ));
+                                if(!(boolean)map.get("Block")) {
+                                    list.add(new ChatModel(
+                                            document.getId()
+                                    ));
+                                }
                             }
                             adapter.notifyDataSetChanged();
                         }

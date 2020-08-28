@@ -44,4 +44,6 @@
     <string name="WelcomeMotivationalTxt">So don\'t feel low anymore and hit the button to get started</string>
     <string name="report_post">Report Post</string>
     <string name="block_user">Block User</string>
+    <string name="blocked_user">Blocked User</string>
+    <string name="block">Block</string>
 </resources>

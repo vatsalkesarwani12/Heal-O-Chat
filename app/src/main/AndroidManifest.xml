@@ -13,8 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.ChatActivity"
-            android:parentActivityName=".Activity.MainScreen"/>
+        <activity android:name=".Activity.BlockActivity"
+            android:parentActivityName=".Activity.Setting"
+            android:label="Block Activity"/>
+        <activity
+            android:name=".Activity.ChatActivity"
+            android:parentActivityName=".Activity.MainScreen" />
         <activity
             android:name=".Activity.AddPost"
             android:label="Post" />
@@ -32,7 +36,7 @@
             android:parentActivityName=".Activity.MainScreen" />
         <activity
             android:name=".Activity.Profile"
-            android:theme="@style/AppThemeNoActionBar"/>
+            android:theme="@style/AppThemeNoActionBar" />
         <activity
             android:name=".Activity.MainScreen"
             android:theme="@style/AppThemeNoActionBar" />

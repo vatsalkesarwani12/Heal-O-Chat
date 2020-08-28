@@ -1,8 +1,12 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.RecyclerView;
@@ -57,6 +62,7 @@ public class ChatActivity extends AppCompatActivity {
     private MessageAdapter adapter;
     private ArrayList<MessageModel> list;
     private Map<String,Object> map2=new HashMap<>();
+    private Map<String,Object> map3=new HashMap<>();
     private static final String TAG = "ChatActivity";
     private FirebaseDatabase db1;
     private DatabaseReference dr;
@@ -93,28 +99,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });*/
 
-        db.collection("User")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection("Chat")
-                .document(mail)
-                .set(map2)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                    }
-                });
-
-        db.collection("User")
-                .document(mail)
-                .collection("Chat")
-                .document(Objects.requireNonNull(mAuth.getCurrentUser().getEmail()))
-                .set(map2)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                    }
-                });
+        addUserToChatList();
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,6 +170,95 @@ public class ChatActivity extends AppCompatActivity {
         };
         dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addChildEventListener(listener);*/
 
+    }
+
+    private void addUserToChatList() {
+        //add user to chat list
+        db.collection("User")
+                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                .collection("Chat")
+                .document(mail)
+                .set(map2)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                });
+        //add user to chat list
+        db.collection("User")
+                .document(mail)
+                .collection("Chat")
+                .document(Objects.requireNonNull(mAuth.getCurrentUser().getEmail()))
+                .set(map2)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.chat_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.block) {
+            AlertDialog.Builder builder= new AlertDialog.Builder(this);
+            builder.setTitle("Wanna Block "+name);
+            builder.setCancelable(true);
+            builder.setPositiveButton("Block", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    blockUser();
+                }
+            })
+            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+
+            AlertDialog dialog= builder.create();
+
+            dialog.show();
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void blockUser(){
+        //remove user from chat list
+        db.collection("User")
+                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                .collection("Chat")
+                .document(mail)
+                .set(map3)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                });
+        //remove user from chat list
+        db.collection("User")
+                .document(mail)
+                .collection("Chat")
+                .document(Objects.requireNonNull(mAuth.getCurrentUser().getEmail()))
+                .set(map3)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                });
+
+        Toast.makeText(this,name+" blocked", Toast.LENGTH_SHORT).show();
     }
 
     private void post(){
@@ -291,6 +365,9 @@ public class ChatActivity extends AppCompatActivity {
         adapter = new MessageAdapter(this, list);
         chats.setAdapter(adapter);
         map2.put("first",1);
+        map2.put("Block",false);
+        map3.put("first",1);
+        map3.put("Block",true);
         db1=FirebaseDatabase.getInstance();
         dr=db1.getReference();
 
