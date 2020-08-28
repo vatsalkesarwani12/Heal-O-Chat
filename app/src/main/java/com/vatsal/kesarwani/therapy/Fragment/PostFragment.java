@@ -119,13 +119,17 @@ public class PostFragment extends Fragment {
                         if (task.isSuccessful()){
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 map=document.getData();
-                                list.add(new PostModel(Objects.requireNonNull(map.get(AppConfig.POST_IMAGE)).toString(),
-                                        Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.LIKES)).toString()),
-                                        Objects.requireNonNull(map.get(AppConfig.POST_DESCRIPTION)).toString(),
-                                        Objects.requireNonNull(map.get(AppConfig.POST_BY)).toString(),
-                                        document.getId(),
-                                        false));
-
+                                if ((boolean)map.get(AppConfig.VISIBLE)){
+                                    list.add(new PostModel(Objects.requireNonNull(map.get(AppConfig.POST_IMAGE)).toString(),
+                                            Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.LIKES)).toString()),
+                                            Objects.requireNonNull(map.get(AppConfig.POST_DESCRIPTION)).toString(),
+                                            Objects.requireNonNull(map.get(AppConfig.POST_BY)).toString(),
+                                            document.getId(),
+                                            false,
+                                            Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
+                                            Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
+                                            Objects.requireNonNull(map.get(AppConfig.UID)).toString()));
+                                }
                             }
                             Collections.shuffle(list);
                             adapter.notifyDataSetChanged();

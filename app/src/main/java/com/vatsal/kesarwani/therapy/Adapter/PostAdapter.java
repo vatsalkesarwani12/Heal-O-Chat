@@ -74,8 +74,32 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.likes.setText(x[0] +" Likes");
         final StorageReference sr= FirebaseStorage.getInstance().getReference();
         final String[] name = new String[2];
+        name[0]=list.get(position).getName();
+        name[1]= list.get(position).getUid();
+        holder.by.setText(name[0]);
 
-        FirebaseFirestore.getInstance().collection("User")
+        if(!list.get(position).getProfile_display().isEmpty()) {
+            try {
+                sr.child(list.get(position).getProfile_display())
+                        .getDownloadUrl()
+                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Glide.with(context.getApplicationContext())
+                                        .load(uri)
+                                        .into(holder.post_profile_dp);
+                            }
+                        });
+            }
+            finally {
+
+            }
+        }
+        else if(list.get(position).getProfile_display().length()<5){
+            holder.post_profile_dp.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_male));
+        }
+
+        /*FirebaseFirestore.getInstance().collection("User")
                 .document(list.get(position).getBy())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -111,7 +135,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         }
 
                     }
-                });
+                });*/
 
         sr.child(list.get(position).getUri())
                 .getDownloadUrl()
@@ -129,7 +153,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Intent intent =new Intent(context, CureProfile.class);
                 intent.putExtra("mail",list.get(position).getBy());
                 intent.putExtra("name",name[0]);
-                intent.putExtra("uid",name[1]);
+                intent.putExtra("uid",name[1]); //todo when user delete account remember to set visible to false
                 context.startActivity(intent);
             }
         });

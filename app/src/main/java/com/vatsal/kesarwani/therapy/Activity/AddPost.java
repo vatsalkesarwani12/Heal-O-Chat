@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -15,11 +17,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -46,6 +52,8 @@ public class AddPost extends AppCompatActivity {
     private String filePath;
     private File file;
     private Uri uri;
+    private String name,uid,pf_display;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +69,34 @@ public class AddPost extends AppCompatActivity {
             }
         });
         post.setEnabled(true);
+
+        db.collection("User")
+                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            DocumentSnapshot document = task.getResult();
+                            assert document != null;
+                            if (document.exists()){
+                                Map<String,Object> map=document.getData();
+                                assert map != null;
+                                name= Objects.requireNonNull(map.get(AppConfig.NAME)).toString();
+                                pf_display= Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString();
+                                uid= Objects.requireNonNull(map.get(AppConfig.UID)).toString();
+                            }
+                        }
+                        else
+                            Toasty.error(AddPost.this,"Error Fetching Data "+task.getException(),Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
 
         post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +152,10 @@ public class AddPost extends AppCompatActivity {
         map.put(AppConfig.POST_DESCRIPTION,sdes);
         map.put(AppConfig.POST_BY,Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()));
         map.put(AppConfig.LIKES,0);
+        map.put(AppConfig.VISIBLE,true);
+        map.put(AppConfig.NAME,name);
+        map.put(AppConfig.UID,uid);
+        map.put(AppConfig.PROFILE_DISPLAY,pf_display);
         sr.child("Images/"+uri.getLastPathSegment())
                 .putFile(uri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -168,5 +208,6 @@ public class AddPost extends AppCompatActivity {
         desc=findViewById(R.id.post_desc);
         post=findViewById(R.id.post);
         postView=findViewById(R.id.image);
+        sharedPreferences =getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
     }
 }
