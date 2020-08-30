@@ -46,4 +46,5 @@
     <string name="block_user">Block User</string>
     <string name="blocked_user">Blocked User</string>
     <string name="block">Block</string>
+    <string name="unblock">Unblock</string>
 </resources>

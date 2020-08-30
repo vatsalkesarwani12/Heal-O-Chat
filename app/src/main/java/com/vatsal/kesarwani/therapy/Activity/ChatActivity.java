@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -68,6 +69,7 @@ public class ChatActivity extends AppCompatActivity {
     private DatabaseReference dr;
     private ChildEventListener listener;
     private ValueEventListener valueEventListener;
+    private boolean status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,29 +79,6 @@ public class ChatActivity extends AppCompatActivity {
         init();
         Objects.requireNonNull(getSupportActionBar()).setTitle(name);
 
-        /*db.collection("User")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection("Chat")
-                .document(mail)
-                .collection(mail)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                map1 = document.getData();
-                                list.add(new MessageModel(
-                                        Objects.requireNonNull(map1.get("user")).toString(),
-                                        Objects.requireNonNull(map1.get("mssg")).toString()
-                                ));
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                });*/
-
-        addUserToChatList();
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,10 +89,15 @@ public class ChatActivity extends AppCompatActivity {
                 text.setText("");
                 map.put("user", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
                 map.put("mssg", mssg);
-                //update();
-                //adapterUpdate();
-
-                post();
+                refrehStatus();
+                if(!status) {
+                    addUserToChatList();
+                    post();
+                }
+                else{
+                    Snackbar.make(v,"You cannot message the user",Snackbar.LENGTH_INDEFINITE)
+                            .show();
+                }
             }
         });
 
@@ -172,6 +156,22 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    private void refrehStatus(){
+        db.collection("User")
+                .document(mail)
+                .collection("Chat")
+                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document= task.getResult();
+                        assert document != null;
+                        status= (boolean) document.get("Block");
+                    }
+                });
+    }
+
     private void addUserToChatList() {
         //add user to chat list
         db.collection("User")
@@ -227,7 +227,7 @@ public class ChatActivity extends AppCompatActivity {
             AlertDialog dialog= builder.create();
 
             dialog.show();
-
+            item.setVisible(false);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -247,7 +247,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
         //remove user from chat list
-        db.collection("User")
+        /*db.collection("User")
                 .document(mail)
                 .collection("Chat")
                 .document(Objects.requireNonNull(mAuth.getCurrentUser().getEmail()))
@@ -256,15 +256,12 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                     }
-                });
+                });*/
 
         Toast.makeText(this,name+" blocked", Toast.LENGTH_SHORT).show();
     }
 
     private void post(){
-
-        /*list.add(new MessageModel(mssg,Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()));
-        adapter.notifyDataSetChanged();*/
 
         dr.child(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()))
                 .child(uid)
@@ -277,75 +274,10 @@ public class ChatActivity extends AppCompatActivity {
                 .setValue(map);
     }
 
-    private void listener(){
-
-    }
-
-    private void adapterUpdate() {
-
-        list.clear();
-        adapter.notifyDataSetChanged();
-
-
-        db.collection("User")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection("Chat")
-                .document(mail)
-                .collection(mail)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                map1 = document.getData();
-                                list.add(new MessageModel(
-                                        Objects.requireNonNull(map1.get("user")).toString(),
-                                        Objects.requireNonNull(map1.get("mssg")).toString()
-                                ));
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                });
-    }
 
     private boolean check() {
         mssg = text.getText().toString();
         return mssg.length() >= 1;
-    }
-
-    private void update() {
-
-        list.add(new MessageModel(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail(), mssg));
-        adapter.notifyDataSetChanged();
-
-        db.collection("User")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection("Chat")
-                .document(mail)
-                .collection(mail)
-                .add(map)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        //Toasty.success(ChatActivity.this, "Sent", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        db.collection("User")
-                .document(mail)
-                .collection("Chat")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .add(map)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        //Toasty.success(ChatActivity.this, "Sent", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
     }
 
     private void init() {
@@ -370,6 +302,6 @@ public class ChatActivity extends AppCompatActivity {
         map3.put("Block",true);
         db1=FirebaseDatabase.getInstance();
         dr=db1.getReference();
-
+        status= false;
     }
 }
