@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.Util;
 
 public class Splash extends AppCompatActivity {
 
@@ -68,10 +69,15 @@ public class Splash extends AppCompatActivity {
                     if (mAuth.getCurrentUser() != null && sharedPreferences.getString(AppConfig.PROFILE_STATE, "com.vatsal.kesarwani.theraphy.PROFILE_STATE").equals("com.vatsal.kesarwani.theraphy.PROFILE_STATE")) {
                         startActivity(new Intent(getApplicationContext(), Editprofile.class));
                     } else if (mAuth.getCurrentUser() != null) {
+                        onlineStatus();
                         startActivity(new Intent(getApplicationContext(), MainScreen.class));
                     }
                 }
             }
         },2000);
+    }
+
+    private void onlineStatus(){
+        new Util().setOnline();
     }
 }

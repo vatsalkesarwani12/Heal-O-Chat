@@ -34,6 +34,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.Util;
 
 import java.io.File;
 import java.util.HashMap;
@@ -93,6 +94,7 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
                 userData.put(AppConfig.CAN_CALL,true);
                 userData.put(AppConfig.VISIBLE,true);
                 userData.put(AppConfig.UID, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+                userData.put(AppConfig.STATUS,true);  //true= online
 
                 sharedPreferences.edit()
                         .putString(AppConfig.USERNAME,sfn)

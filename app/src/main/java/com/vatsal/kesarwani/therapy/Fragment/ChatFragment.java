@@ -95,23 +95,6 @@ public class ChatFragment extends Fragment {
 
         init(root);
 
-       /* db.collection("User")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection("Chat")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
-                        }else{
-                            Toasty.error(Objects.requireNonNull(getContext()),"error fetching data",Toasty.LENGTH_SHORT).show();
-                        }
-                    }
-                });*/
-
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")
