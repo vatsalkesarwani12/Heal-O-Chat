@@ -70,8 +70,8 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
                             }
                         });
             }
-            finally {
-
+            catch (Exception e){
+                e.printStackTrace();
             }
         }
 

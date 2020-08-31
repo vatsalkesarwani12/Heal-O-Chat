@@ -221,7 +221,9 @@ public class CureProfile extends AppCompatActivity {
                         try{
                             DocumentSnapshot document= task.getResult();
                             assert document != null;
-                            status= (boolean) document.get("Block");
+                            Map<String,Object> m=document.getData();
+                            assert m != null;
+                            status= (boolean) m.get("Block");
                         } catch (Exception e){
                             status=false;
                         }

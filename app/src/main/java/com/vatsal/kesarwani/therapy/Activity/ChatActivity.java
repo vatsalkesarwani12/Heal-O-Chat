@@ -3,6 +3,7 @@ package com.vatsal.kesarwani.therapy.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -59,6 +60,7 @@ public class ChatActivity extends AppCompatActivity {
     private ChildEventListener listener;
     private ValueEventListener valueEventListener;
     private boolean status;
+    private View v;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,14 +81,7 @@ public class ChatActivity extends AppCompatActivity {
                 map.put("user", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
                 map.put("mssg", mssg);
                 refrehStatus();
-                if(!status) {
-                    addUserToChatList();
-                    post();
-                }
-                else{
-                    Snackbar.make(v,"You cannot message the user",Snackbar.LENGTH_INDEFINITE)
-                            .show();
-                }
+
             }
         });
 
@@ -122,7 +117,18 @@ public class ChatActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         DocumentSnapshot document= task.getResult();
                         assert document != null;
-                        status= (boolean) document.get("Block");
+                        Map<String,Object> map =document.getData();
+                        assert map != null;
+                        status= (boolean) map.get("Block");
+                        Log.d(TAG, status+"");
+                        if(!status) {
+                            addUserToChatList();
+                            post();
+                        }
+                        else{
+                            Snackbar.make(v,"You cannot message the user",Snackbar.LENGTH_LONG)
+                                    .show();
+                        }
                     }
                 });
     }
@@ -133,24 +139,13 @@ public class ChatActivity extends AppCompatActivity {
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")
                 .document(mail)
-                .set(map2)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                    }
-                });
+                .set(map2);
         //add user to chat list
         db.collection("User")
                 .document(mail)
                 .collection("Chat")
                 .document(Objects.requireNonNull(mAuth.getCurrentUser().getEmail()))
-                .set(map2)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                    }
-                });
+                .set(map2);
     }
 
     @Override
@@ -247,5 +242,6 @@ public class ChatActivity extends AppCompatActivity {
         db1=FirebaseDatabase.getInstance();
         dr=db1.getReference();
         status= false;
+        v= findViewById(android.R.id.content);
     }
 }

@@ -138,12 +138,6 @@ public class BlockAdapter extends RecyclerView.Adapter<BlockAdapter.ViewHolder> 
                 .document(mail)
                 .set(map2);
 
-        db.collection("User")
-                .document(mail)
-                .collection("Chat")
-                .document(Objects.requireNonNull(mAuth.getCurrentUser().getEmail()))
-                .set(map2);
-
     }
 
     @Override
