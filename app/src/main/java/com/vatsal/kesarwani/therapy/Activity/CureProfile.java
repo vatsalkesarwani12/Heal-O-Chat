@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -54,7 +56,7 @@ public class CureProfile extends AppCompatActivity {
     private Intent intent,intent2;
     private int CODE =1;
     private static final String TAG = "CureProfile";
-    private boolean status=false;
+    private boolean status=false;  /**block status*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,9 +222,13 @@ public class CureProfile extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document= task.getResult();
-                        assert document != null;
-                        status= (boolean) document.get("Block");
+                        try{
+                            DocumentSnapshot document= task.getResult();
+                            assert document != null;
+                            status= (boolean) document.get("Block");
+                        } catch (Exception e){
+                            status=false;
+                        }
                     }
                 });
     }

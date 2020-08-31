@@ -101,6 +101,7 @@ public class MainScreen extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.signout:
+                new Util().setOffline();
                 mAuth.signOut();
                 startActivity(new Intent(getApplicationContext(), LoginScreen.class));
                 return true;
@@ -120,13 +121,17 @@ public class MainScreen extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //new Util().setOnline();
+    }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finishAffinity();
-        new Util().setOffline();
+        //new Util().setOffline();
         finish();
     }
 }

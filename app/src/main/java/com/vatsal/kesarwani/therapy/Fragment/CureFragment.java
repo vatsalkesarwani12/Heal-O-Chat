@@ -110,7 +110,7 @@ public class CureFragment extends Fragment {
                                 map=document.getData();
                                 Log.d(TAG, Objects.requireNonNull(map.get(AppConfig.NAME)).toString());
                                 if((boolean)map.get(AppConfig.VISIBLE)) {
-                                    if(!Objects.requireNonNull(map.get(AppConfig.NAME)).toString().equals(sharedPreferences.getString(AppConfig.USERNAME,""))) {
+                                    if(!Objects.requireNonNull(map.get(AppConfig.UID)).toString().equals(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())) {
                                         list.add(new CureModel(
                                                 Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
                                                 Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString(),
