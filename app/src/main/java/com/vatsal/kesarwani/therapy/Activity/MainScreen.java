@@ -1,31 +1,22 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.appbar.AppBarLayout;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.vatsal.kesarwani.therapy.Adapter.MyAdapter;
-import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
 import com.vatsal.kesarwani.therapy.Utility.Util;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 public class MainScreen extends AppCompatActivity {
 
@@ -121,17 +112,11 @@ public class MainScreen extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //new Util().setOnline();
-    }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finishAffinity();
-        //new Util().setOffline();
         finish();
     }
 }

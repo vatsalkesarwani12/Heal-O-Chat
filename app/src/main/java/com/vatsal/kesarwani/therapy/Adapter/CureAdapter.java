@@ -14,21 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.vatsal.kesarwani.therapy.Activity.ChatActivity;
 import com.vatsal.kesarwani.therapy.Activity.CureProfile;
-import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.CureModel;
 import com.vatsal.kesarwani.therapy.R;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -94,18 +86,6 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
                 context.startActivity(intent);
             }
         });
-
-        /*holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent =new Intent(context, ChatActivity.class);
-                intent.putExtra("mail",list.get(position).getMail());
-                intent.putExtra("name",list.get(position).getName());
-                intent.putExtra("uid",list.get(position).getUID());
-                context.startActivity(intent);
-            }
-        });*/
     }
 
     @Override

@@ -5,16 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +18,6 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -33,13 +27,8 @@ import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.microedition.khronos.opengles.GL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import es.dmoral.toasty.Toasty;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
@@ -99,44 +88,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             holder.post_profile_dp.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_male));
         }
 
-        /*FirebaseFirestore.getInstance().collection("User")
-                .document(list.get(position).getBy())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful() && task.getResult()!=null) {
-                            name[0]=Objects.requireNonNull(Objects.requireNonNull(task.getResult()).get(AppConfig.NAME)).toString();
-                            name[1]= Objects.requireNonNull(task.getResult().get(AppConfig.UID)).toString();
-                            holder.by.setText(Objects.requireNonNull(Objects.requireNonNull(task.getResult()).get(AppConfig.NAME)).toString());
-                            if(!Objects.requireNonNull(task.getResult().get(AppConfig.PROFILE_DISPLAY)).toString().isEmpty()) {
-                                try {
-                                    sr.child(Objects.requireNonNull(task.getResult().get(AppConfig.PROFILE_DISPLAY)).toString())
-                                            .getDownloadUrl()
-                                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                @Override
-                                                public void onSuccess(Uri uri) {
-                                                    Glide.with(context.getApplicationContext())
-                                                            .load(uri)
-                                                            .into(holder.post_profile_dp);
-                                                }
-                                            });
-                                }
-                                finally {
-
-                                }
-                            }
-                            else if(Objects.requireNonNull(task.getResult().get(AppConfig.PROFILE_DISPLAY)).toString().length()<5){
-                                if (Objects.requireNonNull(task.getResult().get(AppConfig.SEX)).toString().equals("Male"))
-                                    holder.post_profile_dp.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_male));
-                                else
-                                    holder.post_profile_dp.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_female));
-                            }
-                        }
-
-                    }
-                });*/
-
         sr.child(list.get(position).getUri())
                 .getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -178,13 +129,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         });
             }
         });
-
-        /*if (list.get(position).isClicked()){
-            holder.like.setVisibility(View.GONE);
-            holder.liked.setVisibility(View.VISIBLE);
-        }*/
-
-
     }
 
     @Override

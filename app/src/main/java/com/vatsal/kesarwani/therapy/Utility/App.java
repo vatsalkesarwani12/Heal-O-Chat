@@ -1,22 +1,12 @@
-package com.vatsal.kesarwani.therapy;
+package com.vatsal.kesarwani.therapy.Utility;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.vatsal.kesarwani.therapy.Activity.Editprofile;
-import com.vatsal.kesarwani.therapy.Activity.MainScreen;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
-import com.vatsal.kesarwani.therapy.Utility.Util;
 
 public class App extends Application {
     private FirebaseAuth mAuth;

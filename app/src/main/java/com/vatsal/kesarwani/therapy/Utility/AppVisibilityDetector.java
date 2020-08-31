@@ -1,4 +1,4 @@
-package com.vatsal.kesarwani.therapy;
+package com.vatsal.kesarwani.therapy.Utility;
 
 import android.app.Activity;
 import android.app.ActivityManager;

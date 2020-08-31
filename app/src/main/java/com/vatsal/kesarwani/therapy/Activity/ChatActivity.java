@@ -3,18 +3,15 @@ package com.vatsal.kesarwani.therapy.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -25,21 +22,15 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.vatsal.kesarwani.therapy.Adapter.MessageAdapter;
-import com.vatsal.kesarwani.therapy.Model.AppConfig;
-import com.vatsal.kesarwani.therapy.Model.CureModel;
 import com.vatsal.kesarwani.therapy.Model.MessageModel;
 import com.vatsal.kesarwani.therapy.R;
 
@@ -47,8 +38,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import es.dmoral.toasty.Toasty;
 
 public class ChatActivity extends AppCompatActivity {
     private Intent intent;
@@ -119,40 +108,6 @@ public class ChatActivity extends AppCompatActivity {
             }
         };
         dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addValueEventListener(valueEventListener);
-
-        /*listener =new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Log.d(TAG, snapshot.getValue()+"" );
-                MessageModel model= snapshot.getValue(MessageModel.class);
-                Log.d(TAG, model.toString());
-                //if (model!=null) {
-                    list.add(model);
-                    adapter.notifyDataSetChanged();
-                //}
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        };
-        dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addChildEventListener(listener);*/
 
     }
 
@@ -246,17 +201,6 @@ public class ChatActivity extends AppCompatActivity {
 
                     }
                 });
-        //remove user from chat list
-        /*db.collection("User")
-                .document(mail)
-                .collection("Chat")
-                .document(Objects.requireNonNull(mAuth.getCurrentUser().getEmail()))
-                .set(map3)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                    }
-                });*/
 
         Toast.makeText(this,name+" blocked", Toast.LENGTH_SHORT).show();
     }

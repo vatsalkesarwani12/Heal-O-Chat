@@ -2,6 +2,10 @@ package com.vatsal.kesarwani.therapy.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -9,12 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,7 +26,6 @@ import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Activity.AddPost;
 import com.vatsal.kesarwani.therapy.Adapter.PostAdapter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
-import com.vatsal.kesarwani.therapy.Model.CureModel;
 import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 
