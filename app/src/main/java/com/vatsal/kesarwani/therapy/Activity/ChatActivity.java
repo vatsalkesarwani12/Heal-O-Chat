@@ -1,7 +1,9 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,12 +15,15 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -31,14 +36,24 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.vatsal.kesarwani.therapy.Adapter.MessageAdapter;
+import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.MessageModel;
 import com.vatsal.kesarwani.therapy.R;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import es.dmoral.toasty.Toasty;
 
 public class ChatActivity extends AppCompatActivity {
     private Intent intent;
@@ -61,6 +76,9 @@ public class ChatActivity extends AppCompatActivity {
     private ValueEventListener valueEventListener;
     private boolean status;
     private View v;
+    private String filePath;
+    private File file;
+    private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +98,11 @@ public class ChatActivity extends AppCompatActivity {
                 text.setText("");
                 map.put("user", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
                 map.put("mssg", mssg);
+
+                map.put("img","");
+                map.put("time",getTime());
+                map.put("date",getDate());
+
                 refrehStatus();
 
             }
@@ -180,13 +203,90 @@ public class ChatActivity extends AppCompatActivity {
             item.setVisible(false);
             return true;
         }
-        else if (item.getItemId() == android.R.id.home){
+        else if (item.getItemId() == android.R.id.home){   //override the back button on the app bar
             onBackPressed();
+            return true;
+        }
+        else if(item.getItemId() == R.id.attach){
+            attachPicture();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void attachPicture(){
+        map.put("user", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
+        map.put("mssg", "");
+
+        ImagePicker.Companion.with(ChatActivity.this)
+                .crop()
+                .compress(1024)			                //Final image size will be less than 1 MB(Optional)
+                .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
+                .start();
+
+    }
+
+    private String getDate(){
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy");
+        String strDate= formatter.format(currentTime);
+        return strDate;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            //Image Uri will not be null for RESULT_OK
+            assert data != null;
+            final Uri fileUri = data.getData();
+            //profiledp.setImageURI(fileUri);
+
+
+            assert fileUri != null;
+            StorageReference sr= FirebaseStorage.getInstance().getReference();
+            sr.child("CHAT/"+Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()+"/"+fileUri.getLastPathSegment())
+                    .putFile(fileUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            map.put("img","CHAT/"+Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()+"/"+fileUri.getLastPathSegment());
+                            Log.d(TAG, "image sent");
+                            map.put("time",getTime());
+                            map.put("date",getDate());
+                            refrehStatus();
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(ChatActivity.this,"Try again later",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+
+            //You can get File object from intent
+            file = ImagePicker.Companion.getFile(data);
+
+            //You can also get File Path from intent
+            filePath = ImagePicker.Companion.getFilePath(data);
+
+
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            Toast.makeText(this, ImagePicker.Companion.getError(data), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String getTime(){
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
+        String strDate= formatter.format(currentTime);
+        return strDate;
+    }
     private void blockUser(){
         //remove user from chat list
         db.collection("User")
@@ -219,7 +319,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
     private boolean check() {
-        mssg = text.getText().toString();
+        mssg = text.getText().toString().trim();
         return mssg.length() >= 1;
     }
 

@@ -48,4 +48,6 @@
     <string name="block">Block</string>
     <string name="unblock">Unblock</string>
     <string name="send_mssg_button">send mssg button</string>
+    <string name="xx_xx_am">xx:xx am</string>
+    <string name="image">Image</string>
 </resources>
