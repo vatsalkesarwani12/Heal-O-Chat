@@ -24,4 +24,5 @@ public class AppConfig {
     final public static String PROFILE_DISPLAY="PROFILE_DISPLAY";
     final public static String LIKES="LIKES";
     final public static String STATUS="STATUS";
+    final public static String REPORT="REPORT";
 }

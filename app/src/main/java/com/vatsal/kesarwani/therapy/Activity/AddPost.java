@@ -154,6 +154,7 @@ public class AddPost extends AppCompatActivity {
         map.put(AppConfig.VISIBLE,true);
         map.put(AppConfig.NAME,name);
         map.put(AppConfig.UID,uid);
+        map.put(AppConfig.REPORT,0);
         map.put(AppConfig.PROFILE_DISPLAY,pf_display);
         sr.child("Images/"+uri.getLastPathSegment())
                 .putFile(uri)

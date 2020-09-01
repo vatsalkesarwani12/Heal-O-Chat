@@ -28,9 +28,11 @@ import com.vatsal.kesarwani.therapy.Adapter.PostAdapter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.App;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -117,15 +119,24 @@ public class PostFragment extends Fragment {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 map=document.getData();
                                 if ((boolean)map.get(AppConfig.VISIBLE)){
-                                    list.add(new PostModel(Objects.requireNonNull(map.get(AppConfig.POST_IMAGE)).toString(),
-                                            Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.LIKES)).toString()),
-                                            Objects.requireNonNull(map.get(AppConfig.POST_DESCRIPTION)).toString(),
-                                            Objects.requireNonNull(map.get(AppConfig.POST_BY)).toString(),
-                                            document.getId(),
-                                            false,
-                                            Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
-                                            Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
-                                            Objects.requireNonNull(map.get(AppConfig.UID)).toString()));
+                                    Map<String ,Object> mm= new HashMap<>();
+                                    mm.put(AppConfig.VISIBLE,false);
+                                    if(Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.REPORT)).toString()) >=25 ){
+                                        db.collection("Posts")
+                                                .document(document.getId())
+                                                .update(mm);
+                                    }else {
+                                        list.add(new PostModel(Objects.requireNonNull(map.get(AppConfig.POST_IMAGE)).toString(),
+                                                Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.LIKES)).toString()),
+                                                Objects.requireNonNull(map.get(AppConfig.POST_DESCRIPTION)).toString(),
+                                                Objects.requireNonNull(map.get(AppConfig.POST_BY)).toString(),
+                                                document.getId(),
+                                                false,
+                                                Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
+                                                Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
+                                                Objects.requireNonNull(map.get(AppConfig.UID)).toString(),
+                                                Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.REPORT)).toString())));
+                                    }
                                 }
                             }
                             Collections.shuffle(list);

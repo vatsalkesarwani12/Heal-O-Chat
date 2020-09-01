@@ -1,7 +1,9 @@
 package com.vatsal.kesarwani.therapy.Adapter;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,8 +30,11 @@ import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
@@ -80,8 +86,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             }
                         });
             }
-            finally {
-
+            catch (Exception e){
+                e.printStackTrace();
             }
         }
         else if(list.get(position).getProfile_display().length()<5){
@@ -129,6 +135,31 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         });
             }
         });
+
+        holder.more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder= new AlertDialog.Builder(context);
+                builder.setMessage("Report "+name[0]+"'s Post");
+                builder.setCancelable(true);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        reportUser(position,list.get(position).getReport());
+                    }
+                });
+                AlertDialog dialog= builder.create();
+                dialog.show();
+            }
+        });
+    }
+
+    private void reportUser(int pos,int rep){
+        Map<String ,Object> map=new HashMap<>();
+        map.put(AppConfig.REPORT,rep+1);
+        FirebaseFirestore.getInstance().collection("Posts")
+                .document(list.get(pos).getId())
+                .update(map);
     }
 
     @Override
@@ -137,7 +168,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView postImage ,like ,liked ;
+        private ImageView postImage ,like ,liked, more ;
         private TextView by,message,likes;
         private CircleImageView post_profile_dp;
         public ViewHolder(@NonNull View itemView) {
@@ -149,6 +180,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             like=itemView.findViewById(R.id.like);
             liked=itemView.findViewById(R.id.liked);
             post_profile_dp=itemView.findViewById(R.id.post_profile_dp);
+            more= itemView.findViewById(R.id.more);
         }
     }
 
