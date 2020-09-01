@@ -24,7 +24,7 @@
     <string name="sex">sex</string>
     <string name="about">About</string>
     <string name="contact">contact</string>
-    <string name="call">call</string>
+    <string name="call">Call</string>
     <string name="message">message</string>
     <string name="name">name</string>
     <string name="vatsal_kesarwani">Vatsal Kesarwani</string>
@@ -50,4 +50,5 @@
     <string name="send_mssg_button">send mssg button</string>
     <string name="xx_xx_am">xx:xx am</string>
     <string name="image">Image</string>
+    <string name="view_profile">View Profile</string>
 </resources>

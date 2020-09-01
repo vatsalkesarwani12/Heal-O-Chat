@@ -211,7 +211,28 @@ public class ChatActivity extends AppCompatActivity {
             attachPicture();
             return true;
         }
+        else if(item.getItemId() == R.id.profile){
+            //todo cure profile
+        }
+        else if(item.getItemId() == R.id.call){
+            AlertDialog.Builder builder =new AlertDialog.Builder(this);
+            builder.setTitle("Call");
+            builder.setCancelable(true);
+            builder.setMessage("Do you want to call "+name);
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    callUser();
+                }
+            });
+            AlertDialog dialog= builder.create();
+            dialog.show();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void callUser(){
+        //todo call
     }
 
     private void attachPicture(){
