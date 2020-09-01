@@ -42,7 +42,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.mssg.setText(list.get(position).getMssg());
+        holder.mssg.setText(list.get(position).getMssg()+"        ");  //8 spaces
     }
 
     @Override

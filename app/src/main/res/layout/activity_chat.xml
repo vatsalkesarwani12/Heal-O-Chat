@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity.ChatActivity">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/chats"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/card_mssg"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chats"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/card_mssg"
+        android:layout_marginBottom="6dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_mssg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:cardBackgroundColor="#129A7F"
-
         android:layout_marginStart="2dp"
-        android:layout_marginEnd="2dp"
+
         android:layout_marginTop="1dp"
-        android:layout_marginBottom="2dp">
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="2dp"
+        app:cardBackgroundColor="#129A7F">
         <!-- app:cardCornerRadius="20dp" -->
 
         <RelativeLayout
@@ -33,29 +33,30 @@
             android:layout_marginBottom="1dp">
 
             <EditText
-                android:background="@android:color/transparent"
                 android:id="@+id/text_to_send"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="40dp"
-                android:textSize="18dp"
                 android:layout_marginStart="15dp"
+                android:layout_marginEnd="40dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/enter_message"
+                android:singleLine="true"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white"
-                android:hint="@string/enter_message"/>
+                android:textSize="18dp" />
 
             <ImageButton
-                android:src="@drawable/ic_outline_send_24"
-                android:background="#00000000"
                 android:id="@+id/send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/send"
                 android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:layout_marginEnd="8dp"
-                android:layout_centerVertical="true"/>
+                android:background="#00000000"
+                android:src="@drawable/ic_outline_send_24"
+                android:text="@string/send"
+                android:contentDescription="@string/send_mssg_button" />
 
         </RelativeLayout>
 

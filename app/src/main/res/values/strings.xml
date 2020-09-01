@@ -47,4 +47,5 @@
     <string name="blocked_user">Blocked User</string>
     <string name="block">Block</string>
     <string name="unblock">Unblock</string>
+    <string name="send_mssg_button">send mssg button</string>
 </resources>

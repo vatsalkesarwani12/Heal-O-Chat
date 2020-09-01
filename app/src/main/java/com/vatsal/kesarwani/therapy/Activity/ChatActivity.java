@@ -180,6 +180,10 @@ public class ChatActivity extends AppCompatActivity {
             item.setVisible(false);
             return true;
         }
+        else if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

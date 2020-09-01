@@ -19,14 +19,16 @@
             android:label="Block Activity"/>
         <activity
             android:name=".Activity.ChatActivity"
-            android:parentActivityName=".Activity.MainScreen" />
+            android:parentActivityName=".Activity.MainScreen"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".Activity.AddPost"
             android:label="Post" />
         <activity android:name=".Activity.CureProfile" />
         <activity
             android:name=".Activity.Editprofile"
-            android:label="Edit Profile" />
+            android:label="Edit Profile"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".Activity.AboutUs"
             android:label="About Developer"
