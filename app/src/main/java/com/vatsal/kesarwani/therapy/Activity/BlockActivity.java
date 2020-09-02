@@ -1,25 +1,22 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
+import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.vatsal.kesarwani.therapy.Adapter.BlockAdapter;
-import com.vatsal.kesarwani.therapy.Model.ChatModel;
 import com.vatsal.kesarwani.therapy.R;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +32,7 @@ public class BlockActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FirebaseAuth mAuth;
     private Map<String,Object> map;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +40,26 @@ public class BlockActivity extends AppCompatActivity {
         setContentView(R.layout.activity_block);
 
         init();
-        fetchData();
+        //fetchData();
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchData();
+            }
+        });
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchData();
+    }
+
     private void fetchData() {
+        list.clear();
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")
@@ -62,6 +75,7 @@ public class BlockActivity extends AppCompatActivity {
                                     list.add(document.getId());
                                 }
                             }
+                            swipeRefreshLayout.setRefreshing(false);
                             adapter.notifyDataSetChanged();
                         }
                         else{
@@ -79,5 +93,6 @@ public class BlockActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         mAuth= FirebaseAuth.getInstance();
         map= new HashMap<>();
+        swipeRefreshLayout=findViewById(R.id.refreshBlock);
     }
 }

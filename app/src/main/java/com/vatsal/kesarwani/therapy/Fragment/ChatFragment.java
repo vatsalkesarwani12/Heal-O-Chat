@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,12 +37,10 @@ import es.dmoral.toasty.Toasty;
  */
 public class ChatFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private RecyclerView chatRecycle;
@@ -51,6 +50,7 @@ public class ChatFragment extends Fragment {
     private ChatAdapter adapter;
     private Map<String,Object> map;
     private static final String TAG = "ChatFragment";
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -64,7 +64,6 @@ public class ChatFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment ChatFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static ChatFragment newInstance(String param1, String param2) {
         ChatFragment fragment = new ChatFragment();
         Bundle args = new Bundle();
@@ -92,6 +91,28 @@ public class ChatFragment extends Fragment {
 
         init(root);
 
+        //fetchData();
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchData();
+            }
+        });
+
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        fetchData();
+    }
+
+    private void fetchData(){
+        list.clear();
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")
@@ -110,6 +131,7 @@ public class ChatFragment extends Fragment {
                                     ));
                                 }
                             }
+                            swipeRefreshLayout.setRefreshing(false);
                             adapter.notifyDataSetChanged();
                         }
                         else{
@@ -117,8 +139,6 @@ public class ChatFragment extends Fragment {
                         }
                     }
                 });
-
-        return root;
     }
 
     private void init(View root) {
@@ -129,5 +149,6 @@ public class ChatFragment extends Fragment {
         list=new ArrayList<>();
         adapter=new ChatAdapter(getContext(),list);
         chatRecycle.setAdapter(adapter);
+        swipeRefreshLayout=root.findViewById(R.id.refreshChat);
     }
 }

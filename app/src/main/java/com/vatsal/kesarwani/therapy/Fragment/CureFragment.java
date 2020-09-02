@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -39,12 +40,10 @@ import es.dmoral.toasty.Toasty;
  */
 public class CureFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -56,6 +55,7 @@ public class CureFragment extends Fragment {
     private static final String TAG = "CureFragment";
     private ArrayList<CureModel> list;
     private SharedPreferences sharedPreferences;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public CureFragment() {
         // Required empty public constructor
@@ -69,7 +69,6 @@ public class CureFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment CureFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static CureFragment newInstance(String param1, String param2) {
         CureFragment fragment = new CureFragment();
         Bundle args = new Bundle();
@@ -96,7 +95,27 @@ public class CureFragment extends Fragment {
         final View root = inflater.inflate(R.layout.fragment_cure, container, false);
         init(root);
 
+        //fetchData(root);
 
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchData(root);
+            }
+        });
+
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchData(getView());
+    }
+
+    private void fetchData(final View root){
+        list.clear();
         db.collection("User")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -119,6 +138,7 @@ public class CureFragment extends Fragment {
                                     }
                                 }
                             }
+                            swipeRefreshLayout.setRefreshing(false);
                             adapter.notifyDataSetChanged();
                         }
                         else{
@@ -126,7 +146,6 @@ public class CureFragment extends Fragment {
                         }
                     }
                 });
-        return root;
     }
 
     private void init(View root) {
@@ -138,6 +157,7 @@ public class CureFragment extends Fragment {
         mAuth=FirebaseAuth.getInstance();
         db=FirebaseFirestore.getInstance();
         sharedPreferences=root.getContext().getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
+        swipeRefreshLayout=root.findViewById(R.id.refreshCure);
     }
 
 }
