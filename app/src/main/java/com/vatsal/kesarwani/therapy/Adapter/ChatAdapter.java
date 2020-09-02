@@ -15,6 +15,8 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -53,6 +55,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         final String[] sname = new String[1];
         final String[] sdp = new String[1];
         final String[] uid = new String[1];
+        final boolean[] online = {false};
 
         //holder.profname.setText(list.get(position).getMail());
 
@@ -73,6 +76,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                                 sdp[0] = Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString();
                                 uid[0] = Objects.requireNonNull(map.get(AppConfig.UID)).toString();
                                 holder.profname.setText(sname[0]);
+                                online[0] = (boolean)map.get(AppConfig.STATUS);
+
+                                if(online[0]){
+                                    holder.online.setVisibility(View.VISIBLE);
+                                }
 
                                 StorageReference sr= FirebaseStorage.getInstance().getReference();
                                 if (sdp[0].length()>5) {
@@ -88,13 +96,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                                                     }
                                                 });
                                     }
-                                    finally {
-
+                                    catch (Exception e){
+                                        e.printStackTrace();
                                     }
                                 }
                                 else
                                 {
-                                    if (map.get(AppConfig.SEX).equals("Male")){
+                                    if (Objects.equals(map.get(AppConfig.SEX), "Male")){
                                         Glide.with(context.getApplicationContext())
                                                 .load(R.drawable.ic_male)
                                                 .into(holder.dp);
@@ -119,7 +127,26 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 intent.putExtra("mail",list.get(position).getMail());
                 intent.putExtra("name", sname[0]);
                 intent.putExtra("uid",uid[0]);
-                context.startActivity(intent);
+                intent.putExtra("online",online[0]);
+                final boolean[] status = new boolean[1];
+                String mail=list.get(position).getMail();
+                FirebaseFirestore.getInstance().collection("User")
+                        .document(mail)
+                        .collection("Chat")
+                        .document(Objects.requireNonNull(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail()))
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                DocumentSnapshot document= task.getResult();
+                                assert document != null;
+                                status[0] = (boolean) document.get("Block");
+                            }
+                        });
+                if(!status[0])
+                    context.startActivity(intent);
+                else
+                    Snackbar.make(v,"You cannot message the person",Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -130,10 +157,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private CircleImageView dp;
+        private CircleImageView dp,online;
         private TextView profname;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            online=itemView.findViewById(R.id.online);
             dp=itemView.findViewById(R.id.chat_profile_dp);
             profname=itemView.findViewById(R.id.chat_profile_name);
         }

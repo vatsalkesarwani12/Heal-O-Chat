@@ -10,8 +10,9 @@ public class PostModel {
     private String name;
     private String profile_display;
     private String uid;
+    private int report;
 
-    public PostModel(String uri, int likes, String message, String by,String id,boolean clicked, String name, String profile_display, String uid) {
+    public PostModel(String uri, int likes, String message, String by,String id,boolean clicked, String name, String profile_display, String uid, int report) {
         this.uri = uri;
         this.likes = likes;
         this.message = message;
@@ -21,6 +22,7 @@ public class PostModel {
         this.name= name;
         this.profile_display= profile_display;
         this.uid= uid;
+        this.report= report;
     }
 
     public String getUri() {
@@ -93,5 +95,13 @@ public class PostModel {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public int getReport() {
+        return report;
+    }
+
+    public void setReport(int report) {
+        this.report = report;
     }
 }

@@ -1,10 +1,5 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +12,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -155,6 +154,7 @@ public class AddPost extends AppCompatActivity {
         map.put(AppConfig.VISIBLE,true);
         map.put(AppConfig.NAME,name);
         map.put(AppConfig.UID,uid);
+        map.put(AppConfig.REPORT,0);
         map.put(AppConfig.PROFILE_DISPLAY,pf_display);
         sr.child("Images/"+uri.getLastPathSegment())
                 .putFile(uri)
@@ -187,12 +187,6 @@ public class AddPost extends AppCompatActivity {
                         post.setEnabled(true);
                     }
                 });
-
-        /*Map<String,Object> map=new HashMap<>();
-        map.put(AppConfig.POST_DESCRIPTION,sdes);
-        map.put(AppConfig.POST_IMAGE,file);*/
-
-
     }
 
     @Override

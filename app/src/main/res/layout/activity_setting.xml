@@ -20,6 +20,14 @@
         tools:layout_editor_absoluteY="46dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="7dp"/>
+
     <Switch
         android:id="@+id/call_setting"
         android:layout_width="match_parent"
@@ -27,22 +35,31 @@
         android:text="@string/allow_call_from_others"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="7dp"
         tools:layout_editor_absoluteX="57dp"
         tools:layout_editor_absoluteY="46dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="7dp"/>
 
     <TextView
         android:id="@+id/delete_profile_setting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/delete_profile"
+        android:text="@string/deactivate_profile"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/black"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="15dp"/>
+        android:layout_marginTop="7dp"/>
 
-    <TextView
+    <!--<TextView
+        android:visibility="gone"
         android:id="@+id/delete_setting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,6 +67,24 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/black"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="15dp"/>
+        android:layout_marginTop="15dp"/>-->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="7dp"/>
+
+    <TextView
+        android:id="@+id/block_user_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/blocked_user"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="7dp"/>
 
 </LinearLayout>

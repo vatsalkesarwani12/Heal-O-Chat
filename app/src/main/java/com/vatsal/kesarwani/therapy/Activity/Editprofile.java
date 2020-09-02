@@ -1,10 +1,5 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,13 +15,15 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.bumptech.glide.Glide;
 import com.github.dhaval2404.imagepicker.ImagePicker;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -93,6 +90,7 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
                 userData.put(AppConfig.CAN_CALL,true);
                 userData.put(AppConfig.VISIBLE,true);
                 userData.put(AppConfig.UID, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+                userData.put(AppConfig.STATUS,true);  //true= online
 
                 sharedPreferences.edit()
                         .putString(AppConfig.USERNAME,sfn)
@@ -107,8 +105,6 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
             public void onClick(View v) {
                 ImagePicker.Companion.with(Editprofile.this)
                         .crop()	    			//Crop image(Optional), Check Customization for more option
-                        .compress(1024)			//Final image size will be less than 1 MB(Optional)
-                        .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
                         .start();
             }
         });
@@ -127,12 +123,12 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
 
             assert fileUri != null;
             StorageReference sr=FirebaseStorage.getInstance().getReference();
-            sr.child("PROFILES/"+fileUri.getLastPathSegment())
+            sr.child("PROFILES/"+  Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
                     .putFile(fileUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            userData.put(AppConfig.PROFILE_DISPLAY,"PROFILES/"+fileUri.getLastPathSegment());
+                            userData.put(AppConfig.PROFILE_DISPLAY,"PROFILES/"+ Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
                             sharedPreferences.edit()
                                     .putString(AppConfig.PROFILE_DP,"Set")
                                     .apply();

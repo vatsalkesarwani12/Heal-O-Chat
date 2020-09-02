@@ -2,6 +2,10 @@ package com.vatsal.kesarwani.therapy.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -9,12 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,12 +27,13 @@ import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Activity.AddPost;
 import com.vatsal.kesarwani.therapy.Adapter.PostAdapter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
-import com.vatsal.kesarwani.therapy.Model.CureModel;
 import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.App;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -46,12 +46,10 @@ import es.dmoral.toasty.Toasty;
  */
 public class PostFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -64,6 +62,7 @@ public class PostFragment extends Fragment {
     private FirebaseFirestore db;
     private Map<String ,Object> map;
     private static final String TAG = "PostFragment";
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public PostFragment() {
         // Required empty public constructor
@@ -77,7 +76,6 @@ public class PostFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment PostFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static PostFragment newInstance(String param1, String param2) {
         PostFragment fragment = new PostFragment();
         Bundle args = new Bundle();
@@ -110,6 +108,22 @@ public class PostFragment extends Fragment {
                 startActivity(new Intent(getContext(), AddPost.class));
             }
         });
+
+        fetchData(root);
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchData(root);
+
+            }
+        });
+
+        return root;
+    }
+
+    private void fetchData(final View root){
         list.clear();
         db.collection("Posts")
                 .get()
@@ -120,18 +134,28 @@ public class PostFragment extends Fragment {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 map=document.getData();
                                 if ((boolean)map.get(AppConfig.VISIBLE)){
-                                    list.add(new PostModel(Objects.requireNonNull(map.get(AppConfig.POST_IMAGE)).toString(),
-                                            Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.LIKES)).toString()),
-                                            Objects.requireNonNull(map.get(AppConfig.POST_DESCRIPTION)).toString(),
-                                            Objects.requireNonNull(map.get(AppConfig.POST_BY)).toString(),
-                                            document.getId(),
-                                            false,
-                                            Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
-                                            Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
-                                            Objects.requireNonNull(map.get(AppConfig.UID)).toString()));
+                                    Map<String ,Object> mm= new HashMap<>();
+                                    mm.put(AppConfig.VISIBLE,false);
+                                    if(Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.REPORT)).toString()) >=25 ){
+                                        db.collection("Posts")
+                                                .document(document.getId())
+                                                .update(mm);
+                                    }else {
+                                        list.add(new PostModel(Objects.requireNonNull(map.get(AppConfig.POST_IMAGE)).toString(),
+                                                Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.LIKES)).toString()),
+                                                Objects.requireNonNull(map.get(AppConfig.POST_DESCRIPTION)).toString(),
+                                                Objects.requireNonNull(map.get(AppConfig.POST_BY)).toString(),
+                                                document.getId(),
+                                                false,
+                                                Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
+                                                Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
+                                                Objects.requireNonNull(map.get(AppConfig.UID)).toString(),
+                                                Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.REPORT)).toString())));
+                                    }
                                 }
                             }
                             Collections.shuffle(list);
+                            swipeRefreshLayout.setRefreshing(false);
                             adapter.notifyDataSetChanged();
                         }
                         else{
@@ -139,10 +163,8 @@ public class PostFragment extends Fragment {
                         }
                     }
                 });
-
-
-        return root;
     }
+
     private void init(View root){
         addpost=root.findViewById(R.id.add_post);
         list=new ArrayList<>();
@@ -154,5 +176,6 @@ public class PostFragment extends Fragment {
         snapHelper.attachToRecyclerView(postRecycler);
         adapter=new PostAdapter(getContext(),list);
         postRecycler.setAdapter(adapter);
+        swipeRefreshLayout=root.findViewById(R.id.refreshPost);
     }
 }

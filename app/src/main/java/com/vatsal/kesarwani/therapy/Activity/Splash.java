@@ -1,8 +1,5 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +7,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
@@ -74,4 +74,5 @@ public class Splash extends AppCompatActivity {
             }
         },2000);
     }
+
 }

@@ -1,17 +1,17 @@
 package com.vatsal.kesarwani.therapy.Fragment;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,9 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
 import com.vatsal.kesarwani.therapy.Adapter.ChatAdapter;
-import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.ChatModel;
 import com.vatsal.kesarwani.therapy.R;
 
@@ -39,12 +37,10 @@ import es.dmoral.toasty.Toasty;
  */
 public class ChatFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private RecyclerView chatRecycle;
@@ -54,6 +50,7 @@ public class ChatFragment extends Fragment {
     private ChatAdapter adapter;
     private Map<String,Object> map;
     private static final String TAG = "ChatFragment";
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -67,7 +64,6 @@ public class ChatFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment ChatFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static ChatFragment newInstance(String param1, String param2) {
         ChatFragment fragment = new ChatFragment();
         Bundle args = new Bundle();
@@ -95,23 +91,28 @@ public class ChatFragment extends Fragment {
 
         init(root);
 
-       /* db.collection("User")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection("Chat")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
-                        }else{
-                            Toasty.error(Objects.requireNonNull(getContext()),"error fetching data",Toasty.LENGTH_SHORT).show();
-                        }
-                    }
-                });*/
+        //fetchData();
 
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchData();
+            }
+        });
+
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        fetchData();
+    }
+
+    private void fetchData(){
+        list.clear();
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")
@@ -124,10 +125,13 @@ public class ChatFragment extends Fragment {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
                                 map=document.getData();
                                 Log.d("IDCollection", document.getId());
-                                list.add(new ChatModel(
-                                        document.getId()
-                                ));
+                                if(!(boolean)map.get("Block")) {
+                                    list.add(new ChatModel(
+                                            document.getId()
+                                    ));
+                                }
                             }
+                            swipeRefreshLayout.setRefreshing(false);
                             adapter.notifyDataSetChanged();
                         }
                         else{
@@ -135,8 +139,6 @@ public class ChatFragment extends Fragment {
                         }
                     }
                 });
-
-        return root;
     }
 
     private void init(View root) {
@@ -147,5 +149,6 @@ public class ChatFragment extends Fragment {
         list=new ArrayList<>();
         adapter=new ChatAdapter(getContext(),list);
         chatRecycle.setAdapter(adapter);
+        swipeRefreshLayout=root.findViewById(R.id.refreshChat);
     }
 }

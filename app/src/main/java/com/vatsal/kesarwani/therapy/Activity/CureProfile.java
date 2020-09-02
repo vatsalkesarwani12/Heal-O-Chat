@@ -1,14 +1,8 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,16 +14,23 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.rpc.Code;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
 
@@ -43,7 +44,7 @@ public class CureProfile extends AppCompatActivity {
 
     private TextView name, age, sex, about, description;
     private ImageButton contact, message;
-    private String sn, sa, ss, sc, sabout, sdes, uid;
+    private String sn, sa, ss, sc, sabout, sdes, uid,mail;
     private CircleImageView profile;
     private ImageView cover;
     private ProgressBar progressBar;
@@ -53,6 +54,7 @@ public class CureProfile extends AppCompatActivity {
     private Intent intent,intent2;
     private int CODE =1;
     private static final String TAG = "CureProfile";
+    private boolean status=false;  /**block status*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +71,23 @@ public class CureProfile extends AppCompatActivity {
         contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent2 = new Intent(Intent.ACTION_CALL);
-                intent2.setData(Uri.parse(sc));
-                checkPermission(Manifest.permission.CALL_PHONE,
-                        CODE);
+                AlertDialog.Builder builder= new AlertDialog.Builder(CureProfile.this);
+                builder.setTitle("Confirmation");
+                builder.setMessage("Call "+sn);
+                builder.setPositiveButton("Call", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        intent2 = new Intent(Intent.ACTION_CALL);
+                        intent2.setData(Uri.parse(sc));
+                        checkPermission(Manifest.permission.CALL_PHONE,
+                                CODE);
+                    }
+                });
+
+                builder.setCancelable(true);
+                AlertDialog dialog= builder.create();
+                dialog.show();
+
             }
         });
 
@@ -82,8 +97,11 @@ public class CureProfile extends AppCompatActivity {
                 Intent intent1 =new Intent(getApplicationContext(), ChatActivity.class);
                 intent1.putExtra("mail",intent.getStringExtra("mail"));
                 intent1.putExtra("name",intent.getStringExtra("name"));
-                intent1.putExtra("uid",intent.getStringExtra("uid"));  //todo account deleted then handle this crash when uid is deleted
-                startActivity(intent1);
+                intent1.putExtra("uid",intent.getStringExtra("uid"));
+                if(!status)
+                    startActivity(intent1);
+                else
+                    Snackbar.make(v,"You cannot message the person",Snackbar.LENGTH_LONG).show();
             }
         });
 
@@ -206,5 +224,25 @@ public class CureProfile extends AppCompatActivity {
         intent = getIntent();
         message=findViewById(R.id.message_profile);
         cover =findViewById(R.id.profile_cover);
+        mail= intent.getStringExtra("mail");
+        db.collection("User")
+                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                .collection("Chat")
+                .document(mail)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        try{
+                            DocumentSnapshot document= task.getResult();
+                            assert document != null;
+                            Map<String,Object> m=document.getData();
+                            assert m != null;
+                            status= (boolean) m.get("Block");
+                        } catch (Exception e){
+                            status=false;
+                        }
+                    }
+                });
     }
 }

@@ -3,23 +3,21 @@ package com.vatsal.kesarwani.therapy.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.Api;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -42,12 +40,10 @@ import es.dmoral.toasty.Toasty;
  */
 public class CureFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -59,6 +55,7 @@ public class CureFragment extends Fragment {
     private static final String TAG = "CureFragment";
     private ArrayList<CureModel> list;
     private SharedPreferences sharedPreferences;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public CureFragment() {
         // Required empty public constructor
@@ -72,7 +69,6 @@ public class CureFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment CureFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static CureFragment newInstance(String param1, String param2) {
         CureFragment fragment = new CureFragment();
         Bundle args = new Bundle();
@@ -99,7 +95,27 @@ public class CureFragment extends Fragment {
         final View root = inflater.inflate(R.layout.fragment_cure, container, false);
         init(root);
 
+        //fetchData(root);
 
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchData(root);
+            }
+        });
+
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchData(getView());
+    }
+
+    private void fetchData(final View root){
+        list.clear();
         db.collection("User")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -110,7 +126,7 @@ public class CureFragment extends Fragment {
                                 map=document.getData();
                                 Log.d(TAG, Objects.requireNonNull(map.get(AppConfig.NAME)).toString());
                                 if((boolean)map.get(AppConfig.VISIBLE)) {
-                                    if(!Objects.requireNonNull(map.get(AppConfig.NAME)).toString().equals(sharedPreferences.getString(AppConfig.USERNAME,""))) {
+                                    if(!Objects.requireNonNull(map.get(AppConfig.UID)).toString().equals(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())) {
                                         list.add(new CureModel(
                                                 Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
                                                 Objects.requireNonNull(map.get(AppConfig.DESCRIPTION)).toString(),
@@ -122,6 +138,7 @@ public class CureFragment extends Fragment {
                                     }
                                 }
                             }
+                            swipeRefreshLayout.setRefreshing(false);
                             adapter.notifyDataSetChanged();
                         }
                         else{
@@ -129,24 +146,18 @@ public class CureFragment extends Fragment {
                         }
                     }
                 });
-        return root;
     }
 
     private void init(View root) {
         recyclerView=root.findViewById(R.id.cureRecycler);
         map=new HashMap<>();
         list=new ArrayList<>();
-        /*map.put(AppConfig.NAME,"Vatsal");
-        map.put(AppConfig.SEX,"Male");
-        map.put(AppConfig.AGE,"12");
-        map.put(AppConfig.NUMBER,"9696115598");
-        map.put(AppConfig.ABOUT,"Hello frands");
-        map.put(AppConfig.DESCRIPTION,"Chai pe lo frnds");*/
         adapter=new CureAdapter(root.getContext(),list);
         recyclerView.setAdapter(adapter);
         mAuth=FirebaseAuth.getInstance();
         db=FirebaseFirestore.getInstance();
         sharedPreferences=root.getContext().getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
+        swipeRefreshLayout=root.findViewById(R.id.refreshCure);
     }
 
 }

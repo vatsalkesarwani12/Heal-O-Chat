@@ -1,43 +1,58 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.vatsal.kesarwani.therapy.Adapter.MessageAdapter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
-import com.vatsal.kesarwani.therapy.Model.CureModel;
 import com.vatsal.kesarwani.therapy.Model.MessageModel;
 import com.vatsal.kesarwani.therapy.R;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -45,6 +60,7 @@ import java.util.Objects;
 import es.dmoral.toasty.Toasty;
 
 public class ChatActivity extends AppCompatActivity {
+    private static final int CODE = 125;
     private Intent intent;
     private String mail, name, mssg,uid;
     private FirebaseAuth mAuth;
@@ -57,11 +73,20 @@ public class ChatActivity extends AppCompatActivity {
     private MessageAdapter adapter;
     private ArrayList<MessageModel> list;
     private Map<String,Object> map2=new HashMap<>();
+    private Map<String,Object> map3=new HashMap<>();
     private static final String TAG = "ChatActivity";
     private FirebaseDatabase db1;
     private DatabaseReference dr;
     private ChildEventListener listener;
     private ValueEventListener valueEventListener;
+    private boolean status;
+    private View v;
+    private String filePath;
+    private File file;
+    private Uri uri;
+    private Intent intent2;
+    private String sc;
+    private boolean canCall= false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,50 +96,6 @@ public class ChatActivity extends AppCompatActivity {
         init();
         Objects.requireNonNull(getSupportActionBar()).setTitle(name);
 
-        /*db.collection("User")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection("Chat")
-                .document(mail)
-                .collection(mail)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                map1 = document.getData();
-                                list.add(new MessageModel(
-                                        Objects.requireNonNull(map1.get("user")).toString(),
-                                        Objects.requireNonNull(map1.get("mssg")).toString()
-                                ));
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                });*/
-
-        db.collection("User")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection("Chat")
-                .document(mail)
-                .set(map2)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                    }
-                });
-
-        db.collection("User")
-                .document(mail)
-                .collection("Chat")
-                .document(Objects.requireNonNull(mAuth.getCurrentUser().getEmail()))
-                .set(map2)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                    }
-                });
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,10 +106,13 @@ public class ChatActivity extends AppCompatActivity {
                 text.setText("");
                 map.put("user", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
                 map.put("mssg", mssg);
-                //update();
-                //adapterUpdate();
 
-                post();
+                map.put("img","");
+                map.put("time",getTime());
+                map.put("date",getDate());
+
+                refrehStatus();
+
             }
         });
 
@@ -151,46 +135,250 @@ public class ChatActivity extends AppCompatActivity {
         };
         dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addValueEventListener(valueEventListener);
 
-        /*listener =new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Log.d(TAG, snapshot.getValue()+"" );
-                MessageModel model= snapshot.getValue(MessageModel.class);
-                Log.d(TAG, model.toString());
-                //if (model!=null) {
-                    list.add(model);
-                    adapter.notifyDataSetChanged();
-                //}
+    }
+
+    private void refrehStatus(){
+        db.collection("User")
+                .document(mail)
+                .collection("Chat")
+                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document= task.getResult();
+                        assert document != null;
+                        Map<String,Object> map =document.getData();
+                        assert map != null;
+                        status= (boolean) map.get("Block");
+                        Log.d(TAG, status+"");
+                        if(!status) {
+                            addUserToChatList();
+                            post();
+                        }
+                        else{
+                            Snackbar.make(v,"You cannot message the user",Snackbar.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
+                });
+    }
+
+    private void addUserToChatList() {
+        //add user to chat list
+        db.collection("User")
+                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                .collection("Chat")
+                .document(mail)
+                .set(map2);
+        //add user to chat list
+        db.collection("User")
+                .document(mail)
+                .collection("Chat")
+                .document(Objects.requireNonNull(mAuth.getCurrentUser().getEmail()))
+                .set(map2);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.chat_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.block) {
+            AlertDialog.Builder builder= new AlertDialog.Builder(this);
+            builder.setTitle("Wanna Block "+name);
+            builder.setCancelable(true);
+            builder.setPositiveButton("Block", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    blockUser();
+                }
+            })
+            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+
+            AlertDialog dialog= builder.create();
+
+            dialog.show();
+            item.setVisible(false);
+            return true;
+        }
+        else if (item.getItemId() == android.R.id.home){   //override the back button on the app bar
+            onBackPressed();
+            return true;
+        }
+        else if(item.getItemId() == R.id.attach){
+            attachPicture();
+            return true;
+        }
+        else if(item.getItemId() == R.id.profile){
+            Intent intent = new Intent(getApplicationContext(),CureProfile.class);
+            intent.putExtra("mail",mail);
+            intent.putExtra("name",name);
+            intent.putExtra("uid",uid);
+            startActivity(intent);
+        }
+        else if(item.getItemId() == R.id.call){
+            AlertDialog.Builder builder =new AlertDialog.Builder(this);
+            builder.setTitle("Call");
+            builder.setCancelable(true);
+            builder.setMessage("Do you want to call "+name);
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    callUser();
+                }
+            });
+            AlertDialog dialog= builder.create();
+            dialog.show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void callUser(){
+        if(canCall) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+            builder.setTitle("Confirmation");
+            builder.setMessage("Call " + name);
+            builder.setPositiveButton("Call", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    intent2 = new Intent(Intent.ACTION_CALL);
+                    intent2.setData(Uri.parse(sc));
+                    checkPermission(Manifest.permission.CALL_PHONE,
+                            CODE);
+                }
+            });
+
+            builder.setCancelable(true);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+        else{
+            Toast.makeText(this, name+" don't allow call", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Function to check and request permission
+    public void checkPermission(String permission, int requestCode)
+    {
+
+        // Checking if permission is not granted
+        if (ContextCompat.checkSelfPermission(ChatActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(ChatActivity.this, new String[] { permission }, requestCode);
+        }
+        else{
+            startActivity(intent2);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions,grantResults);
+
+        if (requestCode == CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(ChatActivity.this, "Call Permission Granted", Toast.LENGTH_SHORT).show();
+                startActivity(intent2);
             }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+            else {
+                Toast.makeText(ChatActivity.this, "Call Permission Denied", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+    private void attachPicture(){
+        map.put("user", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
+        map.put("mssg", "");
 
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        };
-        dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addChildEventListener(listener);*/
+        ImagePicker.Companion.with(ChatActivity.this)
+                .crop()
+                .compress(1024)			                //Final image size will be less than 1 MB(Optional)
+                .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
+                .start();
 
     }
 
-    private void post(){
+    private String getDate(){
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy");
+        String strDate= formatter.format(currentTime);
+        return strDate;
+    }
 
-        /*list.add(new MessageModel(mssg,Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()));
-        adapter.notifyDataSetChanged();*/
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            //Image Uri will not be null for RESULT_OK
+            assert data != null;
+            final Uri fileUri = data.getData();
+
+            assert fileUri != null;
+            StorageReference sr= FirebaseStorage.getInstance().getReference();
+            sr.child("CHAT/"+Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()+"/"+mail+"/"+fileUri.getLastPathSegment())
+                    .putFile(fileUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            map.put("img","CHAT/"+Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()+"/"+mail+"/"+fileUri.getLastPathSegment());
+                            Log.d(TAG, "image sent");
+                            map.put("time",getTime());
+                            map.put("date",getDate());
+                            refrehStatus();
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(ChatActivity.this,"Try again later",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+
+            //You can get File object from intent
+            file = ImagePicker.Companion.getFile(data);
+
+            //You can also get File Path from intent
+            filePath = ImagePicker.Companion.getFilePath(data);
+
+
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            Toast.makeText(this, ImagePicker.Companion.getError(data), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String getTime(){
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
+        String strDate= formatter.format(currentTime);
+        return strDate;
+    }
+    private void blockUser(){
+        //remove user from chat list
+        db.collection("User")
+                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
+                .collection("Chat")
+                .document(mail)
+                .set(map3);
+
+        Toast.makeText(this,name+" blocked", Toast.LENGTH_SHORT).show();
+    }
+
+    private void post(){
 
         dr.child(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()))
                 .child(uid)
@@ -203,75 +391,10 @@ public class ChatActivity extends AppCompatActivity {
                 .setValue(map);
     }
 
-    private void listener(){
-
-    }
-
-    private void adapterUpdate() {
-
-        list.clear();
-        adapter.notifyDataSetChanged();
-
-
-        db.collection("User")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection("Chat")
-                .document(mail)
-                .collection(mail)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                map1 = document.getData();
-                                list.add(new MessageModel(
-                                        Objects.requireNonNull(map1.get("user")).toString(),
-                                        Objects.requireNonNull(map1.get("mssg")).toString()
-                                ));
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                });
-    }
 
     private boolean check() {
-        mssg = text.getText().toString();
+        mssg = text.getText().toString().trim();
         return mssg.length() >= 1;
-    }
-
-    private void update() {
-
-        list.add(new MessageModel(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail(), mssg));
-        adapter.notifyDataSetChanged();
-
-        db.collection("User")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection("Chat")
-                .document(mail)
-                .collection(mail)
-                .add(map)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        //Toasty.success(ChatActivity.this, "Sent", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        db.collection("User")
-                .document(mail)
-                .collection("Chat")
-                .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .collection(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
-                .add(map)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        //Toasty.success(ChatActivity.this, "Sent", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
     }
 
     private void init() {
@@ -291,8 +414,27 @@ public class ChatActivity extends AppCompatActivity {
         adapter = new MessageAdapter(this, list);
         chats.setAdapter(adapter);
         map2.put("first",1);
+        map2.put("Block",false);
+        map3.put("first",1);
+        map3.put("Block",true);
         db1=FirebaseDatabase.getInstance();
         dr=db1.getReference();
+        status= false;
+        v= findViewById(android.R.id.content);
 
+        db.collection("User")
+                .document(Objects.requireNonNull(Objects.requireNonNull(mail)))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            Map<String,Object> mm= Objects.requireNonNull(task.getResult()).getData();
+                            assert mm != null;
+                            canCall= (boolean) mm.get(AppConfig.CAN_CALL);
+                            sc="tel:"+Objects.requireNonNull(mm.get(AppConfig.NUMBER)).toString();
+                        }
+                    }
+                });
     }
 }

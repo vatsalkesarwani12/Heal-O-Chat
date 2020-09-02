@@ -1,21 +1,22 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.vatsal.kesarwani.therapy.Adapter.MyAdapter;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.Util;
 
 public class MainScreen extends AppCompatActivity {
 
@@ -29,14 +30,15 @@ public class MainScreen extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
-        Toolbar toolbar =findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         init();
+
         tabLayout.addTab(tabLayout.newTab().setText("Post"));
         tabLayout.addTab(tabLayout.newTab().setText("Cure"));
         tabLayout.addTab(tabLayout.newTab().setText("Chat"));
-        adapter = new MyAdapter(getSupportFragmentManager(),this, tabLayout.getTabCount());
+        adapter = new MyAdapter(getSupportFragmentManager(), this, tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
 
 
@@ -45,16 +47,16 @@ public class MainScreen extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()){
-                    case 0 :
+                switch (tab.getPosition()) {
+                    case 0:
                         viewPager.setCurrentItem(0);
                         break;
 
-                    case 1 :
+                    case 1:
                         viewPager.setCurrentItem(1);
                         break;
 
-                    case 2 :
+                    case 2:
                         viewPager.setCurrentItem(2);
                         break;
                 }
@@ -74,9 +76,9 @@ public class MainScreen extends AppCompatActivity {
     }
 
     private void init() {
-        mAuth= FirebaseAuth.getInstance();
-        tabLayout=findViewById(R.id.tablayout);
-        viewPager=findViewById(R.id.viewpager);
+        mAuth = FirebaseAuth.getInstance();
+        tabLayout = findViewById(R.id.tablayout);
+        viewPager = findViewById(R.id.viewpager);
     }
 
     @Override
@@ -88,10 +90,11 @@ public class MainScreen extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.signout:
+                new Util().setOffline();
                 mAuth.signOut();
-                startActivity(new Intent(getApplicationContext(),LoginScreen.class));
+                startActivity(new Intent(getApplicationContext(), LoginScreen.class));
                 return true;
 
             case R.id.profile:
@@ -103,11 +106,12 @@ public class MainScreen extends AppCompatActivity {
                 return true;
 
             case R.id.aboutus:
-                startActivity(new Intent(getApplicationContext(),AboutUs.class));
+                startActivity(new Intent(getApplicationContext(), AboutUs.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public void onBackPressed() {
