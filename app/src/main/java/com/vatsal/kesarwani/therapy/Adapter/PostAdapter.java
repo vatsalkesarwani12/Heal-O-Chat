@@ -110,7 +110,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Intent intent =new Intent(context, CureProfile.class);
                 intent.putExtra("mail",list.get(position).getBy());
                 intent.putExtra("name",name[0]);
-                intent.putExtra("uid",name[1]); //todo when user delete account remember to set visible to false
+                intent.putExtra("uid",name[1]);
                 context.startActivity(intent);
             }
         });

@@ -123,12 +123,12 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
 
             assert fileUri != null;
             StorageReference sr=FirebaseStorage.getInstance().getReference();
-            sr.child("PROFILES/"+fileUri.getLastPathSegment())
+            sr.child("PROFILES/"+  Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
                     .putFile(fileUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            userData.put(AppConfig.PROFILE_DISPLAY,"PROFILES/"+fileUri.getLastPathSegment());
+                            userData.put(AppConfig.PROFILE_DISPLAY,"PROFILES/"+ Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
                             sharedPreferences.edit()
                                     .putString(AppConfig.PROFILE_DP,"Set")
                                     .apply();

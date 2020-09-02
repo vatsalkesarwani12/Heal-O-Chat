@@ -326,12 +326,12 @@ public class ChatActivity extends AppCompatActivity {
 
             assert fileUri != null;
             StorageReference sr= FirebaseStorage.getInstance().getReference();
-            sr.child("CHAT/"+Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()+"/"+fileUri.getLastPathSegment())
+            sr.child("CHAT/"+Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()+"/"+mail+"/"+fileUri.getLastPathSegment())
                     .putFile(fileUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            map.put("img","CHAT/"+Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()+"/"+fileUri.getLastPathSegment());
+                            map.put("img","CHAT/"+Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()+"/"+mail+"/"+fileUri.getLastPathSegment());
                             Log.d(TAG, "image sent");
                             map.put("time",getTime());
                             map.put("date",getDate());

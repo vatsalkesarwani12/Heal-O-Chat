@@ -97,7 +97,7 @@ public class CureProfile extends AppCompatActivity {
                 Intent intent1 =new Intent(getApplicationContext(), ChatActivity.class);
                 intent1.putExtra("mail",intent.getStringExtra("mail"));
                 intent1.putExtra("name",intent.getStringExtra("name"));
-                intent1.putExtra("uid",intent.getStringExtra("uid"));  //todo account deleted then handle this crash when uid is deleted
+                intent1.putExtra("uid",intent.getStringExtra("uid"));
                 if(!status)
                     startActivity(intent1);
                 else
