@@ -1,6 +1,7 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
@@ -69,10 +71,23 @@ public class CureProfile extends AppCompatActivity {
         contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent2 = new Intent(Intent.ACTION_CALL);
-                intent2.setData(Uri.parse(sc));
-                checkPermission(Manifest.permission.CALL_PHONE,
-                        CODE);
+                AlertDialog.Builder builder= new AlertDialog.Builder(CureProfile.this);
+                builder.setTitle("Confirmation");
+                builder.setMessage("Call "+sn);
+                builder.setPositiveButton("Call", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        intent2 = new Intent(Intent.ACTION_CALL);
+                        intent2.setData(Uri.parse(sc));
+                        checkPermission(Manifest.permission.CALL_PHONE,
+                                CODE);
+                    }
+                });
+
+                builder.setCancelable(true);
+                AlertDialog dialog= builder.create();
+                dialog.show();
+
             }
         });
 

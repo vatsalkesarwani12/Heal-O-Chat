@@ -1,8 +1,10 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +21,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.dhaval2404.imagepicker.ImagePicker;
@@ -56,6 +60,7 @@ import java.util.Objects;
 import es.dmoral.toasty.Toasty;
 
 public class ChatActivity extends AppCompatActivity {
+    private static final int CODE = 125;
     private Intent intent;
     private String mail, name, mssg,uid;
     private FirebaseAuth mAuth;
@@ -79,6 +84,9 @@ public class ChatActivity extends AppCompatActivity {
     private String filePath;
     private File file;
     private Uri uri;
+    private Intent intent2;
+    private String sc;
+    private boolean canCall= false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,7 +220,11 @@ public class ChatActivity extends AppCompatActivity {
             return true;
         }
         else if(item.getItemId() == R.id.profile){
-            //todo cure profile
+            Intent intent = new Intent(getApplicationContext(),CureProfile.class);
+            intent.putExtra("mail",mail);
+            intent.putExtra("name",name);
+            intent.putExtra("uid",uid);
+            startActivity(intent);
         }
         else if(item.getItemId() == R.id.call){
             AlertDialog.Builder builder =new AlertDialog.Builder(this);
@@ -232,7 +244,56 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void callUser(){
-        //todo call
+        if(canCall) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+            builder.setTitle("Confirmation");
+            builder.setMessage("Call " + name);
+            builder.setPositiveButton("Call", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    intent2 = new Intent(Intent.ACTION_CALL);
+                    intent2.setData(Uri.parse(sc));
+                    checkPermission(Manifest.permission.CALL_PHONE,
+                            CODE);
+                }
+            });
+
+            builder.setCancelable(true);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+        else{
+            Toast.makeText(this, name+" don't allow call", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Function to check and request permission
+    public void checkPermission(String permission, int requestCode)
+    {
+
+        // Checking if permission is not granted
+        if (ContextCompat.checkSelfPermission(ChatActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(ChatActivity.this, new String[] { permission }, requestCode);
+        }
+        else{
+            startActivity(intent2);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions,grantResults);
+
+        if (requestCode == CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(ChatActivity.this, "Call Permission Granted", Toast.LENGTH_SHORT).show();
+                startActivity(intent2);
+            }
+            else {
+                Toast.makeText(ChatActivity.this, "Call Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void attachPicture(){
@@ -262,8 +323,6 @@ public class ChatActivity extends AppCompatActivity {
             //Image Uri will not be null for RESULT_OK
             assert data != null;
             final Uri fileUri = data.getData();
-            //profiledp.setImageURI(fileUri);
-
 
             assert fileUri != null;
             StorageReference sr= FirebaseStorage.getInstance().getReference();
@@ -314,13 +373,7 @@ public class ChatActivity extends AppCompatActivity {
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")
                 .document(mail)
-                .set(map3)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                    }
-                });
+                .set(map3);
 
         Toast.makeText(this,name+" blocked", Toast.LENGTH_SHORT).show();
     }
@@ -368,5 +421,20 @@ public class ChatActivity extends AppCompatActivity {
         dr=db1.getReference();
         status= false;
         v= findViewById(android.R.id.content);
+
+        db.collection("User")
+                .document(Objects.requireNonNull(Objects.requireNonNull(mail)))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            Map<String,Object> mm= Objects.requireNonNull(task.getResult()).getData();
+                            assert mm != null;
+                            canCall= (boolean) mm.get(AppConfig.CAN_CALL);
+                            sc="tel:"+Objects.requireNonNull(mm.get(AppConfig.NUMBER)).toString();
+                        }
+                    }
+                });
     }
 }

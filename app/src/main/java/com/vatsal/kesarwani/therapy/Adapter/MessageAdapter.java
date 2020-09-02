@@ -71,9 +71,6 @@ public class MessageAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
 
-        //todo mssg pressed info
-        //todo mssg forward
-
         if (list.get(position).getMssg().length() >1) {
             ((TextViewHolder) holder).mssg.setText(list.get(position).getMssg() + "        ");  //8 spaces
             ((TextViewHolder) holder).time.setText(list.get(position).getTime());
