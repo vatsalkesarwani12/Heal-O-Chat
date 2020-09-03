@@ -28,7 +28,7 @@ public class Util {
         m.put(AppConfig.STATUS,true);
 
         FirebaseFirestore.getInstance().collection("User")
-                .document(Objects.requireNonNull(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()))
+                .document(Objects.requireNonNull(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail()))
                 .update(m);
     }
 

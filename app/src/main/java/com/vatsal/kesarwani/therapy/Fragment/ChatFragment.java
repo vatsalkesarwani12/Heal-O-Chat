@@ -96,13 +96,13 @@ public class ChatFragment extends Fragment {
 
         //fetchData();
 
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        /*swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);    //cause recycling error
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 fetchData();
             }
-        });
+        });*/
 
         return root;
     }
@@ -134,7 +134,7 @@ public class ChatFragment extends Fragment {
                                     ));
                                 }
                             }
-                            swipeRefreshLayout.setRefreshing(false);
+                            //swipeRefreshLayout.setRefreshing(false);
                             if(list.size() == 0){
                                 warn.setVisibility(View.VISIBLE);
                             }
@@ -158,7 +158,7 @@ public class ChatFragment extends Fragment {
         list=new ArrayList<>();
         adapter=new ChatAdapter(getContext(),list);
         chatRecycle.setAdapter(adapter);
-        swipeRefreshLayout=root.findViewById(R.id.refreshChat);
+        //swipeRefreshLayout=root.findViewById(R.id.refreshChat);
         warn=root.findViewById(R.id.warn_chat);
         if(list.size() == 0){
             warn.setVisibility(View.VISIBLE);

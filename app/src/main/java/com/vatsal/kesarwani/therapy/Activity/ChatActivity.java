@@ -151,7 +151,13 @@ public class ChatActivity extends AppCompatActivity {
                         assert document != null;
                         Map<String,Object> map =document.getData();
                         assert map != null;
-                        status= (boolean) map.get("Block");
+                        try {
+                            status = (boolean) map.get("Block");
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                            status=false;
+                        }
                         Log.d(TAG, status+"");
                         if(!status) {
                             addUserToChatList();
