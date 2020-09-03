@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,8 +52,8 @@ public class ChatFragment extends Fragment {
     private Map<String,Object> map;
     private static final String TAG = "ChatFragment";
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView warn;
 
-    //todo when list is empty activity should show a message
 
     public ChatFragment() {
         // Required empty public constructor
@@ -134,6 +135,12 @@ public class ChatFragment extends Fragment {
                                 }
                             }
                             swipeRefreshLayout.setRefreshing(false);
+                            if(list.size() == 0){
+                                warn.setVisibility(View.VISIBLE);
+                            }
+                            else {
+                                warn.setVisibility(View.GONE);
+                            }
                             adapter.notifyDataSetChanged();
                         }
                         else{
@@ -152,5 +159,9 @@ public class ChatFragment extends Fragment {
         adapter=new ChatAdapter(getContext(),list);
         chatRecycle.setAdapter(adapter);
         swipeRefreshLayout=root.findViewById(R.id.refreshChat);
+        warn=root.findViewById(R.id.warn_chat);
+        if(list.size() == 0){
+            warn.setVisibility(View.VISIBLE);
+        }
     }
 }

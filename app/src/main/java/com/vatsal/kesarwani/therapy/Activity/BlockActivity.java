@@ -1,6 +1,8 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,8 +35,8 @@ public class BlockActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Map<String,Object> map;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView warn;
 
-    //todo when list is empty activity should show a message
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,11 @@ public class BlockActivity extends AppCompatActivity {
                                 }
                             }
                             swipeRefreshLayout.setRefreshing(false);
+                            if(list.size() > 0){
+                                warn.setVisibility(View.GONE);
+                            }else{
+                                warn.setVisibility(View.VISIBLE);
+                            }
                             adapter.notifyDataSetChanged();
                         }
                         else{
@@ -96,5 +103,9 @@ public class BlockActivity extends AppCompatActivity {
         mAuth= FirebaseAuth.getInstance();
         map= new HashMap<>();
         swipeRefreshLayout=findViewById(R.id.refreshBlock);
+        warn=findViewById(R.id.warn_block);
+        if (list.size() == 0){
+            warn.setVisibility(View.VISIBLE);
+        }
     }
 }

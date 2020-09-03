@@ -79,7 +79,6 @@ public class MessageAdapter extends RecyclerView.Adapter {
             ((TextViewHolder) holder).time.setText(list.get(position).getTime());
         }
         else {
-            //todo image click to see expand image
             final Dialog dialog =new Dialog(context);
             dialog.setContentView(R.layout.dialog_image_layout);
             Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
