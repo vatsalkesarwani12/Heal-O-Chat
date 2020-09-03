@@ -52,6 +52,8 @@ public class ChatFragment extends Fragment {
     private static final String TAG = "ChatFragment";
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    //todo when list is empty activity should show a message
+
     public ChatFragment() {
         // Required empty public constructor
     }

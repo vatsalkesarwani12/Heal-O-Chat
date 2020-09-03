@@ -60,6 +60,9 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
     private File file;
     private Uri uri;
 
+    //todo verify phone number entered by user
+    //todo also make phone number optional field
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);

@@ -34,6 +34,8 @@ public class BlockActivity extends AppCompatActivity {
     private Map<String,Object> map;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    //todo when list is empty activity should show a message
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

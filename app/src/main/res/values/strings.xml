@@ -52,4 +52,5 @@
     <string name="image">Image</string>
     <string name="view_profile">View Profile</string>
     <string name="deactivate_profile">Deactivate Profile</string>
+    <string name="posts">Posts</string>
 </resources>

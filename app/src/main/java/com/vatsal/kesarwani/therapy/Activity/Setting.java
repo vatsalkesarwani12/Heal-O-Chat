@@ -46,6 +46,15 @@ public class Setting extends AppCompatActivity {
     private static final String TAG = "Setting";
     private int state=-1;
 
+    //todo add app activity activity
+    /**
+     *liked a post
+     *report a post
+     *added a post
+     *blocked a user
+     *updated profile
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);

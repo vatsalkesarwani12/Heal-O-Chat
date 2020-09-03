@@ -156,12 +156,12 @@ public class AddPost extends AppCompatActivity {
         map.put(AppConfig.UID,uid);
         map.put(AppConfig.REPORT,0);
         map.put(AppConfig.PROFILE_DISPLAY,pf_display);
-        sr.child("Images/"+uri.getLastPathSegment())
+        sr.child("Images/"+name+"/"+uri.getLastPathSegment())
                 .putFile(uri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        map.put(AppConfig.POST_IMAGE,"Images/"+uri.getLastPathSegment());
+                        map.put(AppConfig.POST_IMAGE,"Images/"+name+"/"+uri.getLastPathSegment());
                         db.collection("Posts")
                                 .add(map)
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

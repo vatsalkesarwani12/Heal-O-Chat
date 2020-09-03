@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,11 +26,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.vatsal.kesarwani.therapy.Adapter.BotttomAdapter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
+import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -39,7 +47,7 @@ public class Profile extends AppCompatActivity {
 
     private Button editProfile;
     private TextView name,age,sex,contact,about,description;
-    private String sn,sa,ss,sc,sabout,sdes;
+    private String sn,sa,ss,sc,sabout,sdes,mail;
     private ImageView cover;
     private CircleImageView profile;
     private ProgressBar progressBar;
@@ -49,14 +57,16 @@ public class Profile extends AppCompatActivity {
     private static final String TAG = "Profile";
     private SharedPreferences sharedPreferences;
     private Intent intent;
+    private RecyclerView bottomRecycle;
+    private BotttomAdapter adapter;
+    private List<PostModel> list;
 
-    //TODO list of post
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile1);
+        setContentView(R.layout.activity_profile);
 
         init();
         progressBar.setVisibility(View.VISIBLE);
@@ -74,6 +84,8 @@ public class Profile extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        mail= Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
 
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
@@ -155,6 +167,36 @@ public class Profile extends AppCompatActivity {
                             Toasty.error(Profile.this,"Error Fetching Data "+task.getException(),Toast.LENGTH_SHORT).show();
                     }
                 });
+
+        postData();
+    }
+
+    private void postData(){
+        list.clear();
+        db.collection("Posts")
+                .whereEqualTo("POST_BY", mail)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Map<String,Object> map=document.getData();
+                                list.add(new PostModel(Objects.requireNonNull(map.get(AppConfig.POST_IMAGE)).toString(),
+                                        Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.LIKES)).toString()),
+                                        Objects.requireNonNull(map.get(AppConfig.POST_DESCRIPTION)).toString(),
+                                        Objects.requireNonNull(map.get(AppConfig.POST_BY)).toString(),
+                                        document.getId(),
+                                        false,
+                                        Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
+                                        Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
+                                        Objects.requireNonNull(map.get(AppConfig.UID)).toString(),
+                                        Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.REPORT)).toString())));
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
 
     private void init() {
@@ -173,6 +215,12 @@ public class Profile extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
         sharedPreferences=getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
         intent=new Intent(getApplicationContext(),Editprofile.class);
+        bottomRecycle=findViewById(R.id.postRecycler);
+        RecyclerView.LayoutManager manager = new GridLayoutManager(this, 3);
+        bottomRecycle.setLayoutManager(manager);
+        list=new ArrayList<>();
+        adapter=new BotttomAdapter(this,list);
+        bottomRecycle.setAdapter(adapter);
     }
 
     @Override

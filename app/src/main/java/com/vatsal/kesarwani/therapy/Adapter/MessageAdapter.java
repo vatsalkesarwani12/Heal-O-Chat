@@ -76,6 +76,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
             ((TextViewHolder) holder).time.setText(list.get(position).getTime());
         }
         else {
+            //todo image click to see expand image
             ((ImageViewHolder) holder).time.setText(list.get(position).getTime());
 
             StorageReference sr= FirebaseStorage.getInstance().getReference();
