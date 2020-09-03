@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,13 +27,16 @@ import com.vatsal.kesarwani.therapy.Activity.CureProfile;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.Util;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import es.dmoral.toasty.Toasty;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
@@ -130,6 +132,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                     Log.d("ClickRecycler",list.get(position).getBy());
                                     list.get(position).setClicked(true);
                                     list.get(position).setLikes(x[0]);
+
+                                    //update track
+                                    Map<String,Object> m = new HashMap<>();
+                                    m.put(AppConfig.TIME,getDate());
+                                    m.put(AppConfig.TRACKNAME,"Liked "+name[0]+" post");
+                                    new Util().track(m);
                                 }
                             }
                         });
@@ -145,7 +153,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        reportUser(position,list.get(position).getReport());
+                        reportUser(position,list.get(position).getReport(),name[0]);
                     }
                 });
                 AlertDialog dialog= builder.create();
@@ -154,12 +162,32 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         });
     }
 
-    private void reportUser(int pos,int rep){
+    private void reportUser(int pos, int rep, final String name){
         Map<String ,Object> map=new HashMap<>();
         map.put(AppConfig.REPORT,rep+1);
         FirebaseFirestore.getInstance().collection("Posts")
                 .document(list.get(pos).getId())
-                .update(map);
+                .update(map)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+
+                            //update track
+                            Map<String,Object> m = new HashMap<>();
+                            m.put(AppConfig.TIME,getDate());
+                            m.put(AppConfig.TRACKNAME,"Reported "+name+" post");
+                            new Util().track(m);
+                        }
+                    }
+                });
+    }
+
+    private String getDate(){
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy");
+        String strDate= formatter.format(currentTime);
+        return strDate;
     }
 
     @Override

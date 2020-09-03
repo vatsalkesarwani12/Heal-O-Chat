@@ -25,4 +25,9 @@ public class AppConfig {
     final public static String LIKES="LIKES";
     final public static String STATUS="STATUS";
     final public static String REPORT="REPORT";
+    final public static String TIME="time";
+    final public static String TRACKNAME="trackName";
+
+
+
 }

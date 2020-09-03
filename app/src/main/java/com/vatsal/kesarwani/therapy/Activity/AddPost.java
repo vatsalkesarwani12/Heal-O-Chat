@@ -31,8 +31,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.Util;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -167,6 +171,13 @@ public class AddPost extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
+                                        //update track
+                                        Map<String,Object> m = new HashMap<>();
+                                        m.put(AppConfig.TIME,getDate());
+                                        m.put(AppConfig.TRACKNAME,"You Added post");
+                                        new Util().track(m);
+
+
                                         Toasty.success(AddPost.this,"Post Uploaded",Toast.LENGTH_SHORT).show();
                                         startActivity(new Intent(getApplicationContext(),MainScreen.class));
                                     }
@@ -193,6 +204,13 @@ public class AddPost extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         post.setEnabled(true);
+    }
+
+    private String getDate(){
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy");
+        String strDate= formatter.format(currentTime);
+        return strDate;
     }
 
     private void init(){

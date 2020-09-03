@@ -47,6 +47,7 @@ import com.vatsal.kesarwani.therapy.Adapter.MessageAdapter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.MessageModel;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.Util;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -373,7 +374,19 @@ public class ChatActivity extends AppCompatActivity {
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")
                 .document(mail)
-                .set(map3);
+                .set(map3)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            //update track
+                            Map<String,Object> m = new HashMap<>();
+                            m.put(AppConfig.TIME,getDate());
+                            m.put(AppConfig.TRACKNAME,"Blocked "+name);
+                            new Util().track(m);
+                        }
+                    }
+                });
 
         Toast.makeText(this,name+" blocked", Toast.LENGTH_SHORT).show();
     }
