@@ -4,29 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.BlockActivity"
+    tools:context=".Activity.TrackYourActivity"
     android:background="#EEFFFC">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/refreshBlock"
+        android:id="@+id/refreshTrack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/blockedRecycle"
+            android:id="@+id/trackRecycle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_block"/>
+            tools:listitem="@layout/item_track"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <TextView
-        android:id="@+id/warn_block"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/no_user_blocked_from_your_side"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
 </RelativeLayout>

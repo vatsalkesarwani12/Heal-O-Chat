@@ -1,6 +1,9 @@
 package com.vatsal.kesarwani.therapy.Adapter;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,6 +79,11 @@ public class MessageAdapter extends RecyclerView.Adapter {
             ((TextViewHolder) holder).time.setText(list.get(position).getTime());
         }
         else {
+            final Dialog dialog =new Dialog(context);
+            dialog.setContentView(R.layout.dialog_image_layout);
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.setCancelable(true);
+
             ((ImageViewHolder) holder).time.setText(list.get(position).getTime());
 
             StorageReference sr= FirebaseStorage.getInstance().getReference();
@@ -88,12 +96,23 @@ public class MessageAdapter extends RecyclerView.Adapter {
                                 Glide.with(context.getApplicationContext())
                                         .load(uri)
                                         .into(((ImageViewHolder)holder).image);
+
+                                Glide.with(context.getApplicationContext())
+                                        .load(uri)
+                                        .into((ImageView)dialog.findViewById(R.id.img));
                             }
                         });
             }
             catch (Exception e){
                 e.printStackTrace();
             }
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.show();
+                }
+            });
         }
     }
 

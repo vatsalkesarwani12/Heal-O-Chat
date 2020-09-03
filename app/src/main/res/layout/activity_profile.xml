@@ -9,9 +9,8 @@
     tools:context=".Activity.Profile">
 
     <include
-        layout="@layout/cure_template"/>
+        layout="@layout/profile_template"/>
 
-    <include
-        layout="@layout/bottom_sheet"/>
+    <include layout="@layout/bottom_sheet" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

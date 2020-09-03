@@ -31,8 +31,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.Util;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -156,17 +160,24 @@ public class AddPost extends AppCompatActivity {
         map.put(AppConfig.UID,uid);
         map.put(AppConfig.REPORT,0);
         map.put(AppConfig.PROFILE_DISPLAY,pf_display);
-        sr.child("Images/"+uri.getLastPathSegment())
+        sr.child("Images/"+name+"/"+uri.getLastPathSegment())
                 .putFile(uri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        map.put(AppConfig.POST_IMAGE,"Images/"+uri.getLastPathSegment());
+                        map.put(AppConfig.POST_IMAGE,"Images/"+name+"/"+uri.getLastPathSegment());
                         db.collection("Posts")
                                 .add(map)
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
+                                        //update track
+                                        Map<String,Object> m = new HashMap<>();
+                                        m.put(AppConfig.TIME,getDate());
+                                        m.put(AppConfig.TRACKNAME,"You Added post");
+                                        new Util().track(m);
+
+
                                         Toasty.success(AddPost.this,"Post Uploaded",Toast.LENGTH_SHORT).show();
                                         startActivity(new Intent(getApplicationContext(),MainScreen.class));
                                     }
@@ -193,6 +204,13 @@ public class AddPost extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         post.setEnabled(true);
+    }
+
+    private String getDate(){
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy");
+        String strDate= formatter.format(currentTime);
+        return strDate;
     }
 
     private void init(){

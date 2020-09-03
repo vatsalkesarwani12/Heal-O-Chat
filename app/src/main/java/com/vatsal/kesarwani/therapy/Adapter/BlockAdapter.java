@@ -24,7 +24,11 @@ import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Activity.BlockActivity;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.Util;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +117,7 @@ public class BlockAdapter extends RecyclerView.Adapter<BlockAdapter.ViewHolder> 
                 builder.setPositiveButton("Unblock", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        unblock(name[1]);
+                        unblock(name[1],name[0]);
                     }
                 });
 
@@ -126,7 +130,7 @@ public class BlockAdapter extends RecyclerView.Adapter<BlockAdapter.ViewHolder> 
         });
     }
 
-    private void unblock(String mail) {
+    private void unblock(String mail, final String name) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String,Object> map2=new HashMap<>();
@@ -137,8 +141,27 @@ public class BlockAdapter extends RecyclerView.Adapter<BlockAdapter.ViewHolder> 
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")
                 .document(mail)
-                .set(map2);
+                .set(map2)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            //update track
+                            Map<String,Object> m = new HashMap<>();
+                            m.put(AppConfig.TIME,getDate());
+                            m.put(AppConfig.TRACKNAME,"Unblocked "+name);
+                            new Util().track(m);
+                        }
+                    }
+                });
 
+    }
+
+    private String getDate(){
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy");
+        String strDate= formatter.format(currentTime);
+        return strDate;
     }
 
     @Override

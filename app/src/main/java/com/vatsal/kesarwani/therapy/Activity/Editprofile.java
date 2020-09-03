@@ -31,8 +31,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.Util;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -74,7 +78,6 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
                 if(!check()){
                     return;
                 }
-                //Toast.makeText(Editprofile.this, "Data accepted", Toast.LENGTH_SHORT).show();
                 sharedPreferences.edit()
                         .putString(AppConfig.PROFILE_STATE,count+"")
                         .apply();
@@ -197,6 +200,12 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
+                        //update track
+                        Map<String,Object> m = new HashMap<>();
+                        m.put(AppConfig.TIME,getDate());
+                        m.put(AppConfig.TRACKNAME,"Updated Profile");
+                        new Util().track(m);
+
                         Toasty.success(Editprofile.this,"Data Updated",Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(getApplicationContext(),Profile.class));
                     }
@@ -209,6 +218,13 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
                     }
                 });
 
+    }
+
+    private String getDate(){
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy");
+        String strDate= formatter.format(currentTime);
+        return strDate;
     }
 
     private boolean check() {

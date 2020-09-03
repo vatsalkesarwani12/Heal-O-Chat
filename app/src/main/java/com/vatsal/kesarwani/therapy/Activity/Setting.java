@@ -1,10 +1,5 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +12,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,11 +24,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
-import com.vatsal.kesarwani.therapy.Utility.App;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +37,7 @@ public class Setting extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
     private Switch prof_visib,call;
-    private TextView delete, deleteAcc, blockedUser;
+    private TextView delete, yourActivity, blockedUser;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private static final String TAG = "Setting";
@@ -180,18 +177,14 @@ public class Setting extends AppCompatActivity {
             }
         });
 
-        /*deleteAcc.setOnClickListener(new View.OnClickListener() {
+        yourActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteAccount();
+                startActivity(new Intent(getApplicationContext(),TrackYourActivity.class));
             }
-        });*/
-    }
+        });
 
-    /*private void deleteAccount(){
-        state=1;
-        deleteProfile();
-    }*/
+    }
 
     private void deactiveProfile(){
 
@@ -219,28 +212,6 @@ public class Setting extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         }
-                        /*if (state==1) {
-                            Objects.requireNonNull(mAuth.getCurrentUser())
-                                    .delete()
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Log.d(TAG, "User account deleted.");
-                                                sharedPreferences.edit()
-                                                        .putString(AppConfig.PROFILE_STATE, "com.vatsal.kesarwani.theraphy.PROFILE_STATE")
-                                                        .putString(AppConfig.PROFILE_VISIBILITY, "com.vatsal.kesarwani.theraphy.PROFILE_VISIBILITY")
-                                                        .putString(AppConfig.CALL_STATE, "com.vatsal.kesarwani.theraphy.CALL_STATE")
-                                                        .putString(AppConfig.PROFILE_DP, "com.vatsal.kesarwani.theraphy.PROFILE_DP")
-                                                        .apply();
-                                                Intent intent=new Intent(getApplicationContext(), LoginScreen.class);
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                startActivity(intent);
-                                                finish();
-                                            }
-                                        }
-                                    });
-                        }*/
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -256,11 +227,10 @@ public class Setting extends AppCompatActivity {
         sharedPreferences=getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
         call=findViewById(R.id.call_setting);
         delete=findViewById(R.id.delete_profile_setting);
-        //deleteAcc=findViewById(R.id.delete_setting);
         db=FirebaseFirestore.getInstance();
         mAuth=FirebaseAuth.getInstance();
         blockedUser= findViewById(R.id.block_user_setting);
-
+        yourActivity=findViewById(R.id.your_activity_setting);
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .get()

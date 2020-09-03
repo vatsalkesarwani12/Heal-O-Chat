@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -20,6 +21,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,11 +34,17 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.vatsal.kesarwani.therapy.Adapter.BotttomAdapter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
+import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -55,12 +66,15 @@ public class CureProfile extends AppCompatActivity {
     private int CODE =1;
     private static final String TAG = "CureProfile";
     private boolean status=false;  /**block status*/
+    private RecyclerView bottomRecycle;
+    private BotttomAdapter adapter;
+    private List<PostModel> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cure_profile1);
+        setContentView(R.layout.activity_cure_profile);
 
         init();
         progressBar.setVisibility(View.VISIBLE);
@@ -207,6 +221,37 @@ public class CureProfile extends AppCompatActivity {
                             Toasty.error(CureProfile.this, "Error Fetching Data " + task.getException(), Toast.LENGTH_SHORT).show();
                     }
                 });
+
+        //postData
+        postData();
+    }
+
+    private void postData(){
+        list.clear();
+        db.collection("Posts")
+                .whereEqualTo("POST_BY", mail)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Map<String,Object> map=document.getData();
+                                list.add(new PostModel(Objects.requireNonNull(map.get(AppConfig.POST_IMAGE)).toString(),
+                                        Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.LIKES)).toString()),
+                                        Objects.requireNonNull(map.get(AppConfig.POST_DESCRIPTION)).toString(),
+                                        Objects.requireNonNull(map.get(AppConfig.POST_BY)).toString(),
+                                        document.getId(),
+                                        false,
+                                        Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
+                                        Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
+                                        Objects.requireNonNull(map.get(AppConfig.UID)).toString(),
+                                        Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.REPORT)).toString())));
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
 
     private void init() {
@@ -225,6 +270,13 @@ public class CureProfile extends AppCompatActivity {
         message=findViewById(R.id.message_profile);
         cover =findViewById(R.id.profile_cover);
         mail= intent.getStringExtra("mail");
+        bottomRecycle=findViewById(R.id.postRecycler);
+        RecyclerView.LayoutManager manager = new GridLayoutManager(this, 3);
+        bottomRecycle.setLayoutManager(manager);
+        list=new ArrayList<>();
+        adapter=new BotttomAdapter(this,list);
+        bottomRecycle.setAdapter(adapter);
+
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
                 .collection("Chat")

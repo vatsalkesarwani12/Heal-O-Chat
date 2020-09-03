@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,8 @@ public class ChatFragment extends Fragment {
     private Map<String,Object> map;
     private static final String TAG = "ChatFragment";
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView warn;
+
 
     public ChatFragment() {
         // Required empty public constructor
@@ -93,13 +96,13 @@ public class ChatFragment extends Fragment {
 
         //fetchData();
 
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        /*swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);    //cause recycling error
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 fetchData();
             }
-        });
+        });*/
 
         return root;
     }
@@ -131,7 +134,13 @@ public class ChatFragment extends Fragment {
                                     ));
                                 }
                             }
-                            swipeRefreshLayout.setRefreshing(false);
+                            //swipeRefreshLayout.setRefreshing(false);
+                            if(list.size() == 0){
+                                warn.setVisibility(View.VISIBLE);
+                            }
+                            else {
+                                warn.setVisibility(View.GONE);
+                            }
                             adapter.notifyDataSetChanged();
                         }
                         else{
@@ -149,6 +158,10 @@ public class ChatFragment extends Fragment {
         list=new ArrayList<>();
         adapter=new ChatAdapter(getContext(),list);
         chatRecycle.setAdapter(adapter);
-        swipeRefreshLayout=root.findViewById(R.id.refreshChat);
+        //swipeRefreshLayout=root.findViewById(R.id.refreshChat);
+        warn=root.findViewById(R.id.warn_chat);
+        if(list.size() == 0){
+            warn.setVisibility(View.VISIBLE);
+        }
     }
 }
