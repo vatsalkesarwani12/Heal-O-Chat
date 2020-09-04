@@ -43,15 +43,6 @@ public class MessageAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        /*if (viewType == YOU) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_list, parent, false);
-            return new ViewHolder(v);
-        }
-        else {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_list_other, parent, false);
-            return new ViewHolder(v);
-        }*/
-
         switch (viewType){
             case OTHER :
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_list_other, parent, false);
@@ -75,7 +66,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
 
         if (list.get(position).getMssg().length() >1) {
-            ((TextViewHolder) holder).mssg.setText(list.get(position).getMssg() + "        ");  //8 spaces
+            ((TextViewHolder) holder).mssg.setText(list.get(position).getMssg().trim() + "        ");  //8 spaces
             ((TextViewHolder) holder).time.setText(list.get(position).getTime());
         }
         else {
@@ -93,13 +84,18 @@ public class MessageAdapter extends RecyclerView.Adapter {
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
-                                Glide.with(context.getApplicationContext())
-                                        .load(uri)
-                                        .into(((ImageViewHolder)holder).image);
+                                try {
+                                    Glide.with(context.getApplicationContext())
+                                            .load(uri)
+                                            .into(((ImageViewHolder) holder).image);
 
-                                Glide.with(context.getApplicationContext())
-                                        .load(uri)
-                                        .into((ImageView)dialog.findViewById(R.id.img));
+                                    Glide.with(context.getApplicationContext())
+                                            .load(uri)
+                                            .into((ImageView) dialog.findViewById(R.id.img));
+                                }
+                                catch (Exception e){
+                                    e.printStackTrace();
+                                }
                             }
                         });
             }
