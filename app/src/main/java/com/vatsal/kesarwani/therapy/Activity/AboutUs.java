@@ -8,12 +8,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.vatsal.kesarwani.therapy.R;
 
 public class AboutUs extends AppCompatActivity {
     private ImageButton linkedin,github,twitter;
-    private String llinkedin,lgit,ltweet;
+    private String llinkedin,lgit,ltweet,lrepo;
+    private ImageView star;
+    private TextView tv_star;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +28,7 @@ public class AboutUs extends AppCompatActivity {
         llinkedin="https://www.linkedin.com/in/vatsal-kesarwani-4a3858171/";
         lgit="https://github.com/plazzy99";
         ltweet="https://twitter.com/KesarwaniVatsal";
+        lrepo="https://github.com/plazzy99/Therapy";
 
         linkedin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,10 +57,33 @@ public class AboutUs extends AppCompatActivity {
             }
         });
 
+        star.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                starRepo();
+            }
+        });
+
+        tv_star.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                starRepo();
+            }
+        });
+
     }
+
+    private void starRepo() {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(lrepo));
+        startActivity(i);
+    }
+
     private  void init(){
         linkedin=findViewById(R.id.linkedin);
         github=findViewById(R.id.github);
         twitter=findViewById(R.id.twitter);
+        star=findViewById(R.id.starImage);
+        tv_star=findViewById(R.id.star);
     }
 }

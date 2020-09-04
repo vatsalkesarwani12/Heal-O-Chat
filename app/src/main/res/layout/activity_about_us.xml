@@ -65,11 +65,12 @@
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="12dp"
         android:gravity="center|center_vertical"
+        android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4">
 
@@ -77,32 +78,53 @@
             android:id="@+id/linkedin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_linkedin"
-            android:contentDescription="@string/linkedin" />
+            android:background="@null"
+            android:contentDescription="@string/linkedin"
+            app:srcCompat="@drawable/ic_linkedin" />
 
         <ImageButton
             android:id="@+id/github"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_github"
-            android:contentDescription="@string/github" />
+            android:background="@null"
+            android:contentDescription="@string/github"
+            app:srcCompat="@drawable/ic_github" />
 
         <ImageButton
             android:id="@+id/twitter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_twitter"
-            android:contentDescription="@string/twitter" />
+            android:background="@null"
+            android:contentDescription="@string/twitter"
+            app:srcCompat="@drawable/ic_twitter" />
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/starImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:srcCompat="@drawable/ic_round_star_24" />
 
+    <TextView
+        android:id="@+id/star"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:text="Star This Project on Github"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/starImage"
+        app:layout_constraintStart_toEndOf="@+id/starImage"
+        app:layout_constraintTop_toTopOf="@+id/starImage" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

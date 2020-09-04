@@ -27,6 +27,8 @@ import com.vatsal.kesarwani.therapy.Model.CureModel;
 import com.vatsal.kesarwani.therapy.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -139,6 +141,7 @@ public class CureFragment extends Fragment {
                                 }
                             }
                             swipeRefreshLayout.setRefreshing(false);
+                            Collections.shuffle(list);
                             adapter.notifyDataSetChanged();
                         }
                         else{
