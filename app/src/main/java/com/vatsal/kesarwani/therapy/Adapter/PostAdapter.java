@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -27,6 +28,7 @@ import com.vatsal.kesarwani.therapy.Activity.CureProfile;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.App;
 import com.vatsal.kesarwani.therapy.Utility.Util;
 
 import java.text.SimpleDateFormat;
@@ -35,6 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -70,14 +73,40 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         final int[] x = {list.get(position).getLikes()};
         holder.likes.setText(x[0] +" Likes");
         final StorageReference sr= FirebaseStorage.getInstance().getReference();
-        final String[] name = new String[2];
+        final String[] name = new String[4];
         name[0]=list.get(position).getName();
         name[1]= list.get(position).getUid();
+        name[2]=list.get(position).getProfile_display();
+        name[3]="Male";
         holder.by.setText(name[0]);
 
-        if(!list.get(position).getProfile_display().isEmpty()) {
+        //profile display and name update
+        FirebaseFirestore.getInstance().collection("User")
+                .document(list.get(position).getBy())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            Map<String,Object> map = Objects.requireNonNull(task.getResult()).getData();
+                            Map<String,Object> m=new HashMap<>();
+                            assert map != null;
+                            name[0]=Objects.requireNonNull(map.get(AppConfig.NAME)).toString();
+                            name[2]=Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString();
+                            name[3]= Objects.requireNonNull(map.get(AppConfig.SEX)).toString();
+                            m.put(AppConfig.NAME, Objects.requireNonNull(map.get(AppConfig.NAME)).toString());
+                            m.put(AppConfig.PROFILE_DISPLAY, Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString());
+
+                            FirebaseFirestore.getInstance().collection("Posts")
+                                    .document(list.get(position).getId())
+                                    .update(m);
+                        }
+                    }
+                });
+
+        if(!name[2].isEmpty()) {
             try {
-                sr.child(list.get(position).getProfile_display())
+                sr.child(name[2])
                         .getDownloadUrl()
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -92,8 +121,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 e.printStackTrace();
             }
         }
-        else if(list.get(position).getProfile_display().length()<5){
-            holder.post_profile_dp.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_male));
+        else {
+            if (name[3].equals("Male")) {
+                holder.post_profile_dp.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_male));
+            }
+            else {
+                holder.post_profile_dp.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_female));
+            }
         }
 
         sr.child(list.get(position).getUri())

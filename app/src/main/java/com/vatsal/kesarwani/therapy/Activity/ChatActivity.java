@@ -412,7 +412,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
     private boolean check() {
-        mssg = text.getText().toString().trim();
+        mssg = text.getText().toString();
         return mssg.length() >= 1;
     }
 

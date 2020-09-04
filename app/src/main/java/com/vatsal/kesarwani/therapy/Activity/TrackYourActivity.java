@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +29,7 @@ public class TrackYourActivity extends AppCompatActivity {
     private DatabaseReference dr;
     private FirebaseAuth mAuth;
     private ValueEventListener valueEventListener;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,19 @@ public class TrackYourActivity extends AppCompatActivity {
 
         init();
 
+        refreshData();
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshData();
+            }
+        });
+
+    }
+
+    private void refreshData(){
         valueEventListener=new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -44,6 +59,8 @@ public class TrackYourActivity extends AppCompatActivity {
                     TrackModel model=snapshott.getValue(TrackModel.class);
                     list.add(model);
                 }
+                trackRecycle.scrollToPosition(list.size() -1);
+                swipeRefreshLayout.setRefreshing(false);
                 adapter.notifyDataSetChanged();
             }
 
@@ -62,5 +79,6 @@ public class TrackYourActivity extends AppCompatActivity {
         trackRecycle.setAdapter(adapter);
         dr= FirebaseDatabase.getInstance().getReference();
         mAuth=FirebaseAuth.getInstance();
+        swipeRefreshLayout=findViewById(R.id.refreshTrack);
     }
 }
