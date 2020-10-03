@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -60,6 +61,7 @@ public class Profile extends AppCompatActivity {
     private RecyclerView bottomRecycle;
     private BotttomAdapter adapter;
     private List<PostModel> list;
+    private ImageButton back;
 
 
     @Override
@@ -79,6 +81,12 @@ public class Profile extends AppCompatActivity {
             }
         });
 
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     @Override
@@ -221,6 +229,7 @@ public class Profile extends AppCompatActivity {
         list=new ArrayList<>();
         adapter=new BotttomAdapter(this,list);
         bottomRecycle.setAdapter(adapter);
+        back=findViewById(R.id.imBack);
     }
 
     @Override

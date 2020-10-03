@@ -13,4 +13,11 @@
 
     <include layout="@layout/bottom_sheet" />
 
+    <ImageButton
+        android:id="@+id/imBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="#00000000"
+        app:srcCompat="?attr/actionModeCloseDrawable" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
