@@ -26,6 +26,7 @@ Table of Contents
       * [6. Configure a Remote for the Fork](#6-configure-a-remote-for-the-fork)
       * [7. Sync the Fork](#7-sync-the-fork)
       * [8. Create Pull Request](#8-create-pull-request)
+   * [Screenshorts of the app](#screenshots)
    * [Download app from the link](#download-app-from-the-link)
    * [Project Maintainer](#project-maintainer)
    * [Check your Njack Leaderboard](#check-the-leaderboard-at)
@@ -63,7 +64,7 @@ Table of Contents
 3. minSdkVersion 21
 
 ## Discord channel
-[![chat on discord](https://img.shields.io/badge/chat-on%20discord-brightgreen)]()
+[![chat on discord](https://img.shields.io/badge/chat-on%20discord-brightgreen)](https://discord.gg/HuwMhB6U)
 
 ## Getting started
 
