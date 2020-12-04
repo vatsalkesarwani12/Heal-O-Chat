@@ -94,7 +94,7 @@ public class ChatFragment extends Fragment {
 
         init(root);
 
-        //fetchData();
+        fetchData(root);
 
         /*swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);    //cause recycling error
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -111,10 +111,10 @@ public class ChatFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        fetchData();
+        //fetchData();
     }
 
-    private void fetchData(){
+    private void fetchData(final View root){
         list.clear();
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
@@ -124,7 +124,7 @@ public class ChatFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()){
-
+                            list.clear();
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
                                 map=document.getData();
                                 Log.d("IDCollection", document.getId());
@@ -156,6 +156,7 @@ public class ChatFragment extends Fragment {
         map=new HashMap<>();
         db=FirebaseFirestore.getInstance();
         list=new ArrayList<>();
+        list.clear();
         adapter=new ChatAdapter(getContext(),list);
         chatRecycle.setAdapter(adapter);
         //swipeRefreshLayout=root.findViewById(R.id.refreshChat);

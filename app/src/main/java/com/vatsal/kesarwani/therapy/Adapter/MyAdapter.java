@@ -41,4 +41,10 @@ public class MyAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return totalTabs;
     }
+
+    @Override
+    public int getItemPosition(Object object) {
+        // POSITION_NONE makes it possible to reload the PagerAdapter
+        return POSITION_NONE;
+    }
 }
