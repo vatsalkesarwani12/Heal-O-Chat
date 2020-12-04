@@ -2,6 +2,7 @@ package com.vatsal.kesarwani.therapy.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -10,11 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.vatsal.kesarwani.therapy.Adapter.MyAdapter;
+import com.vatsal.kesarwani.therapy.Fragment.CureFragment;
 import com.vatsal.kesarwani.therapy.R;
 import com.vatsal.kesarwani.therapy.Utility.Util;
 
@@ -54,10 +58,12 @@ public class MainScreen extends AppCompatActivity {
 
                     case 1:
                         viewPager.setCurrentItem(1);
+                        viewPager.getAdapter().notifyDataSetChanged();
                         break;
 
                     case 2:
                         viewPager.setCurrentItem(2);
+                        viewPager.getAdapter().notifyDataSetChanged();
                         break;
                 }
             }
