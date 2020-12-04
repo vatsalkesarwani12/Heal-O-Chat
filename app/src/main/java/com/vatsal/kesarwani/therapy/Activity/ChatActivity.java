@@ -97,7 +97,6 @@ public class ChatActivity extends AppCompatActivity {
         init();
         Objects.requireNonNull(getSupportActionBar()).setTitle(name);
 
-
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,6 +133,7 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         };
+
         dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addValueEventListener(valueEventListener);
 
     }
@@ -374,6 +374,7 @@ public class ChatActivity extends AppCompatActivity {
         String strDate= formatter.format(currentTime);
         return strDate;
     }
+
     private void blockUser(){
         //remove user from chat list
         db.collection("User")
