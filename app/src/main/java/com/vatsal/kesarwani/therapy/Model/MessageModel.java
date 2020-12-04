@@ -6,6 +6,7 @@ public class MessageModel {
     private String img;
     private String time;
     private String date;
+    private String nodeKey;
 
     public MessageModel() {
     }
@@ -16,6 +17,15 @@ public class MessageModel {
         this.img = img;
         this.time = time;
         this.date = date;
+    }
+
+    public MessageModel(String mssg, String user, String img, String time, String date, String nodeKey) {
+        this.user = user;
+        this.mssg = mssg;
+        this.img = img;
+        this.time = time;
+        this.date = date;
+        this.nodeKey = nodeKey;
     }
 
     public String getUser() {
@@ -56,6 +66,14 @@ public class MessageModel {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getNodeKey() {
+        return nodeKey;
+    }
+
+    public void setNodeKey(String nodeKey) {
+        this.nodeKey = nodeKey;
     }
 
     @Override
