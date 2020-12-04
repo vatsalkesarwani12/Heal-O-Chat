@@ -64,7 +64,7 @@ Table of Contents
 3. minSdkVersion 21
 
 ## Discord channel
-[![chat on discord](https://img.shields.io/badge/chat-on%20discord-brightgreen)](https://discord.gg/bcqbktHd)
+[![chat on discord](https://img.shields.io/badge/chat-on%20discord-brightgreen)](https://discord.gg/DswQDgyF8a)
 
 ## Getting started
 

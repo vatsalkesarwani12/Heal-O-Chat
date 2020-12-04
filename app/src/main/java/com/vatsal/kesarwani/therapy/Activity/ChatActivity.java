@@ -122,6 +122,7 @@ public class ChatActivity extends AppCompatActivity {
                 list.clear();
                 for (DataSnapshot snapshott : snapshot.getChildren()){
                     MessageModel model1=snapshott.getValue(MessageModel.class);
+                    model1.setNodeKey(snapshott.getKey());
                     list.add(model1);
                 }
                 chats.scrollToPosition(list.size() - 1);
@@ -431,7 +432,7 @@ public class ChatActivity extends AppCompatActivity {
         chats = findViewById(R.id.chats);
         chats.setHasFixedSize(true);
         list = new ArrayList<>();
-        adapter = new MessageAdapter(this, list);
+        adapter = new MessageAdapter(this, list, uid);
         chats.setAdapter(adapter);
         map2.put("first",1);
         map2.put("Block",false);
