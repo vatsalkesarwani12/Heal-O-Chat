@@ -36,6 +36,8 @@ import com.vatsal.kesarwani.therapy.R;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static java.lang.Math.max;
+
 public class MessageAdapter extends RecyclerView.Adapter {
     Context context;
     ArrayList<MessageModel> list;
@@ -45,6 +47,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
     final int OTHER_IMAGE= 22;
     private View v;
     private String uid;
+    private ArrayList<MessageModel> list2 = new ArrayList<>();
 
     public MessageAdapter(Context context, ArrayList<MessageModel> list, String uid) {
         this.context = context;
@@ -103,7 +106,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
                             })
                             .setNegativeButton("Delete for Everyone", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    Toast.makeText(context, "Will be implemented very soon!", Toast.LENGTH_SHORT).show();
+                                    fetchChats(0, position);
                                 }
                             });
 
@@ -181,7 +184,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
                             })
                             .setNegativeButton("Delete for Everyone", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    Toast.makeText(context, "Will be implemented very soon!", Toast.LENGTH_SHORT).show();
+                                    fetchChats(1, position);
                                 }
                             });
 
@@ -222,6 +225,65 @@ public class MessageAdapter extends RecyclerView.Adapter {
         }
     }
 
+    private void fetchChats(final int isImage, final int position){
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(uid).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+
+        dr.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                list2.clear();
+                for (DataSnapshot snapshott : snapshot.getChildren()){
+                    MessageModel model1=snapshott.getValue(MessageModel.class);
+                    model1.setNodeKey(snapshott.getKey());
+                    list2.add(model1);
+                }
+
+                if(isImage == 1){
+                    //removing node from realtime database from current user
+                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                    DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).child(list.get(position).getNodeKey());
+                    dr.removeValue();
+                    //removing image from storage
+                    StorageReference sr = FirebaseStorage.getInstance().getReference().child(list.get(position).getImg());
+                    sr.delete();
+                    //matching messages
+                    int position2 = 0;
+                    for(int i = 0; i < list2.size(); i++){
+                        if(list2.get(i).getImg().equals(list.get(position).getImg())){
+                            position2 = i;
+                            break;
+                        }
+                    }
+                    //removing node from realtime database from other user
+                    dr = FirebaseDatabase.getInstance().getReference().child(uid).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(list2.get(position2).getNodeKey());
+                    dr.removeValue();
+                }else{
+                    //remove current users message
+                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                    DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).child(list.get(position).getNodeKey());
+                    dr.removeValue();
+                    //matching messages
+                    int position2 = 0;
+                    for(int i = 0; i < list2.size(); i++){
+                        if(list2.get(i).getMssg().equals(list.get(position).getMssg())){
+                            position2 = i;
+                            break;
+                        }
+                    }
+                    //removing from other users message
+                    dr = FirebaseDatabase.getInstance().getReference().child(uid).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(list2.get(position2).getNodeKey());
+                    dr.removeValue();
+                }
+                Toast.makeText(context, "Deleted for everyone!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     @Override
     public int getItemViewType(int position) {
