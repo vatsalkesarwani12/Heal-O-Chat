@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -52,7 +53,7 @@ public class AddPost extends AppCompatActivity {
     private StorageReference sr;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private EditText desc;
+    private TextInputEditText desc;
     private Button post;
     private ImageView postView;
     private String sdes;

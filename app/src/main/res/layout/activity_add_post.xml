@@ -41,34 +41,48 @@
 
     </androidx.cardview.widget.CardView>
 
-    <EditText
-        android:id="@+id/post_desc"
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/post_desc_box"
         android:layout_below="@id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@null"
         android:layout_marginTop="10dp"
         android:layout_marginStart="24dp"
-        android:inputType="textMultiLine"
         android:layout_marginEnd="24dp"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:minLines="5"
-        android:maxHeight="212dp"
-        android:gravity="top"
-        android:background="@drawable/edit_text_border"
-        android:maxLength="200"
-        android:hint="@string/post_description" />
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/post_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:layout_marginTop="5dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:minLines="5"
+            android:maxHeight="212dp"
+            android:gravity="top"
+            android:background="@null"
+            android:maxLength="200"
+            android:hint="@string/post_description"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
 
     <Switch
         android:id="@+id/postLater"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:ignore="UseSwitchCompatOrMaterialXml"
-        android:layout_below="@id/post_desc"
+        android:layout_below="@id/post_desc_box"
         android:layout_marginTop="10dp"
         android:layout_marginStart="24dp"
         android:layout_alignParentStart="true"
-
         android:text="@string/post_later"
         android:switchMinWidth="26dp"
         android:checked="false"
