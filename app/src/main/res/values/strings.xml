@@ -56,4 +56,6 @@
     <string name="add_some_friends_to_your_chat_list_from_the_cure_profiles">Add Some Friends to your chat list from the cure profiles</string>
     <string name="no_user_blocked_from_your_side">No User Blocked From Your Side</string>
     <string name="your_activity">Your Activity</string>
+    <string name="post_later">Post Later?</string>
+    <string name="info_post_later">The post will remain private, until you change visibilty of the post.</string>
 </resources>
