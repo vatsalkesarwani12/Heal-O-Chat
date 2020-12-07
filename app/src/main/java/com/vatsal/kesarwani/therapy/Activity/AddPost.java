@@ -1,15 +1,19 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -48,7 +53,7 @@ public class AddPost extends AppCompatActivity {
     private StorageReference sr;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private EditText desc;
+    private TextInputEditText desc;
     private Button post;
     private ImageView postView;
     private String sdes;
@@ -57,14 +62,29 @@ public class AddPost extends AppCompatActivity {
     private Uri uri;
     private String name,uid,pf_display;
     private SharedPreferences sharedPreferences;
+    private Switch postLater;
+    private TextView info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
-        
+
         init();
+
+        postLater.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(postLater.isChecked())
+                {
+                    info.setVisibility(View.VISIBLE);
+                }
+                else
+                    info.setVisibility(View.GONE);
+            }
+        });
+
         postView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,6 +120,7 @@ public class AddPost extends AppCompatActivity {
 
                     }
                 });
+
 
         post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,13 +170,15 @@ public class AddPost extends AppCompatActivity {
     }
 
     private void dataUpload() {
+
+        boolean bool = postVisibility();
         sdes=desc.getText().toString();
         uri=Uri.fromFile(file);
         final Map<String,Object> map=new HashMap<>();
         map.put(AppConfig.POST_DESCRIPTION,sdes);
         map.put(AppConfig.POST_BY,Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()));
         map.put(AppConfig.LIKES,0);
-        map.put(AppConfig.VISIBLE,true);
+        map.put(AppConfig.VISIBLE,bool);
         map.put(AppConfig.NAME,name);
         map.put(AppConfig.UID,uid);
         map.put(AppConfig.REPORT,0);
@@ -213,6 +236,25 @@ public class AddPost extends AppCompatActivity {
         return strDate;
     }
 
+    private boolean postVisibility()
+    {
+        final int[] a = new int[1];
+        postLater.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(postLater.isChecked())
+                    a[0] =0;
+                else
+                    a[0] =1;
+            }
+        });
+
+        if(a[0]==1)
+            return true;
+        else
+            return false;
+    }
+
     private void init(){
         sr=FirebaseStorage.getInstance().getReference();
         mAuth=FirebaseAuth.getInstance();
@@ -221,5 +263,7 @@ public class AddPost extends AppCompatActivity {
         post=findViewById(R.id.post);
         postView=findViewById(R.id.image);
         sharedPreferences =getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
+        postLater = findViewById(R.id.postLater);
+        info = findViewById(R.id.info);
     }
 }
