@@ -52,7 +52,7 @@
             android:label="Welcome" />
         <activity
             android:name=".Activity.Splash"
-            android:theme="@style/AppThemeNoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
