@@ -17,6 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -146,7 +147,14 @@ public class CureFragment extends Fragment {
                             adapter.notifyDataSetChanged();
                         }
                         else{
-                            Toasty.error(root.getContext(),"Error in fetching data",Toast.LENGTH_SHORT).show();
+                            Snackbar.make(root, "Error Fetching Data", Snackbar.LENGTH_LONG)
+                                    .setAction("Try Again", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            fetchData(root);
+                                        }
+                                    })
+                                    .show();
                         }
                     }
                 });

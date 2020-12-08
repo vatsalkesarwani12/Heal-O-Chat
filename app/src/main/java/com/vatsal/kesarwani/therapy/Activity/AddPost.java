@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -64,6 +65,7 @@ public class AddPost extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private Switch postLater;
     private TextView info;
+    private View rootview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +112,10 @@ public class AddPost extends AppCompatActivity {
                                 uid= Objects.requireNonNull(map.get(AppConfig.UID)).toString();
                             }
                         }
-                        else
-                            Toasty.error(AddPost.this,"Error Fetching Data "+task.getException(),Toast.LENGTH_SHORT).show();
+                        else{
+                            Snackbar.make(rootview, "Error Fetching Data " + task.getException(), Snackbar.LENGTH_LONG)
+                                    .show();
+                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -126,7 +130,7 @@ public class AddPost extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (file==null) {
-                    Toasty.warning(AddPost.this,"Select a Image to Post",Toast.LENGTH_SHORT).show();
+                    Snackbar.make(post, "Select a Image to Post", Snackbar.LENGTH_LONG).show();
                     return;
                 }
                 post.setEnabled(false);
@@ -170,7 +174,6 @@ public class AddPost extends AppCompatActivity {
     }
 
     private void dataUpload() {
-
         boolean bool = postVisibility();
         sdes=desc.getText().toString();
         uri=Uri.fromFile(file);
@@ -208,7 +211,14 @@ public class AddPost extends AppCompatActivity {
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Toasty.error(AddPost.this,"Unable to post",Toast.LENGTH_SHORT).show();
+                                        Snackbar.make(post, "Unable to post", Snackbar.LENGTH_LONG)
+                                                .setAction("Try Again", new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        dataUpload();
+                                                    }
+                                                })
+                                                .show();
                                         post.setEnabled(true);
                                     }
                                 });
@@ -217,7 +227,14 @@ public class AddPost extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toasty.error(AddPost.this,"Unable to upload",Toast.LENGTH_SHORT).show();
+                        Snackbar.make(post, "Unable to upload", Snackbar.LENGTH_LONG)
+                                .setAction("Try Again", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        dataUpload();
+                                    }
+                                })
+                                .show();
                         post.setEnabled(true);
                     }
                 });
@@ -256,6 +273,7 @@ public class AddPost extends AppCompatActivity {
     }
 
     private void init(){
+        rootview = findViewById(R.id.rootview);
         sr=FirebaseStorage.getInstance().getReference();
         mAuth=FirebaseAuth.getInstance();
         db=FirebaseFirestore.getInstance();
