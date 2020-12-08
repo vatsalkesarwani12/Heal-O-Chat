@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -144,7 +145,14 @@ public class ChatFragment extends Fragment {
                             adapter.notifyDataSetChanged();
                         }
                         else{
-                            Toasty.error(Objects.requireNonNull(getContext()),"Error Fetching Data", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(root, "Error Fetching Data", Snackbar.LENGTH_LONG)
+                                    .setAction("Try Again", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            fetchData(root);
+                                        }
+                                    })
+                                    .show();
                         }
                     }
                 });

@@ -30,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -69,6 +70,7 @@ public class CureProfile extends AppCompatActivity {
     private RecyclerView bottomRecycle;
     private BotttomAdapter adapter;
     private List<PostModel> list;
+    private View rootview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -217,8 +219,17 @@ public class CureProfile extends AppCompatActivity {
                                 profile.setVisibility(View.VISIBLE);
                                 profileData.setVisibility(View.VISIBLE);
                             }
-                        } else
-                            Toasty.error(CureProfile.this, "Error Fetching Data " + task.getException(), Toast.LENGTH_SHORT).show();
+                        } else{
+                            Snackbar.make(rootview, "Error Fetching Data " + task.getException(), Snackbar.LENGTH_LONG)
+                                    .setAction("Try Again", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            synData();
+                                        }
+                                    })
+                                    .show();
+                        }
+
                     }
                 });
 
@@ -255,6 +266,7 @@ public class CureProfile extends AppCompatActivity {
     }
 
     private void init() {
+        rootview = findViewById(R.id.rootview);
         name = findViewById(R.id.fullname);
         age = findViewById(R.id.age);
         sex = findViewById(R.id.sex);

@@ -12,6 +12,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -36,6 +37,7 @@ public class BlockActivity extends AppCompatActivity {
     private Map<String,Object> map;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView warn;
+    private View rootview;
 
 
     @Override
@@ -88,13 +90,21 @@ public class BlockActivity extends AppCompatActivity {
                             adapter.notifyDataSetChanged();
                         }
                         else{
-                            Toasty.error(BlockActivity.this,"Error Fetching Data", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(rootview, "Error Fetching Data", Snackbar.LENGTH_LONG)
+                                    .setAction("Try Again", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            fetchData();
+                                        }
+                                    })
+                                    .show();
                         }
                     }
                 });
     }
 
     private void init(){
+        rootview = findViewById(R.id.rootview);
         recyclerView= findViewById(R.id.blockedRecycle);
         list= new ArrayList<>();
         db= FirebaseFirestore.getInstance();

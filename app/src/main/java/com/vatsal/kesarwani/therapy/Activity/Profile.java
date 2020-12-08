@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -62,7 +63,7 @@ public class Profile extends AppCompatActivity {
     private BotttomAdapter adapter;
     private List<PostModel> list;
     private ImageButton back;
-
+    private View rootview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,8 +172,9 @@ public class Profile extends AppCompatActivity {
                                 profileData.setVisibility(View.VISIBLE);
                             }
                         }
-                        else
-                            Toasty.error(Profile.this,"Error Fetching Data "+task.getException(),Toast.LENGTH_SHORT).show();
+                        else{
+                            Snackbar.make(rootview, "Error Fetching Data " + task.getException(), Snackbar.LENGTH_LONG).show();
+                        }
                     }
                 });
 
@@ -208,6 +210,7 @@ public class Profile extends AppCompatActivity {
     }
 
     private void init() {
+        rootview = findViewById(R.id.rootview);
         editProfile=findViewById(R.id.edit_profile);
         name=findViewById(R.id.fullname);
         age=findViewById(R.id.age);
