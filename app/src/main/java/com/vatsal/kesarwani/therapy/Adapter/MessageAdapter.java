@@ -6,18 +6,15 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -35,8 +32,6 @@ import com.vatsal.kesarwani.therapy.R;
 
 import java.util.ArrayList;
 import java.util.Objects;
-
-import static java.lang.Math.max;
 
 public class MessageAdapter extends RecyclerView.Adapter {
     Context context;
@@ -123,7 +118,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
             Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.setCancelable(true);
 
-            ((ImageViewHolder) holder).time.setText(list.get(position).getTime());
+            ((TextViewHolder) holder).time.setText(list.get(position).getTime());
 
             StorageReference sr= FirebaseStorage.getInstance().getReference();
             try {
