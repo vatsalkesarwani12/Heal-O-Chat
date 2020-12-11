@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/rootview"
     tools:context=".Activity.AddPost">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card"
         android:layout_width="150dp"
         android:layout_height="200dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="10dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
         app:cardCornerRadius="5dp"
         app:contentPadding="2dp">
 
@@ -25,31 +25,76 @@
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:elevation="2dp"
-                android:contentDescription="@string/post_image" />
+                android:contentDescription="@string/post_image"
+                android:elevation="2dp" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_outline_add_circle_outline"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_outline_add_circle_outline" />
 
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
 
-    <EditText
-        android:id="@+id/post_desc"
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/post_desc_box"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:layout_marginStart="10dp"
-        android:inputType="textMultiLine"
-        android:layout_marginEnd="2dp"
-        android:maxHeight="212dp"
-        android:maxLength="200"
-        android:hint="@string/post_description"
-        android:layout_toStartOf="@+id/card" />
+        android:layout_below="@id/card"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="24dp"
+        android:background="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/post_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@null"
+            android:gravity="top"
+            android:hint="@string/post_description"
+            android:inputType="textMultiLine"
+            android:maxHeight="212dp"
+            android:maxLength="200"
+            android:minLines="5"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <Switch
+        android:id="@+id/postLater"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/post_desc_box"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:checked="false"
+        android:switchMinWidth="26dp"
+        android:text="@string/post_later"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <TextView
+        android:id="@+id/info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/postLater"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="24dp"
+        android:background="#FAFAFA"
+        android:text="@string/info_post_later"
+        android:visibility="gone" />
+
 
     <Button
         android:id="@+id/post"
@@ -61,9 +106,10 @@
         android:layout_marginStart="106dp"
         android:layout_marginEnd="105dp"
         android:layout_marginBottom="60dp"
-        android:text="@string/post"
         android:background="@drawable/button"
-        android:textColor="@android:color/white"/>
+        android:text="@string/post"
+        android:textColor="@android:color/white" />
 
 
 </RelativeLayout>
+

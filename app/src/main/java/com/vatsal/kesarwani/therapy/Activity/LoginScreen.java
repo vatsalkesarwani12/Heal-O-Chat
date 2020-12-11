@@ -24,9 +24,16 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.tapadoo.alerter.Alerter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
+import com.vatsal.kesarwani.therapy.Model.ChatModel;
 import com.vatsal.kesarwani.therapy.R;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
 
@@ -38,6 +45,8 @@ public class LoginScreen extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient ;
     private static final String TAG = "LoginScreen";
     private SharedPreferences sharedPreferences;
+    private ArrayList<String> list;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,11 +110,19 @@ public class LoginScreen extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             Toasty.success(LoginScreen.this,""+mAuth.getCurrentUser().getDisplayName(),Toast.LENGTH_LONG).show();
+
+                            boolean cond = checkEmail(mAuth.getCurrentUser().getEmail());
+
                             if (!sharedPreferences.getString(AppConfig.PROFILE_STATE,"com.vatsal.kesarwani.theraphy.PROFILE_STATE")
                                     .equals("com.vatsal.kesarwani.theraphy.PROFILE_STATE"))
                                 startActivity(new Intent(getApplicationContext(),MainScreen.class));
-                            else
-                                startActivity(new Intent(getApplicationContext(), Editprofile.class));
+                            else {
+                                if(cond){
+                                    startActivity(new Intent(getApplicationContext(),MainScreen.class));
+                                }else {
+                                    startActivity(new Intent(getApplicationContext(), Editprofile.class));
+                                }
+                            }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -121,8 +138,18 @@ public class LoginScreen extends AppCompatActivity {
                 });
     }
 
-    private void init() {
+    private boolean checkEmail(String email) {
+        for(int i = 0; i < list.size(); i++){
+            if(list.get(i).equals(email)){
+                return true;
+            }
+        }
+        return false;
+    }
 
+    private void init() {
+        list = new ArrayList<>();
+        db=FirebaseFirestore.getInstance();
         mAuth=FirebaseAuth.getInstance();
         google=findViewById(R.id.google);
         // Configure Google Sign In
@@ -133,7 +160,27 @@ public class LoginScreen extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         sharedPreferences=getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
+        getUsers();
     }
+
+    private void getUsers(){
+        list.clear();
+        db.collection("User")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            list.clear();
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
+                                list.add(new String(document.getId()));
+                            }
+                        }
+                    }
+                });
+    }
+
+    
 
     @Override
     public void onBackPressed() {

@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -63,6 +64,7 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
     private String filePath;
     private File file;
     private Uri uri;
+    private View rootview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +125,6 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
             final Uri fileUri = data.getData();
             profiledp.setImageURI(fileUri);
 
-
             assert fileUri != null;
             StorageReference sr=FirebaseStorage.getInstance().getReference();
             sr.child("PROFILES/"+  Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
@@ -141,10 +142,9 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toasty.error(Editprofile.this,"Unable to post",Toast.LENGTH_SHORT).show();
+                            Snackbar.make(rootview, "Unable to Post", Snackbar.LENGTH_LONG).show();
                         }
                     });
-
 
             //You can get File object from intent
             file = ImagePicker.Companion.getFile(data);
@@ -214,7 +214,14 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error writing document", e);
-                        Toasty.error(Editprofile.this,"Error Connecting to Server",Toast.LENGTH_SHORT).show();
+                        Snackbar.make(save, "Error Connecting to Server", Snackbar.LENGTH_LONG)
+                                .setAction("Try Again", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        syncData();
+                                    }
+                                })
+                                .show();
                     }
                 });
 
@@ -263,6 +270,7 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
     }
 
     private void init(){
+        rootview = findViewById(R.id.rootview);
         profiledp=findViewById(R.id.profile_dp_edit);
         fullname=findViewById(R.id.fullname_edit);
         age=findViewById(R.id.age_edit);

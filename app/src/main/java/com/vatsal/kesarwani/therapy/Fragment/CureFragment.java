@@ -17,13 +17,16 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.vatsal.kesarwani.therapy.Activity.MainScreen;
 import com.vatsal.kesarwani.therapy.Adapter.CureAdapter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.CureModel;
+import com.vatsal.kesarwani.therapy.Activity.MainScreen.*;
 import com.vatsal.kesarwani.therapy.R;
 
 import java.util.ArrayList;
@@ -96,8 +99,7 @@ public class CureFragment extends Fragment {
         // Inflate the layout for this fragment
         final View root = inflater.inflate(R.layout.fragment_cure, container, false);
         init(root);
-
-        //fetchData(root);
+        fetchData(root);
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -113,7 +115,7 @@ public class CureFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        fetchData(getView());
+        //fetchData(getView());
     }
 
     private void fetchData(final View root){
@@ -145,7 +147,14 @@ public class CureFragment extends Fragment {
                             adapter.notifyDataSetChanged();
                         }
                         else{
-                            Toasty.error(root.getContext(),"Error in fetching data",Toast.LENGTH_SHORT).show();
+                            Snackbar.make(root, "Error Fetching Data", Snackbar.LENGTH_LONG)
+                                    .setAction("Try Again", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            fetchData(root);
+                                        }
+                                    })
+                                    .show();
                         }
                     }
                 });

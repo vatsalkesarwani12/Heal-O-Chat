@@ -97,7 +97,6 @@ public class ChatActivity extends AppCompatActivity {
         init();
         Objects.requireNonNull(getSupportActionBar()).setTitle(name);
 
-
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,6 +122,7 @@ public class ChatActivity extends AppCompatActivity {
                 list.clear();
                 for (DataSnapshot snapshott : snapshot.getChildren()){
                     MessageModel model1=snapshott.getValue(MessageModel.class);
+                    model1.setNodeKey(snapshott.getKey());
                     list.add(model1);
                 }
                 chats.scrollToPosition(list.size() - 1);
@@ -134,6 +134,7 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         };
+
         dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addValueEventListener(valueEventListener);
 
     }
@@ -374,6 +375,7 @@ public class ChatActivity extends AppCompatActivity {
         String strDate= formatter.format(currentTime);
         return strDate;
     }
+
     private void blockUser(){
         //remove user from chat list
         db.collection("User")
@@ -430,12 +432,14 @@ public class ChatActivity extends AppCompatActivity {
         chats = findViewById(R.id.chats);
         chats.setHasFixedSize(true);
         list = new ArrayList<>();
-        adapter = new MessageAdapter(this, list);
+        adapter = new MessageAdapter(this, list, uid, mail);
         chats.setAdapter(adapter);
         map2.put("first",1);
         map2.put("Block",false);
+        map2.put("chats", true);
         map3.put("first",1);
         map3.put("Block",true);
+        map3.put("chats", true);
         db1=FirebaseDatabase.getInstance();
         dr=db1.getReference();
         status= false;

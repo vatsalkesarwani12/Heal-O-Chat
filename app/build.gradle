@@ -34,7 +34,7 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'com.google.android.material:material:1.2.0'
     //noinspection GradleCompatible
-    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.firebase:firebase-firestore:21.6.0'
     implementation 'com.google.firebase:firebase-storage:19.2.0'
@@ -63,5 +63,9 @@ dependencies {
 
     //swipe refresh layout
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+    //TextInputEditText
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
 
 }

@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -94,7 +95,7 @@ public class ChatFragment extends Fragment {
 
         init(root);
 
-        //fetchData();
+        fetchData(root);
 
         /*swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);    //cause recycling error
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -111,10 +112,10 @@ public class ChatFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        fetchData();
+        //fetchData();
     }
 
-    private void fetchData(){
+    private void fetchData(final View root){
         list.clear();
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
@@ -124,14 +125,22 @@ public class ChatFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()){
-
+                            list.clear();
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
                                 map=document.getData();
                                 Log.d("IDCollection", document.getId());
                                 if(!(boolean)map.get("Block")) {
-                                    list.add(new ChatModel(
-                                            document.getId()
-                                    ));
+                                    if(map.containsKey("chats")){
+                                        if(map.get("chats").equals(true)){
+                                            list.add(new ChatModel(
+                                                    document.getId()
+                                            ));
+                                        }
+                                    }else{
+                                        list.add(new ChatModel(
+                                                document.getId()
+                                        ));
+                                    }
                                 }
                             }
                             //swipeRefreshLayout.setRefreshing(false);
@@ -144,7 +153,14 @@ public class ChatFragment extends Fragment {
                             adapter.notifyDataSetChanged();
                         }
                         else{
-                            Toasty.error(Objects.requireNonNull(getContext()),"Error Fetching Data", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(root, "Error Fetching Data", Snackbar.LENGTH_LONG)
+                                    .setAction("Try Again", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            fetchData(root);
+                                        }
+                                    })
+                                    .show();
                         }
                     }
                 });
@@ -156,6 +172,7 @@ public class ChatFragment extends Fragment {
         map=new HashMap<>();
         db=FirebaseFirestore.getInstance();
         list=new ArrayList<>();
+        list.clear();
         adapter=new ChatAdapter(getContext(),list);
         chatRecycle.setAdapter(adapter);
         //swipeRefreshLayout=root.findViewById(R.id.refreshChat);
