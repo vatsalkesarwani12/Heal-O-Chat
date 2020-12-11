@@ -130,9 +130,17 @@ public class ChatFragment extends Fragment {
                                 map=document.getData();
                                 Log.d("IDCollection", document.getId());
                                 if(!(boolean)map.get("Block")) {
-                                    list.add(new ChatModel(
-                                            document.getId()
-                                    ));
+                                    if(map.containsKey("chats")){
+                                        if(map.get("chats").equals(true)){
+                                            list.add(new ChatModel(
+                                                    document.getId()
+                                            ));
+                                        }
+                                    }else{
+                                        list.add(new ChatModel(
+                                                document.getId()
+                                        ));
+                                    }
                                 }
                             }
                             //swipeRefreshLayout.setRefreshing(false);
