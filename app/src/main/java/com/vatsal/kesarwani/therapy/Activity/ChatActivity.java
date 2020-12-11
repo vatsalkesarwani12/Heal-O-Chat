@@ -432,12 +432,14 @@ public class ChatActivity extends AppCompatActivity {
         chats = findViewById(R.id.chats);
         chats.setHasFixedSize(true);
         list = new ArrayList<>();
-        adapter = new MessageAdapter(this, list, uid);
+        adapter = new MessageAdapter(this, list, uid, mail);
         chats.setAdapter(adapter);
         map2.put("first",1);
         map2.put("Block",false);
+        map2.put("chats", true);
         map3.put("first",1);
         map3.put("Block",true);
+        map3.put("chats", true);
         db1=FirebaseDatabase.getInstance();
         dr=db1.getReference();
         status= false;
