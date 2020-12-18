@@ -48,6 +48,7 @@ import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.MessageModel;
 import com.vatsal.kesarwani.therapy.R;
 import com.vatsal.kesarwani.therapy.Utility.Util;
+import com.vatsal.kesarwani.therapy.Utility.ViewDialog;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -88,12 +89,14 @@ public class ChatActivity extends AppCompatActivity {
     private Intent intent2;
     private String sc;
     private boolean canCall= false;
+    private ViewDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        dialog = new ViewDialog(this);
         init();
         Objects.requireNonNull(getSupportActionBar()).setTitle(name);
 
@@ -127,6 +130,7 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 chats.scrollToPosition(list.size() - 1);
                 adapter.notifyDataSetChanged();
+                dialog.hideDialog();
             }
 
             @Override
@@ -135,6 +139,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         };
 
+        dialog.showDialog();
         dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addValueEventListener(valueEventListener);
 
     }
