@@ -21,6 +21,7 @@ import com.vatsal.kesarwani.therapy.Adapter.MyAdapter;
 import com.vatsal.kesarwani.therapy.Fragment.CureFragment;
 import com.vatsal.kesarwani.therapy.R;
 import com.vatsal.kesarwani.therapy.Utility.Util;
+import com.vatsal.kesarwani.therapy.Utility.ViewDialog;
 
 public class MainScreen extends AppCompatActivity {
 
@@ -36,7 +37,6 @@ public class MainScreen extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         init();
 
         tabLayout.addTab(tabLayout.newTab().setText("Post"));
@@ -58,12 +58,12 @@ public class MainScreen extends AppCompatActivity {
 
                     case 1:
                         viewPager.setCurrentItem(1);
-                        viewPager.getAdapter().notifyDataSetChanged();
+                        //viewPager.getAdapter().notifyDataSetChanged();
                         break;
 
                     case 2:
                         viewPager.setCurrentItem(2);
-                        viewPager.getAdapter().notifyDataSetChanged();
+                        //viewPager.getAdapter().notifyDataSetChanged();
                         break;
                 }
             }

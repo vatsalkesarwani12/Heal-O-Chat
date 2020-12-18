@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.ViewDialog;
 
 public class Splash extends AppCompatActivity {
 
@@ -47,7 +48,6 @@ public class Splash extends AppCompatActivity {
 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         SystemClock.sleep(500);
-
         mAuth=FirebaseAuth.getInstance();
         TextView quote = findViewById(R.id.quote);
         sharedPreferences=getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
@@ -60,7 +60,6 @@ public class Splash extends AppCompatActivity {
         sharedPreferences.edit()
                 .putString(AppConfig.SPLASH,z+"")
                 .apply();
-
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override

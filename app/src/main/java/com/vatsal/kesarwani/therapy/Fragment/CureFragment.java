@@ -28,6 +28,7 @@ import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.CureModel;
 import com.vatsal.kesarwani.therapy.Activity.MainScreen.*;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.ViewDialog;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,6 +62,7 @@ public class CureFragment extends Fragment {
     private ArrayList<CureModel> list;
     private SharedPreferences sharedPreferences;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ViewDialog dialog;
 
     public CureFragment() {
         // Required empty public constructor
@@ -98,6 +100,9 @@ public class CureFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View root = inflater.inflate(R.layout.fragment_cure, container, false);
+        dialog = new ViewDialog(getActivity());
+        dialog.showDialog();
+        dialog.hideDialog();
         init(root);
         fetchData(root);
 
@@ -108,7 +113,6 @@ public class CureFragment extends Fragment {
                 fetchData(root);
             }
         });
-
         return root;
     }
 
