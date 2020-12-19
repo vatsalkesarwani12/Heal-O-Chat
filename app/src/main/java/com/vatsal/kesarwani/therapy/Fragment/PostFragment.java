@@ -31,6 +31,7 @@ import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 import com.vatsal.kesarwani.therapy.Utility.App;
+import com.vatsal.kesarwani.therapy.Utility.ViewDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,6 +65,7 @@ public class PostFragment extends Fragment {
     private Map<String ,Object> map;
     private static final String TAG = "PostFragment";
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ViewDialog dialog;
 
     public PostFragment() {
         // Required empty public constructor
@@ -101,6 +103,7 @@ public class PostFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View root = inflater.inflate(R.layout.fragment_post, container, false);
+        dialog = new ViewDialog(getActivity());
         init(root);
 
         addpost.setOnClickListener(new View.OnClickListener() {
@@ -110,6 +113,7 @@ public class PostFragment extends Fragment {
             }
         });
 
+        Toast.makeText(getContext(), "Press on the screen if it loads for more than 5 seconds.", Toast.LENGTH_SHORT).show();
         fetchData(root);
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
@@ -125,6 +129,7 @@ public class PostFragment extends Fragment {
     }
 
     private void fetchData(final View root){
+        dialog.showDialog();
         list.clear();
         db.collection("Posts")
                 .get()
@@ -155,11 +160,13 @@ public class PostFragment extends Fragment {
                                     }
                                 }
                             }
+                            dialog.hideDialog();
                             Collections.shuffle(list);
                             swipeRefreshLayout.setRefreshing(false);
                             adapter.notifyDataSetChanged();
                         }
                         else{
+                            dialog.hideDialog();
                             Snackbar.make(root, "Error Fetching Data " + task.getException(), Snackbar.LENGTH_LONG)
                                     .setAction("Try Again", new View.OnClickListener() {
                                         @Override

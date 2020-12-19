@@ -130,8 +130,12 @@ public class MessageAdapter extends RecyclerView.Adapter {
             Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.setCancelable(true);
 
-            ((ImageViewHolder) holder).time.setText(list.get(position).getTime());
-
+            try {
+                ((ImageViewHolder) holder).time.setText(list.get(position).getTime());
+            }
+            catch (Exception e){
+                Log.d("ERROR", "onBindViewHolder: "+e);
+            }
             StorageReference sr = FirebaseStorage.getInstance().getReference();
             try {
                 sr.child(list.get(position).getImg())
