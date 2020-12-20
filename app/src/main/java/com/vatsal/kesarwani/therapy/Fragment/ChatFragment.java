@@ -24,6 +24,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.vatsal.kesarwani.therapy.Adapter.ChatAdapter;
 import com.vatsal.kesarwani.therapy.Model.ChatModel;
 import com.vatsal.kesarwani.therapy.R;
+import com.vatsal.kesarwani.therapy.Utility.ViewDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +55,7 @@ public class ChatFragment extends Fragment {
     private static final String TAG = "ChatFragment";
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView warn;
+    private ViewDialog dialog;
 
 
     public ChatFragment() {
@@ -93,6 +95,7 @@ public class ChatFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_chat, container, false);
 
+        dialog = new ViewDialog(getActivity());
         init(root);
 
         fetchData(root);
@@ -116,6 +119,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void fetchData(final View root){
+        dialog.showDialog();
         list.clear();
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
@@ -151,8 +155,10 @@ public class ChatFragment extends Fragment {
                                 warn.setVisibility(View.GONE);
                             }
                             adapter.notifyDataSetChanged();
+                            dialog.hideDialog();
                         }
                         else{
+                            dialog.hideDialog();
                             Snackbar.make(root, "Error Fetching Data", Snackbar.LENGTH_LONG)
                                     .setAction("Try Again", new View.OnClickListener() {
                                         @Override
