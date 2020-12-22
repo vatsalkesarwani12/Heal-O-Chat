@@ -1,5 +1,7 @@
 package com.vatsal.kesarwani.therapy.Fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,11 +24,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.vatsal.kesarwani.therapy.Adapter.ChatAdapter;
+import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.ChatModel;
 import com.vatsal.kesarwani.therapy.R;
 import com.vatsal.kesarwani.therapy.Utility.ViewDialog;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -56,6 +61,7 @@ public class ChatFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView warn;
     private ViewDialog dialog;
+    private View root;
 
 
     public ChatFragment() {
@@ -93,7 +99,7 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_chat, container, false);
+        root = inflater.inflate(R.layout.fragment_chat, container, false);
 
         dialog = new ViewDialog(getActivity());
         init(root);
@@ -115,7 +121,7 @@ public class ChatFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        //fetchData();
+        fetchData(root);
     }
 
     private void fetchData(final View root){
@@ -134,15 +140,19 @@ public class ChatFragment extends Fragment {
                                 map=document.getData();
                                 Log.d("IDCollection", document.getId());
                                 if(!(boolean)map.get("Block")) {
+                                    long time = 0;
+                                    if(map.containsKey("time")){
+                                        time = Long.parseLong(String.valueOf(map.get("time")));
+                                    }
                                     if(map.containsKey("chats")){
                                         if(map.get("chats").equals(true)){
                                             list.add(new ChatModel(
-                                                    document.getId()
+                                                    document.getId(), time
                                             ));
                                         }
                                     }else{
                                         list.add(new ChatModel(
-                                                document.getId()
+                                                document.getId(), time
                                         ));
                                     }
                                 }
@@ -154,6 +164,8 @@ public class ChatFragment extends Fragment {
                             else {
                                 warn.setVisibility(View.GONE);
                             }
+
+                            updateList();
                             adapter.notifyDataSetChanged();
                             dialog.hideDialog();
                         }
@@ -170,6 +182,19 @@ public class ChatFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    private void updateList() {
+        Collections.sort(list, new Comparator<ChatModel>() {
+            @Override
+            public int compare(ChatModel o1, ChatModel o2) {
+                return Long.compare(o2.getTime(), o1.getTime());
+            }
+        });
+
+        for(int i = 0; i < list.size(); i++){
+            Log.e("this", String.valueOf(list.get(i).getTime()));
+        }
     }
 
     private void init(View root) {
