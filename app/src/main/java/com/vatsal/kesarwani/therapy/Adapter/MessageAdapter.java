@@ -311,6 +311,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
             map.put("first",1);
             map.put("Block",false);
             map.put("chats", false);
+            map.put("time", 0);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("User")
@@ -325,6 +326,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
             map.put("first",1);
             map.put("Block",false);
             map.put("chats", false);
+            map.put("time", 0);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             //first user
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -347,6 +349,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
             map.put("first",1);
             map.put("Block",false);
             map.put("chats", false);
+            map.put("time", 0);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             //first user
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -362,6 +365,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
             map.put("first",1);
             map.put("Block",false);
             map.put("chats", false);
+            map.put("time", 0);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             //second user
             FirebaseFirestore db1 = FirebaseFirestore.getInstance();

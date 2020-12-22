@@ -178,6 +178,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void addUserToChatList() {
+        map2.put("time", Calendar.getInstance().getTimeInMillis());
         //add user to chat list
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))
