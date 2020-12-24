@@ -7,26 +7,53 @@ public class MessageModel {
     private String time;
     private String date;
     private String nodeKey;
+    private String sender;
+    private String receiver;
+    private boolean isseen;
 
-    public MessageModel() {
+    public String getSender() {
+        return sender;
     }
 
-    public MessageModel(String mssg, String user, String img, String time, String date) {
-        this.user = user;
-        this.mssg = mssg;
-        this.img = img;
-        this.time = time;
-        this.date = date;
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
-    public MessageModel(String mssg, String user, String img, String time, String date, String nodeKey) {
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    public boolean isIsseen() {
+        return isseen;
+    }
+
+    public void setIsseen(boolean isseen) {
+        this.isseen = isseen;
+    }
+
+    public MessageModel(String user, String mssg, String img, String time, String date, String nodeKey, String sender, String receiver, boolean isseen) {
         this.user = user;
         this.mssg = mssg;
         this.img = img;
         this.time = time;
         this.date = date;
         this.nodeKey = nodeKey;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.isseen = isseen;
     }
+
+
+
+    public MessageModel() {
+    }
+
+
+
 
     public String getUser() {
         return user;
