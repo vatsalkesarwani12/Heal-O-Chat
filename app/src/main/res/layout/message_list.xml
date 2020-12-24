@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="2dp">
@@ -14,7 +15,10 @@
         app:cardBackgroundColor="#D0D1D2"
         android:layout_marginEnd="4dp"
         app:cardCornerRadius="5dp">
-
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -58,8 +62,21 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/isSent"
+                android:textSize="8sp"
+                android:textColor="#2196F3"
+                android:text="✔✔"
+                android:gravity="end"
+                android:textAlignment="textEnd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
 
 </RelativeLayout>

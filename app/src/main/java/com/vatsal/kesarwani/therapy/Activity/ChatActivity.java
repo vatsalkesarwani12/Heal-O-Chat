@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,7 +68,7 @@ public class ChatActivity extends AppCompatActivity {
     private String mail, name, mssg,uid;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private Map<String, String> map;
+    private Map<String, Object> map;
     private Map<String, Object> map1;
     private ImageButton send;
     private EditText text;
@@ -79,6 +80,7 @@ public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
     private FirebaseDatabase db1;
     private DatabaseReference dr;
+    DatabaseReference reference,reference1,reference2;
     private ChildEventListener listener;
     private ValueEventListener valueEventListener;
     private boolean status;
@@ -90,14 +92,21 @@ public class ChatActivity extends AppCompatActivity {
     private String sc;
     private boolean canCall= false;
     private ViewDialog dialog;
+    ValueEventListener seenListener,listener1,listener2;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+
         dialog = new ViewDialog(this);
         init();
+
+
         Objects.requireNonNull(getSupportActionBar()).setTitle(name);
 
         send.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +118,9 @@ public class ChatActivity extends AppCompatActivity {
                 text.setText("");
                 map.put("user", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
                 map.put("mssg", mssg);
-
+                map.put("sender", mAuth.getCurrentUser().getUid());
+                map.put("receiver", uid);
+                map.put("isseen", false);
                 map.put("img","");
                 map.put("time",getTime());
                 map.put("date",getDate());
@@ -131,18 +142,132 @@ public class ChatActivity extends AppCompatActivity {
                 chats.scrollToPosition(list.size() - 1);
                 adapter.notifyDataSetChanged();
                 dialog.hideDialog();
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
+
         };
 
         dialog.showDialog();
         dr.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).addValueEventListener(valueEventListener);
+        seenMessage(uid);
+        seenMessage1(uid);
+        seenMessage2(uid);
 
     }
+    private void seenMessage(final String userId) {
+        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        try {
+            seenListener = reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        MessageModel chatModel = snapshot.getValue(MessageModel.class);
+                        assert chatModel != null;
+                        try {
+                            if (chatModel.getReceiver().equals(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()) && chatModel.getSender().equals(userId)) {
+
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("isseen", true);
+                                snapshot.getRef().updateChildren(hashMap);
+                            }
+                        }catch (Exception e)
+                        {
+                            Log.d(TAG, "onDataChange: "+e);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }catch (NullPointerException ignored){
+
+        }
+
+
+    }
+    private void seenMessage1(final String userId) {
+        reference1 = dr.child(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()))
+                .child(uid);
+        try {
+            listener1 = reference1.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        MessageModel chatModel = snapshot.getValue(MessageModel.class);
+                        assert chatModel != null;
+                        try {
+                            if (chatModel.getReceiver().equals(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()) && chatModel.getSender().equals(userId)) {
+
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("isseen", true);
+                                snapshot.getRef().updateChildren(hashMap);
+                            }
+                        }catch (Exception e)
+                        {
+                            Log.d(TAG, "onDataChange: "+e);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }catch (NullPointerException ignored){
+
+        }
+
+
+    }
+    private void seenMessage2(final String userId) {
+        reference2 = dr.child(uid)
+                .child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+        try {
+            listener2 = reference2.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        MessageModel chatModel = snapshot.getValue(MessageModel.class);
+                        assert chatModel != null;
+                        try {
+                            if (chatModel.getReceiver().equals(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()) && chatModel.getSender().equals(userId)) {
+
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("isseen", true);
+                                snapshot.getRef().updateChildren(hashMap);
+                            }
+                        }catch (Exception e)
+                        {
+                            Log.d(TAG, "onDataChange: "+e);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }catch (NullPointerException ignored){
+
+        }
+
+
+    }
+
+
 
     private void refrehStatus(){
         db.collection("User")
@@ -201,6 +326,14 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        reference.removeEventListener(seenListener);
+        reference1.removeEventListener(listener1);
+        reference2.removeEventListener(listener2);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.block) {
             AlertDialog.Builder builder= new AlertDialog.Builder(this);
@@ -226,6 +359,7 @@ public class ChatActivity extends AppCompatActivity {
             return true;
         }
         else if (item.getItemId() == android.R.id.home){   //override the back button on the app bar
+
             onBackPressed();
             return true;
         }
@@ -333,6 +467,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+
         if (resultCode == Activity.RESULT_OK) {
             //Image Uri will not be null for RESULT_OK
             assert data != null;
@@ -416,6 +551,7 @@ public class ChatActivity extends AppCompatActivity {
                 .child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
                 .push()
                 .setValue(map);
+        dr.child("Chats").push().setValue(map);
     }
 
 
@@ -449,6 +585,7 @@ public class ChatActivity extends AppCompatActivity {
         db1=FirebaseDatabase.getInstance();
         dr=db1.getReference();
         status= false;
+
         v= findViewById(android.R.id.content);
 
         db.collection("User")
@@ -466,4 +603,6 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
 }

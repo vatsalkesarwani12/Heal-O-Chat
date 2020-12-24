@@ -82,6 +82,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
+        MessageModel chat = list.get(position);
 
         if (list.get(position).getMssg().length() > 1) {
             ((TextViewHolder) holder).mssg.setText(list.get(position).getMssg().trim() + "        ");  //8 spaces
@@ -205,6 +206,68 @@ public class MessageAdapter extends RecyclerView.Adapter {
                 }
             });
         }
+
+        if (position == list.size() - 1) {
+            if (chat.isIsseen()) {
+
+
+                    if (holder instanceof TextViewHolder) {
+                        try {
+                            ((TextViewHolder)holder).txtseen.setText("✔✔");
+
+                        ((TextViewHolder)holder).txtseen.setTextColor(Color.parseColor("#0565AE"));}catch (Exception e){
+                            Log.d("MessageADAPTER", "onBindViewHolder: "+e);
+                        }
+                    }
+                else if (holder instanceof ImageViewHolder) {
+                        try {
+                            ((ImageViewHolder)holder).txtseen.setText("✔✔");
+
+                            ((ImageViewHolder)holder).txtseen.setTextColor(Color.parseColor("#0565AE"));}catch (Exception e){
+                            Log.d("MessageADAPTER", "onBindViewHolder: "+e);
+                        }
+                }
+
+            }
+            else if (!chat.isIsseen()){
+                if (holder instanceof TextViewHolder) {
+                    try
+                    {
+                    ((TextViewHolder)holder).txtseen.setText("✔");
+                        ((TextViewHolder)holder).txtseen.setTextColor(Color.parseColor("#000000"));}catch (Exception e)
+                    {
+                        Log.d("ERROR", "onBindViewHolder: "+e);
+                    }}
+                else if (holder instanceof ImageViewHolder) {
+                    try
+                    {
+                        ((ImageViewHolder)holder).txtseen.setText("✔");
+                        ((ImageViewHolder)holder).txtseen.setTextColor(Color.parseColor("#000000"));}catch (Exception e)
+                    {
+                        Log.d("ERROR", "onBindViewHolder: "+e);
+                    }}
+
+            }
+        } else {
+            if (holder instanceof TextViewHolder) {
+
+                try
+                {
+                    ((TextViewHolder)holder).txtseen.setVisibility(View.GONE);}catch (Exception e)
+                {
+                    Log.d("ERROR", "onBindViewHolder: "+e);
+                }
+            }
+            else if (holder instanceof ImageViewHolder) {
+
+                try
+                {
+                    ((ImageViewHolder)holder).txtseen.setVisibility(View.GONE);}catch (Exception e)
+                {
+                    Log.d("ERROR", "onBindViewHolder: "+e);
+                }
+            }
+        }
     }
 
     @Override
@@ -214,18 +277,20 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
     public static class TextViewHolder extends RecyclerView.ViewHolder {
         private TextView mssg;
-        private TextView time;
+        private TextView time,txtseen;
 
         public TextViewHolder(@NonNull View itemView) {
             super(itemView);
             mssg = itemView.findViewById(R.id.mssg);
             time = itemView.findViewById(R.id.time);
+            txtseen = itemView.findViewById(R.id.isSent);
+
         }
     }
 
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
 
-        TextView time;
+        TextView time,txtseen;
         ImageView image;
 
         public ImageViewHolder(View itemView) {
@@ -233,12 +298,15 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
             this.time = itemView.findViewById(R.id.time);
             this.image = itemView.findViewById(R.id.image);
+            this.txtseen = itemView.findViewById(R.id.isSent);
+
         }
     }
 
     private void fetchChats(final int isImage, final int position) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(uid).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+       DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(uid).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+
 
         dr.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
