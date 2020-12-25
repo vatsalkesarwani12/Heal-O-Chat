@@ -2,6 +2,7 @@ package com.vatsal.kesarwani.therapy.Fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,16 +17,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Adapter.ChatAdapter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.ChatModel;
+import com.vatsal.kesarwani.therapy.Model.ChatModelDetails;
 import com.vatsal.kesarwani.therapy.R;
 import com.vatsal.kesarwani.therapy.Utility.ViewDialog;
 
@@ -33,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -55,8 +64,9 @@ public class ChatFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private ArrayList<ChatModel> list;
+    private ArrayList<ChatModelDetails> list2;
     private ChatAdapter adapter;
-    private Map<String,Object> map;
+    private Map<String, Object> map;
     private static final String TAG = "ChatFragment";
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView warn;
@@ -101,11 +111,10 @@ public class ChatFragment extends Fragment {
         // Inflate the layout for this fragment
         root = inflater.inflate(R.layout.fragment_chat, container, false);
 
-        dialog = new ViewDialog(getActivity());
         init(root);
 
-        fetchData(root);
-
+        //fetchData(root);
+        Log.e("this", "oncreate");
         /*swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);    //cause recycling error
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -120,11 +129,12 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        Log.e("this", "resume");
+        dialog = new ViewDialog(getActivity());
         fetchData(root);
     }
 
-    private void fetchData(final View root){
+    private void fetchData(final View root) {
         dialog.showDialog();
         list.clear();
         db.collection("User")
@@ -134,23 +144,23 @@ public class ChatFragment extends Fragment {
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             list.clear();
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
-                                map=document.getData();
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                map = document.getData();
                                 Log.d("IDCollection", document.getId());
-                                if(!(boolean)map.get("Block")) {
+                                if (!(boolean) map.get("Block")) {
                                     long time = 0;
-                                    if(map.containsKey("time")){
+                                    if (map.containsKey("time")) {
                                         time = Long.parseLong(String.valueOf(map.get("time")));
                                     }
-                                    if(map.containsKey("chats")){
-                                        if(map.get("chats").equals(true)){
+                                    if (map.containsKey("chats")) {
+                                        if (map.get("chats").equals(true)) {
                                             list.add(new ChatModel(
                                                     document.getId(), time
                                             ));
                                         }
-                                    }else{
+                                    } else {
                                         list.add(new ChatModel(
                                                 document.getId(), time
                                         ));
@@ -158,18 +168,24 @@ public class ChatFragment extends Fragment {
                                 }
                             }
                             //swipeRefreshLayout.setRefreshing(false);
-                            if(list.size() == 0){
+                            if (list.size() == 0) {
                                 warn.setVisibility(View.VISIBLE);
-                            }
-                            else {
+                            } else {
                                 warn.setVisibility(View.GONE);
                             }
 
-                            updateList();
-                            adapter.notifyDataSetChanged();
+                            Collections.sort(list, new Comparator<ChatModel>() {
+                                @Override
+                                public int compare(ChatModel o1, ChatModel o2) {
+                                    return Long.compare(o2.getTime(), o1.getTime());
+                                }
+                            });
+
                             dialog.hideDialog();
-                        }
-                        else{
+
+                            list2.clear();
+                            fetch2();
+                        } else {
                             dialog.hideDialog();
                             Snackbar.make(root, "Error Fetching Data", Snackbar.LENGTH_LONG)
                                     .setAction("Try Again", new View.OnClickListener() {
@@ -184,31 +200,74 @@ public class ChatFragment extends Fragment {
                 });
     }
 
-    private void updateList() {
-        Collections.sort(list, new Comparator<ChatModel>() {
+    private void fetch2(){
+        List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        for(int i = 0; i < list.size(); i++){
+            tasks.add(db.collection("User").document(list.get(i).getMail()).get());
+        }
+
+        Task<List<DocumentSnapshot>> finalTask = Tasks.whenAllSuccess(tasks);
+        finalTask.addOnSuccessListener(new OnSuccessListener<List<DocumentSnapshot>>() {
             @Override
-            public int compare(ChatModel o1, ChatModel o2) {
-                return Long.compare(o2.getTime(), o1.getTime());
+            public void onSuccess(List<DocumentSnapshot> documentSnapshots) {
+                int j = 0;
+                for (DocumentSnapshot snapshot : documentSnapshots) {
+                    if (snapshot.exists()) {
+                        Map<String, Object> map = snapshot.getData();
+                        assert map != null;
+
+                        String sname = Objects.requireNonNull(map.get(AppConfig.NAME)).toString();
+                        String uid = Objects.requireNonNull(map.get(AppConfig.UID)).toString();
+                        String sex = Objects.requireNonNull(map.get(AppConfig.SEX).toString());
+                        final String[] dpLink = {""};
+                        String mail2 = list.get(j).getMail();
+                        j++;
+                        boolean online = (boolean) map.get(AppConfig.STATUS);
+
+                        StorageReference sr = FirebaseStorage.getInstance().getReference();
+                        String sdp = Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString();
+                        if (sdp.length() > 5) {
+                            try {
+                                sr.child(sdp)
+                                        .getDownloadUrl()
+                                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                dpLink[0] = String.valueOf(uri);
+                                            }
+                                        });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            dpLink[0] = "";
+                        }
+
+                        list2.add(new ChatModelDetails(sname, uid, sex, dpLink[0], mail2, online));
+                        adapter.notifyDataSetChanged();
+                    }
+                }
             }
         });
 
-        for(int i = 0; i < list.size(); i++){
-            Log.e("this", String.valueOf(list.get(i).getTime()));
-        }
     }
 
     private void init(View root) {
-        chatRecycle=root.findViewById(R.id.chat_recycler);
-        mAuth=FirebaseAuth.getInstance();
-        map=new HashMap<>();
-        db=FirebaseFirestore.getInstance();
-        list=new ArrayList<>();
+        chatRecycle = root.findViewById(R.id.chat_recycler);
+        mAuth = FirebaseAuth.getInstance();
+        map = new HashMap<>();
+        db = FirebaseFirestore.getInstance();
+        list = new ArrayList<>();
         list.clear();
-        adapter=new ChatAdapter(getContext(),list);
+        list2 = new ArrayList<>();
+        list2.clear();
+        adapter = new ChatAdapter(getContext(), list2);
         chatRecycle.setAdapter(adapter);
         //swipeRefreshLayout=root.findViewById(R.id.refreshChat);
-        warn=root.findViewById(R.id.warn_chat);
-        if(list.size() == 0){
+        warn = root.findViewById(R.id.warn_chat);
+        if (list.size() == 0) {
             warn.setVisibility(View.VISIBLE);
         }
     }
