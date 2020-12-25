@@ -17,10 +17,19 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.vatsal.kesarwani.therapy.Adapter.MyAdapter;
 import com.vatsal.kesarwani.therapy.Fragment.CureFragment;
+import com.vatsal.kesarwani.therapy.Model.MessageModel;
 import com.vatsal.kesarwani.therapy.R;
 import com.vatsal.kesarwani.therapy.Utility.Util;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainScreen extends AppCompatActivity {
 
@@ -36,12 +45,53 @@ public class MainScreen extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        final ArrayList<String> lis=new ArrayList<>();
 
         init();
-
         tabLayout.addTab(tabLayout.newTab().setText("Post"));
         tabLayout.addTab(tabLayout.newTab().setText("Cure"));
         tabLayout.addTab(tabLayout.newTab().setText("Chat"));
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int unread = 0;
+                for (DataSnapshot snapshot:dataSnapshot.getChildren()){
+                    MessageModel chatModel = snapshot.getValue(MessageModel.class);
+                    assert chatModel != null;
+                  try {
+                      if (chatModel.getReceiver().equals(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()) && !chatModel.isIsseen() && !lis.contains(chatModel.getSender())){
+                          unread++;
+                          lis.add(chatModel.getSender());
+                          Log.d("MAINSCREEN", "onDataChangeLIST: "+lis);
+
+                      }
+                      else{
+                          lis.clear();
+                      }
+                  }
+                  catch (Exception e){
+                      Log.d("MAINSCREEN", "onDataChange: "+e);
+                  }
+
+                }
+
+                if (unread==0){
+                    Objects.requireNonNull(tabLayout.getTabAt(2)).setText("Chat");
+                }
+                else{
+                    Objects.requireNonNull(tabLayout.getTabAt(2)).setText("["+unread+"]  Chat");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
         adapter = new MyAdapter(getSupportFragmentManager(), this, tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
 
@@ -58,12 +108,11 @@ public class MainScreen extends AppCompatActivity {
 
                     case 1:
                         viewPager.setCurrentItem(1);
-                        viewPager.getAdapter().notifyDataSetChanged();
+                        //viewPager.getAdapter().notifyDataSetChanged();
                         break;
 
                     case 2:
                         viewPager.setCurrentItem(2);
-                        viewPager.getAdapter().notifyDataSetChanged();
                         break;
                 }
             }
