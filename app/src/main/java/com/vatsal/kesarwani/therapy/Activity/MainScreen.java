@@ -108,12 +108,11 @@ public class MainScreen extends AppCompatActivity {
 
                     case 1:
                         viewPager.setCurrentItem(1);
-                        viewPager.getAdapter().notifyDataSetChanged();
+                        //viewPager.getAdapter().notifyDataSetChanged();
                         break;
 
                     case 2:
                         viewPager.setCurrentItem(2);
-                        viewPager.getAdapter().notifyDataSetChanged();
                         break;
                 }
             }
