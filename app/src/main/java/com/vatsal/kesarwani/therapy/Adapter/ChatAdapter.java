@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -67,9 +66,8 @@ public class ChatAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         final String sname = list.get(position).getName();
         final String uid = list.get(position).getUid();
-        final String sex = list.get(position).getSex();
-        final String dpLink = list.get(position).getDp();
-
+        String sex = list.get(position).getSex();
+        String dpLink = list.get(position).getDp();
         final String mail = list.get(position).getMail();
         final boolean online = list.get(position).isOnline();
 
@@ -77,32 +75,13 @@ public class ChatAdapter extends RecyclerView.Adapter {
             ((ON_ViewHolder) holder).profname.setText(sname);
 
             if (dpLink.length() > 1) {
-
-                StorageReference sr= FirebaseStorage.getInstance().getReference();
                 try {
-                    sr.child(dpLink)
-                            .getDownloadUrl()
-                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-
-                                    Glide.with(context.getApplicationContext())
-                                            .load(uri)
-                                            .into(((ON_ViewHolder) holder).dp);
-                                }
-                            });
-                }
-                catch (Exception e){
+                    Glide.with(context.getApplicationContext())
+                            .load(dpLink)
+                            .into(((ON_ViewHolder) holder).dp);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-//                try {
-//
-//                    Glide.with(context.getApplicationContext())
-//                            .load(dpLink)
-//                            .into(((ON_ViewHolder) holder).dp);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
             } else {
                 if (Objects.equals(sex, "Male")) {
                     Glide.with(context.getApplicationContext())
@@ -118,31 +97,13 @@ public class ChatAdapter extends RecyclerView.Adapter {
             ((OFF_ViewHolder) holder).profname.setText(sname);
 
             if (dpLink.length() > 1) {
-
-                StorageReference sr= FirebaseStorage.getInstance().getReference();
                 try {
-                    sr.child(dpLink)
-                            .getDownloadUrl()
-                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    Glide.with(context.getApplicationContext())
-                                            .load(uri)
-                                            .into(((OFF_ViewHolder) holder).dp);
-                                }
-                            });
-                }
-                catch (Exception e){
+                    Glide.with(context.getApplicationContext())
+                            .load(dpLink)
+                            .into(((OFF_ViewHolder) holder).dp);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-//                try {
-//                    Glide.with(context.getApplicationContext())
-//                            .load(dpLink)
-//                            .into(((OFF_ViewHolder) holder).dp);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
             } else {
                 if (Objects.equals(sex, "Male")) {
                     Glide.with(context.getApplicationContext())
@@ -164,9 +125,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
                 intent.putExtra("mail",mail);
                 intent.putExtra("name", sname);
                 intent.putExtra("uid",uid);
-                intent.putExtra("dp",dpLink);
                 intent.putExtra("online",online);
-                intent.putExtra("sex",sex);
                 final boolean[] status = new boolean[1];
                 FirebaseFirestore.getInstance().collection("User")
                         .document(mail)
