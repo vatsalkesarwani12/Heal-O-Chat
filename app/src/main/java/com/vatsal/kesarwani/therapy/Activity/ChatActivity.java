@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -60,6 +62,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
 
 public class ChatActivity extends AppCompatActivity {
@@ -85,12 +88,15 @@ public class ChatActivity extends AppCompatActivity {
     private ValueEventListener valueEventListener;
     private boolean status;
     private View v;
-    private String filePath;
+    private String filePath,dp,sex;
     private File file;
     private Uri uri;
+    private TextView username,online;
+    private CircleImageView userdp;
     private Intent intent2;
     private String sc;
     private boolean canCall= false;
+    private boolean isonline=false;
     private ViewDialog dialog;
     ValueEventListener seenListener,listener1,listener2;
 
@@ -105,9 +111,51 @@ public class ChatActivity extends AppCompatActivity {
 
         dialog = new ViewDialog(this);
         init();
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        username = findViewById(R.id.username);
+        username.setText(name);
+        userdp = findViewById(R.id.profile_image);
+        online = findViewById(R.id.Onlineuser);
+        if (isonline){
+            online.setText("online");
+        }else
+        {
+            online.setText("offline");
+        }
+        if (dp.length() > 1) {
+            StorageReference sr= FirebaseStorage.getInstance().getReference();
+            try {
+                sr.child(dp)
+                        .getDownloadUrl()
+                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Glide.with(getApplicationContext())
+                                        .load(uri)
+                                        .into(userdp);
+                            }
+                        });
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+//
+        } else {
+            if (Objects.equals(sex, "Male")) {
+                Glide.with(getApplicationContext())
+                        .load(R.drawable.ic_male)
+                        .into(userdp);
+            } else {
+                Glide.with(getApplicationContext())
+                        .load(R.drawable.ic_female)
+                        .into(userdp);
+            }
+        }
 
+        //Objects.requireNonNull(getSupportActionBar()).setTitle(name);
 
-        Objects.requireNonNull(getSupportActionBar()).setTitle(name);
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -567,6 +615,9 @@ public class ChatActivity extends AppCompatActivity {
         mail = intent.getStringExtra("mail");
         name = intent.getStringExtra("name");
         uid = intent.getStringExtra("uid");
+        dp = intent.getStringExtra("dp");
+        sex = intent.getStringExtra("sex");
+        isonline = intent.getBooleanExtra("online",false);
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         send = findViewById(R.id.send);

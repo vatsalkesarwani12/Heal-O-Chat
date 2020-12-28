@@ -4,6 +4,7 @@
     package="com.vatsal.kesarwani.therapy">
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -23,6 +24,7 @@
             android:parentActivityName=".Activity.Setting" />
         <activity
             android:name=".Activity.ChatActivity"
+            android:theme="@style/AppThemeNoActionBar"
             android:parentActivityName=".Activity.MainScreen"
             android:windowSoftInputMode="adjustResize" />
         <activity
