@@ -186,6 +186,7 @@ public class AddPost extends AppCompatActivity {
         map.put(AppConfig.UID,uid);
         map.put(AppConfig.REPORT,0);
         map.put(AppConfig.PROFILE_DISPLAY,pf_display);
+        map.put(AppConfig.TIME, Calendar.getInstance().getTimeInMillis());
         sr.child("Images/"+name+"/"+uri.getLastPathSegment())
                 .putFile(uri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -202,7 +203,6 @@ public class AddPost extends AppCompatActivity {
                                         m.put(AppConfig.TIME,getDate());
                                         m.put(AppConfig.TRACKNAME,"You Added post");
                                         new Util().track(m);
-
 
                                         Toasty.success(AddPost.this,"Post Uploaded",Toast.LENGTH_SHORT).show();
                                         startActivity(new Intent(getApplicationContext(),MainScreen.class));

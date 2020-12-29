@@ -38,6 +38,8 @@ import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -192,6 +194,10 @@ public class Profile extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 Map<String,Object> map=document.getData();
+                                long timeinmilli = 0;
+                                if(map.containsKey(AppConfig.TIME)){
+                                    timeinmilli = Long.parseLong(Objects.requireNonNull(map.get(AppConfig.TIME)).toString());
+                                }
                                 list.add(new PostModel(Objects.requireNonNull(map.get(AppConfig.POST_IMAGE)).toString(),
                                         Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.LIKES)).toString()),
                                         Objects.requireNonNull(map.get(AppConfig.POST_DESCRIPTION)).toString(),
@@ -201,8 +207,15 @@ public class Profile extends AppCompatActivity {
                                         Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
                                         Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
                                         Objects.requireNonNull(map.get(AppConfig.UID)).toString(),
-                                        Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.REPORT)).toString())));
+                                        Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.REPORT)).toString()),
+                                        timeinmilli));
                             }
+                            Collections.sort(list, new Comparator<PostModel>() {
+                                @Override
+                                public int compare(PostModel o1, PostModel o2) {
+                                    return Long.compare(o2.getTime(), o1.getTime());
+                                }
+                            });
                             adapter.notifyDataSetChanged();
                         }
                     }
