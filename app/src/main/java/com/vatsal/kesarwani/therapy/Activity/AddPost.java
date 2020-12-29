@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -66,7 +67,7 @@ public class AddPost extends AppCompatActivity {
     private Switch postLater;
     private TextView info;
     private View rootview;
-    private int a = 1;
+    private boolean visibility_post = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +77,14 @@ public class AddPost extends AppCompatActivity {
 
         init();
 
-        postLater.setOnClickListener(new View.OnClickListener() {
+        postLater.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if (postLater.isChecked()) {
-                    a = 0;
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    visibility_post = false;
                     info.setVisibility(View.VISIBLE);
-                } else {
-                    a = 1;
+                }else{
+                    visibility_post = true;
                     info.setVisibility(View.GONE);
                 }
             }
@@ -175,14 +176,13 @@ public class AddPost extends AppCompatActivity {
     }
 
     private void dataUpload() {
-        boolean bool = postVisibility();
         sdes = desc.getText().toString();
         uri = Uri.fromFile(file);
         final Map<String, Object> map = new HashMap<>();
         map.put(AppConfig.POST_DESCRIPTION, sdes);
         map.put(AppConfig.POST_BY, Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()));
         map.put(AppConfig.LIKES, 0);
-        map.put(AppConfig.VISIBLE, bool);
+        map.put(AppConfig.VISIBLE, visibility_post);
         map.put(AppConfig.NAME, name);
         map.put(AppConfig.UID, uid);
         map.put(AppConfig.REPORT, 0);
@@ -252,13 +252,6 @@ public class AddPost extends AppCompatActivity {
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy");
         String strDate = formatter.format(currentTime);
         return strDate;
-    }
-
-    private boolean postVisibility() {
-        if (a == 1)
-            return true;
-        else
-            return false;
     }
 
     private void init() {
