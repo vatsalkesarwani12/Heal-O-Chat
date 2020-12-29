@@ -228,24 +228,24 @@ public class ChatFragment extends Fragment {
 
                         StorageReference sr = FirebaseStorage.getInstance().getReference();
                         String sdp = Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString();
-                        if (sdp.length() > 5) {
-                            try {
-                                sr.child(sdp)
-                                        .getDownloadUrl()
-                                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                            @Override
-                                            public void onSuccess(Uri uri) {
-                                                dpLink[0] = String.valueOf(uri);
-                                            }
-                                        });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            dpLink[0] = "";
-                        }
+//                        if (sdp.length() > 5) {
+//                            try {
+//                                sr.child(sdp)
+//                                        .getDownloadUrl()
+//                                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                                            @Override
+//                                            public void onSuccess(Uri uri) {
+//                                                dpLink[0] = String.valueOf(uri);
+//                                            }
+//                                        });
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        } else {
+//                            dpLink[0] = "";
+//                        }
 
-                        list2.add(new ChatModelDetails(sname, uid, sex, dpLink[0], mail2, online));
+                        list2.add(new ChatModelDetails(sname, uid, sex, sdp, mail2, online));
                         adapter.notifyDataSetChanged();
                     }
                 }

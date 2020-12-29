@@ -23,6 +23,7 @@
             android:parentActivityName=".Activity.Setting" />
         <activity
             android:name=".Activity.ChatActivity"
+            android:theme="@style/AppThemeNoActionBar"
             android:parentActivityName=".Activity.MainScreen"
             android:windowSoftInputMode="adjustResize" />
         <activity
