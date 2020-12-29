@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -50,7 +51,7 @@ import java.util.Objects;
 import es.dmoral.toasty.Toasty;
 
 public class AddPost extends AppCompatActivity {
-    
+
     private StorageReference sr;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -61,11 +62,12 @@ public class AddPost extends AppCompatActivity {
     private String filePath;
     private File file;
     private Uri uri;
-    private String name,uid,pf_display;
+    private String name, uid, pf_display;
     private SharedPreferences sharedPreferences;
     private Switch postLater;
     private TextView info;
     private View rootview;
+    private boolean visibility_post = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,15 +77,16 @@ public class AddPost extends AppCompatActivity {
 
         init();
 
-        postLater.setOnClickListener(new View.OnClickListener() {
+        postLater.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if(postLater.isChecked())
-                {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    visibility_post = false;
                     info.setVisibility(View.VISIBLE);
-                }
-                else
+                }else{
+                    visibility_post = true;
                     info.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -101,18 +104,17 @@ public class AddPost extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             assert document != null;
-                            if (document.exists()){
-                                Map<String,Object> map=document.getData();
+                            if (document.exists()) {
+                                Map<String, Object> map = document.getData();
                                 assert map != null;
-                                name= Objects.requireNonNull(map.get(AppConfig.NAME)).toString();
-                                pf_display= Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString();
-                                uid= Objects.requireNonNull(map.get(AppConfig.UID)).toString();
+                                name = Objects.requireNonNull(map.get(AppConfig.NAME)).toString();
+                                pf_display = Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString();
+                                uid = Objects.requireNonNull(map.get(AppConfig.UID)).toString();
                             }
-                        }
-                        else{
+                        } else {
                             Snackbar.make(rootview, "Error Fetching Data " + task.getException(), Snackbar.LENGTH_LONG)
                                     .show();
                         }
@@ -129,7 +131,7 @@ public class AddPost extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (file==null) {
+                if (file == null) {
                     Snackbar.make(post, "Select a Image to Post", Snackbar.LENGTH_LONG).show();
                     return;
                 }
@@ -144,9 +146,9 @@ public class AddPost extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ImagePicker.Companion.with(AddPost.this)
-                        .crop()	    			//Crop image(Optional), Check Customization for more option
-                        .compress(1024)			//Final image size will be less than 1 MB(Optional)
-                        .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
+                        .crop()                    //Crop image(Optional), Check Customization for more option
+                        .compress(1024)            //Final image size will be less than 1 MB(Optional)
+                        .maxResultSize(1080, 1080)    //Final image resolution will be less than 1080 x 1080(Optional)
                         .start();
             }
         });
@@ -174,38 +176,37 @@ public class AddPost extends AppCompatActivity {
     }
 
     private void dataUpload() {
-        boolean bool = postVisibility();
-        sdes=desc.getText().toString();
-        uri=Uri.fromFile(file);
-        final Map<String,Object> map=new HashMap<>();
-        map.put(AppConfig.POST_DESCRIPTION,sdes);
-        map.put(AppConfig.POST_BY,Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()));
-        map.put(AppConfig.LIKES,0);
-        map.put(AppConfig.VISIBLE,bool);
-        map.put(AppConfig.NAME,name);
-        map.put(AppConfig.UID,uid);
-        map.put(AppConfig.REPORT,0);
-        map.put(AppConfig.PROFILE_DISPLAY,pf_display);
+        sdes = desc.getText().toString();
+        uri = Uri.fromFile(file);
+        final Map<String, Object> map = new HashMap<>();
+        map.put(AppConfig.POST_DESCRIPTION, sdes);
+        map.put(AppConfig.POST_BY, Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()));
+        map.put(AppConfig.LIKES, 0);
+        map.put(AppConfig.VISIBLE, visibility_post);
+        map.put(AppConfig.NAME, name);
+        map.put(AppConfig.UID, uid);
+        map.put(AppConfig.REPORT, 0);
+        map.put(AppConfig.PROFILE_DISPLAY, pf_display);
         map.put(AppConfig.TIME, Calendar.getInstance().getTimeInMillis());
-        sr.child("Images/"+name+"/"+uri.getLastPathSegment())
+        sr.child("Images/" + name + "/" + uri.getLastPathSegment())
                 .putFile(uri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        map.put(AppConfig.POST_IMAGE,"Images/"+name+"/"+uri.getLastPathSegment());
+                        map.put(AppConfig.POST_IMAGE, "Images/" + name + "/" + uri.getLastPathSegment());
                         db.collection("Posts")
                                 .add(map)
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
                                         //update track
-                                        Map<String,Object> m = new HashMap<>();
-                                        m.put(AppConfig.TIME,getDate());
-                                        m.put(AppConfig.TRACKNAME,"You Added post");
+                                        Map<String, Object> m = new HashMap<>();
+                                        m.put(AppConfig.TIME, getDate());
+                                        m.put(AppConfig.TRACKNAME, "You Added post");
                                         new Util().track(m);
 
-                                        Toasty.success(AddPost.this,"Post Uploaded",Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(getApplicationContext(),MainScreen.class));
+                                        Toasty.success(AddPost.this, "Post Uploaded", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(getApplicationContext(), MainScreen.class));
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
@@ -246,41 +247,22 @@ public class AddPost extends AppCompatActivity {
         post.setEnabled(true);
     }
 
-    private String getDate(){
+    private String getDate() {
         Date currentTime = Calendar.getInstance().getTime();
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy");
-        String strDate= formatter.format(currentTime);
+        String strDate = formatter.format(currentTime);
         return strDate;
     }
 
-    private boolean postVisibility()
-    {
-        final int[] a = new int[1];
-        postLater.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(postLater.isChecked())
-                    a[0] =0;
-                else
-                    a[0] =1;
-            }
-        });
-
-        if(a[0]==1)
-            return true;
-        else
-            return false;
-    }
-
-    private void init(){
+    private void init() {
         rootview = findViewById(R.id.rootview);
-        sr=FirebaseStorage.getInstance().getReference();
-        mAuth=FirebaseAuth.getInstance();
-        db=FirebaseFirestore.getInstance();
-        desc=findViewById(R.id.post_desc);
-        post=findViewById(R.id.post);
-        postView=findViewById(R.id.image);
-        sharedPreferences =getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
+        sr = FirebaseStorage.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        desc = findViewById(R.id.post_desc);
+        post = findViewById(R.id.post);
+        postView = findViewById(R.id.image);
+        sharedPreferences = getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
         postLater = findViewById(R.id.postLater);
         info = findViewById(R.id.info);
     }
