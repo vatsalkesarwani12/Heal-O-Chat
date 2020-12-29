@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,6 +92,7 @@ public class ChatActivity extends AppCompatActivity {
     private String filePath,dp,sex;
     private File file;
     private Uri uri;
+    private LinearLayout userprofile;
     private TextView username,online;
     private CircleImageView userdp;
     private Intent intent2;
@@ -116,8 +118,19 @@ public class ChatActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         username = findViewById(R.id.username);
         username.setText(name);
+        userprofile= findViewById(R.id.userprofile);
         userdp = findViewById(R.id.profile_image);
         online = findViewById(R.id.Onlineuser);
+        userprofile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),CureProfile.class);
+                intent.putExtra("mail",mail);
+                intent.putExtra("name",name);
+                intent.putExtra("uid",uid);
+                startActivity(intent);
+            }
+        });
         if (isonline){
             online.setText("online");
         }else
@@ -415,13 +428,13 @@ public class ChatActivity extends AppCompatActivity {
             attachPicture();
             return true;
         }
-        else if(item.getItemId() == R.id.profile){
-            Intent intent = new Intent(getApplicationContext(),CureProfile.class);
-            intent.putExtra("mail",mail);
-            intent.putExtra("name",name);
-            intent.putExtra("uid",uid);
-            startActivity(intent);
-        }
+//        else if(item.getItemId() == R.id.profile){
+//            Intent intent = new Intent(getApplicationContext(),CureProfile.class);
+//            intent.putExtra("mail",mail);
+//            intent.putExtra("name",name);
+//            intent.putExtra("uid",uid);
+//            startActivity(intent);
+//        }
         else if(item.getItemId() == R.id.call){
             AlertDialog.Builder builder =new AlertDialog.Builder(this);
             builder.setTitle("Call");
