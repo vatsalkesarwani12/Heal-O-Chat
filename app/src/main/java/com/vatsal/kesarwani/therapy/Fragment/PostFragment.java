@@ -2,6 +2,7 @@ package com.vatsal.kesarwani.therapy.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Activity.AddPost;
 import com.vatsal.kesarwani.therapy.Adapter.PostAdapter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
+import com.vatsal.kesarwani.therapy.Model.ChatModel;
 import com.vatsal.kesarwani.therapy.Model.PostModel;
 import com.vatsal.kesarwani.therapy.R;
 import com.vatsal.kesarwani.therapy.Utility.App;
@@ -35,6 +37,7 @@ import com.vatsal.kesarwani.therapy.Utility.ViewDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -147,6 +150,10 @@ public class PostFragment extends Fragment {
                                                 .document(document.getId())
                                                 .update(mm);
                                     }else {
+                                        long timeinmilli = 0;
+                                        if(map.containsKey(AppConfig.TIME)){
+                                            timeinmilli = Long.parseLong(Objects.requireNonNull(map.get(AppConfig.TIME)).toString());
+                                        }
                                         list.add(new PostModel(Objects.requireNonNull(map.get(AppConfig.POST_IMAGE)).toString(),
                                                 Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.LIKES)).toString()),
                                                 Objects.requireNonNull(map.get(AppConfig.POST_DESCRIPTION)).toString(),
@@ -156,12 +163,21 @@ public class PostFragment extends Fragment {
                                                 Objects.requireNonNull(map.get(AppConfig.NAME)).toString(),
                                                 Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString(),
                                                 Objects.requireNonNull(map.get(AppConfig.UID)).toString(),
-                                                Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.REPORT)).toString())));
+                                                Integer.parseInt(Objects.requireNonNull(map.get(AppConfig.REPORT)).toString()),
+                                                timeinmilli));
                                     }
                                 }
                             }
                             dialog.hideDialog();
-                            Collections.shuffle(list);
+                            Log.e("this", String.valueOf(list.size()));
+
+                            Collections.sort(list, new Comparator<PostModel>() {
+                                @Override
+                                public int compare(PostModel o1, PostModel o2) {
+                                    return Long.compare(o2.getTime(), o1.getTime());
+                                }
+                            });
+
                             swipeRefreshLayout.setRefreshing(false);
                             adapter.notifyDataSetChanged();
                         }

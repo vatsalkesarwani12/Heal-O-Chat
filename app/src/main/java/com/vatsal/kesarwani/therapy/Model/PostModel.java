@@ -11,8 +11,9 @@ public class PostModel {
     private String profile_display;
     private String uid;
     private int report;
+    private long time;
 
-    public PostModel(String uri, int likes, String message, String by,String id,boolean clicked, String name, String profile_display, String uid, int report) {
+    public PostModel(String uri, int likes, String message, String by,String id,boolean clicked, String name, String profile_display, String uid, int report, long time) {
         this.uri = uri;
         this.likes = likes;
         this.message = message;
@@ -23,6 +24,15 @@ public class PostModel {
         this.profile_display= profile_display;
         this.uid= uid;
         this.report= report;
+        this.time = time;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public String getUri() {
