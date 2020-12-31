@@ -59,7 +59,7 @@ import java.util.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
 
-public class CureProfile extends Activity {
+public class CureProfile extends AppCompatActivity {
 
     private TextView name, age, sex, about, description;
     private ImageButton contact, message;
