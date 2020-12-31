@@ -10,6 +10,7 @@
     tools:context=".Activity.Profile">
 
     <include
+        android:id="@+id/include"
         layout="@layout/profile_template"/>
 
     <include layout="@layout/bottom_sheet" />
@@ -20,5 +21,7 @@
         android:layout_height="30dp"
         android:background="#00000000"
         app:srcCompat="?attr/actionModeCloseDrawable" />
+
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
