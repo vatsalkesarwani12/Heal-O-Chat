@@ -88,43 +88,79 @@ public class MessageAdapter extends RecyclerView.Adapter {
             ((TextViewHolder) holder).mssg.setText(list.get(position).getMssg().trim() + "        ");  //8 spaces
             ((TextViewHolder) holder).time.setText(list.get(position).getTime());
 
-            ((TextViewHolder) holder).mssg.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Select One")
-                            .setCancelable(true)
-                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    Toast.makeText(context, "Cancelled!", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setPositiveButton("Delete for Me", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                                    DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).child(list.get(position).getNodeKey());
-                                    dr.removeValue();
-                                    Log.e("this", String.valueOf(list.size()));
-                                    if (list.size() == 1) {
-                                        deleteEmail(1);
+            if (getItemViewType(position) == YOU) {
+                ((TextViewHolder) holder).mssg.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage("Select One")
+                                .setCancelable(true)
+                                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        Toast.makeText(context, "Cancelled!", Toast.LENGTH_SHORT).show();
                                     }
+                                })
+                                .setPositiveButton("Delete for Me", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                                        DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).child(list.get(position).getNodeKey());
+                                        dr.removeValue();
+                                        Log.e("this", String.valueOf(list.size()));
+                                        if (list.size() == 1) {
+                                            deleteEmail(1);
+                                        }
 
-                                    Toast.makeText(context, "Text Deleted from your chat.", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton("Delete for Everyone", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    fetchChats(0, position);
-                                }
-                            });
+                                        Toast.makeText(context, "Text Deleted from your chat.", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .setNegativeButton("Delete for Everyone", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        fetchChats(0, position);
+                                    }
+                                });
 
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                        AlertDialog alert = builder.create();
+                        alert.show();
 
-                    return true;
-                }
-            });
+                        return true;
+                    }
+                });
+            } else if (getItemViewType(position) == OTHER) {
+                ((TextViewHolder) holder).mssg.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage("Select One")
+                                .setCancelable(true)
+                                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        Toast.makeText(context, "Cancelled!", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .setPositiveButton("Delete for Me", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                                        DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).child(list.get(position).getNodeKey());
+                                        dr.removeValue();
+                                        Log.e("this", String.valueOf(list.size()));
+                                        if (list.size() == 1) {
+                                            deleteEmail(1);
+                                        }
+
+                                        Toast.makeText(context, "Text Deleted from your chat.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+
+                        return true;
+                    }
+                });
+            }
         } else {
             final Dialog dialog = new Dialog(context);
             dialog.setContentView(R.layout.dialog_image_layout);
@@ -133,9 +169,8 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
             try {
                 ((ImageViewHolder) holder).time.setText(list.get(position).getTime());
-            }
-            catch (Exception e){
-                Log.d("ERROR", "onBindViewHolder: "+e);
+            } catch (Exception e) {
+                Log.d("ERROR", "onBindViewHolder: " + e);
             }
             StorageReference sr = FirebaseStorage.getInstance().getReference();
             try {
@@ -167,104 +202,135 @@ public class MessageAdapter extends RecyclerView.Adapter {
                     dialog.show();
                 }
             });
-
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Select One")
-                            .setCancelable(true)
-                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    Toast.makeText(context, "Cancelled!", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setPositiveButton("Delete for Me", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    //removing node from realtime database
-                                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                                    DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).child(list.get(position).getNodeKey());
-                                    dr.removeValue();
-                                    //no need to remove image in case of delete for me
-                                    if (list.size() == 1) {
-                                        deleteEmail(1);
+            if (getItemViewType(position) == YOU_IMAGE) {
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage("Select One")
+                                .setCancelable(true)
+                                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        Toast.makeText(context, "Cancelled!", Toast.LENGTH_SHORT).show();
                                     }
-                                    Toast.makeText(context, "Image Deleted from your chat.", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton("Delete for Everyone", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    fetchChats(1, position);
-                                }
-                            });
+                                })
+                                .setPositiveButton("Delete for Me", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //removing node from realtime database
+                                        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                                        DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).child(list.get(position).getNodeKey());
+                                        dr.removeValue();
+                                        //no need to remove image in case of delete for me
+                                        if (list.size() == 1) {
+                                            deleteEmail(1);
+                                        }
+                                        Toast.makeText(context, "Image Deleted from your chat.", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .setNegativeButton("Delete for Everyone", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        fetchChats(1, position);
+                                    }
+                                });
 
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                        AlertDialog alert = builder.create();
+                        alert.show();
 
-                    return true;
-                }
-            });
+                        return true;
+                    }
+                });
+            } else if (getItemViewType(position) == OTHER_IMAGE) {
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage("Select One")
+                                .setCancelable(true)
+                                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        Toast.makeText(context, "Cancelled!", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .setPositiveButton("Delete for Me", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //removing node from realtime database
+                                        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                                        DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(uid).child(list.get(position).getNodeKey());
+                                        dr.removeValue();
+                                        //no need to remove image in case of delete for me
+                                        if (list.size() == 1) {
+                                            deleteEmail(1);
+                                        }
+                                        Toast.makeText(context, "Image Deleted from your chat.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+
+                        return true;
+                    }
+                });
+            }
         }
 
         if (position == list.size() - 1) {
             if (chat.isIsseen()) {
 
 
-                    if (holder instanceof TextViewHolder) {
-                        try {
-                            ((TextViewHolder)holder).txtseen.setText("✔✔");
+                if (holder instanceof TextViewHolder) {
+                    try {
+                        ((TextViewHolder) holder).txtseen.setText("✔✔");
 
-                        ((TextViewHolder)holder).txtseen.setTextColor(Color.parseColor("#0565AE"));}catch (Exception e){
-                            Log.d("MessageADAPTER", "onBindViewHolder: "+e);
-                        }
+                        ((TextViewHolder) holder).txtseen.setTextColor(Color.parseColor("#0565AE"));
+                    } catch (Exception e) {
+                        Log.d("MessageADAPTER", "onBindViewHolder: " + e);
                     }
-                else if (holder instanceof ImageViewHolder) {
-                        try {
-                            ((ImageViewHolder)holder).txtseen.setText("✔✔");
+                } else if (holder instanceof ImageViewHolder) {
+                    try {
+                        ((ImageViewHolder) holder).txtseen.setText("✔✔");
 
-                            ((ImageViewHolder)holder).txtseen.setTextColor(Color.parseColor("#0565AE"));}catch (Exception e){
-                            Log.d("MessageADAPTER", "onBindViewHolder: "+e);
-                        }
+                        ((ImageViewHolder) holder).txtseen.setTextColor(Color.parseColor("#0565AE"));
+                    } catch (Exception e) {
+                        Log.d("MessageADAPTER", "onBindViewHolder: " + e);
+                    }
                 }
 
-            }
-            else if (!chat.isIsseen()){
+            } else if (!chat.isIsseen()) {
                 if (holder instanceof TextViewHolder) {
-                    try
-                    {
-                    ((TextViewHolder)holder).txtseen.setText("✔");
-                        ((TextViewHolder)holder).txtseen.setTextColor(Color.parseColor("#000000"));}catch (Exception e)
-                    {
-                        Log.d("ERROR", "onBindViewHolder: "+e);
-                    }}
-                else if (holder instanceof ImageViewHolder) {
-                    try
-                    {
-                        ((ImageViewHolder)holder).txtseen.setText("✔");
-                        ((ImageViewHolder)holder).txtseen.setTextColor(Color.parseColor("#000000"));}catch (Exception e)
-                    {
-                        Log.d("ERROR", "onBindViewHolder: "+e);
-                    }}
+                    try {
+                        ((TextViewHolder) holder).txtseen.setText("✔");
+                        ((TextViewHolder) holder).txtseen.setTextColor(Color.parseColor("#000000"));
+                    } catch (Exception e) {
+                        Log.d("ERROR", "onBindViewHolder: " + e);
+                    }
+                } else if (holder instanceof ImageViewHolder) {
+                    try {
+                        ((ImageViewHolder) holder).txtseen.setText("✔");
+                        ((ImageViewHolder) holder).txtseen.setTextColor(Color.parseColor("#000000"));
+                    } catch (Exception e) {
+                        Log.d("ERROR", "onBindViewHolder: " + e);
+                    }
+                }
 
             }
         } else {
             if (holder instanceof TextViewHolder) {
 
-                try
-                {
-                    ((TextViewHolder)holder).txtseen.setVisibility(View.GONE);}catch (Exception e)
-                {
-                    Log.d("ERROR", "onBindViewHolder: "+e);
+                try {
+                    ((TextViewHolder) holder).txtseen.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    Log.d("ERROR", "onBindViewHolder: " + e);
                 }
-            }
-            else if (holder instanceof ImageViewHolder) {
+            } else if (holder instanceof ImageViewHolder) {
 
-                try
-                {
-                    ((ImageViewHolder)holder).txtseen.setVisibility(View.GONE);}catch (Exception e)
-                {
-                    Log.d("ERROR", "onBindViewHolder: "+e);
+                try {
+                    ((ImageViewHolder) holder).txtseen.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    Log.d("ERROR", "onBindViewHolder: " + e);
                 }
             }
         }
@@ -277,7 +343,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
     public static class TextViewHolder extends RecyclerView.ViewHolder {
         private TextView mssg;
-        private TextView time,txtseen;
+        private TextView time, txtseen;
 
         public TextViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -290,7 +356,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
 
-        TextView time,txtseen;
+        TextView time, txtseen;
         ImageView image;
 
         public ImageViewHolder(View itemView) {
@@ -305,7 +371,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
     private void fetchChats(final int isImage, final int position) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-       DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(uid).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+        DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(uid).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
 
 
         dr.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -356,9 +422,9 @@ public class MessageAdapter extends RecyclerView.Adapter {
                 }
                 if (list.size() == 1 && list2.size() == 1) {
                     deleteEmail(2);
-                }else if(list.size() == 1){
+                } else if (list.size() == 1) {
                     deleteEmail(3);
-                }else if(list2.size() == 2){
+                } else if (list2.size() == 2) {
                     deleteEmail(4);
                 }
                 Toast.makeText(context, "Deleted for everyone!", Toast.LENGTH_SHORT).show();
@@ -376,8 +442,8 @@ public class MessageAdapter extends RecyclerView.Adapter {
         Log.e("this2", String.valueOf(list2.size()));
         if (i == 1) {
             Map<String, Object> map = new HashMap<>();
-            map.put("first",1);
-            map.put("Block",false);
+            map.put("first", 1);
+            map.put("Block", false);
             map.put("chats", false);
             map.put("time", 0);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -389,10 +455,10 @@ public class MessageAdapter extends RecyclerView.Adapter {
                     .set(map);
             Intent intent = new Intent(context, MainScreen.class);
             context.startActivity(intent);
-        }else if(i == 2){
+        } else if (i == 2) {
             Map<String, Object> map = new HashMap<>();
-            map.put("first",1);
-            map.put("Block",false);
+            map.put("first", 1);
+            map.put("Block", false);
             map.put("chats", false);
             map.put("time", 0);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -412,10 +478,10 @@ public class MessageAdapter extends RecyclerView.Adapter {
                     .set(map);
             Intent intent = new Intent(context, MainScreen.class);
             context.startActivity(intent);
-        }else if(i == 3){
+        } else if (i == 3) {
             Map<String, Object> map = new HashMap<>();
-            map.put("first",1);
-            map.put("Block",false);
+            map.put("first", 1);
+            map.put("Block", false);
             map.put("chats", false);
             map.put("time", 0);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -428,10 +494,10 @@ public class MessageAdapter extends RecyclerView.Adapter {
                     .set(map);
             Intent intent = new Intent(context, MainScreen.class);
             context.startActivity(intent);
-        }else if(i == 4){
+        } else if (i == 4) {
             Map<String, Object> map = new HashMap<>();
-            map.put("first",1);
-            map.put("Block",false);
+            map.put("first", 1);
+            map.put("Block", false);
             map.put("chats", false);
             map.put("time", 0);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
