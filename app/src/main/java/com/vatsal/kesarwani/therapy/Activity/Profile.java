@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -59,12 +61,13 @@ public class Profile extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private static final String TAG = "Profile";
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences,pref;
     private Intent intent;
     private RecyclerView bottomRecycle;
     private BotttomAdapter adapter;
     private List<PostModel> list;
     private ImageButton back;
+    private ImageView expanded;
     private View rootview;
 
     @Override
@@ -76,6 +79,44 @@ public class Profile extends AppCompatActivity {
         init();
         progressBar.setVisibility(View.VISIBLE);
         profile.setVisibility(View.GONE);
+
+        profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                expanded.setVisibility(View.VISIBLE);
+                expanded.requestFocus();
+                String channel = (pref.getString("DP", ""));
+                assert channel != null;
+                if (channel.equals("1")){
+                    Glide.with(Profile.this)
+                            .load(R.drawable.ic_male)
+                            .into(expanded);}
+                else if (channel.equals("2")){
+                    Glide.with(Profile.this)
+                            .load(R.drawable.ic_female)
+                            .into(expanded);}
+                else {
+                    Glide.with(Profile.this)
+                            .load(channel)
+                            .into(expanded);
+                }
+
+
+            }
+        });
+        expanded.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (expanded.getVisibility()==View.VISIBLE){
+                    expanded.setVisibility(View.INVISIBLE);}
+
+
+
+                }
+            });
+
+
+
         profileData.setVisibility(View.GONE);
         editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,6 +193,10 @@ public class Profile extends AppCompatActivity {
                                                     Glide.with(Profile.this)
                                                             .load(uri)
                                                             .into(profile);
+                                                    SharedPreferences.Editor editor = pref.edit();
+                                                    editor.putString("DP", String.valueOf(uri));
+                                                    editor.commit();
+                                                    editor.apply();
 
                                                     Glide.with(Profile.this)
                                                             .load(uri)
@@ -163,9 +208,17 @@ public class Profile extends AppCompatActivity {
                                 else {
                                     if(Objects.requireNonNull(map.get(AppConfig.SEX)).toString().equals("Male")){
                                         profile.setImageDrawable(getResources().getDrawable(R.drawable.ic_male));
+                                        SharedPreferences.Editor editor = pref.edit();
+                                        editor.putString("DP", "1");
+                                        editor.commit();
+                                        editor.apply();
                                     }
                                     else if (Objects.requireNonNull(map.get(AppConfig.SEX)).toString().equals("Female")){
                                         profile.setImageDrawable(getResources().getDrawable(R.drawable.ic_female));
+                                        SharedPreferences.Editor editor = pref.edit();
+                                        editor.putString("DP", "2");
+                                        editor.commit();
+                                        editor.apply();
                                     }
                                     intent.putExtra(AppConfig.POST_IMAGE,"");
                                 }
@@ -238,6 +291,7 @@ public class Profile extends AppCompatActivity {
         db=FirebaseFirestore.getInstance();
         mAuth=FirebaseAuth.getInstance();
         sharedPreferences=getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
+        pref = getSharedPreferences("DP", Context.MODE_PRIVATE);
         intent=new Intent(getApplicationContext(),Editprofile.class);
         bottomRecycle=findViewById(R.id.postRecycler);
         RecyclerView.LayoutManager manager = new GridLayoutManager(this, 3);
@@ -246,6 +300,8 @@ public class Profile extends AppCompatActivity {
         adapter=new BotttomAdapter(this,list);
         bottomRecycle.setAdapter(adapter);
         back=findViewById(R.id.imBack);
+        expanded = findViewById(R.id.expanded_image);
+
     }
 
     @Override

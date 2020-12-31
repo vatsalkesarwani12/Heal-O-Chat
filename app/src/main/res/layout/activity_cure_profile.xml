@@ -10,9 +10,20 @@
     tools:context=".Activity.Profile">
 
     <include
-        layout="@layout/cure_template"/>
+        android:id="@+id/include2"
+        layout="@layout/cure_template" />
 
     <include
         layout="@layout/bottom_sheet"/>
+
+    <ImageView
+        android:id="@+id/expanded_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="30dp"
+        android:visibility="invisible"
+        android:background="@drawable/backgroundimage"
+        app:layout_anchor="@+id/include2"
+        app:layout_anchorGravity="center" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
