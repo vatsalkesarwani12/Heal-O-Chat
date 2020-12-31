@@ -1,6 +1,8 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -56,7 +59,7 @@ import java.util.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
 
-public class CureProfile extends AppCompatActivity {
+public class CureProfile extends Activity {
 
     private TextView name, age, sex, about, description;
     private ImageButton contact, message;
@@ -92,36 +95,39 @@ public class CureProfile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                expanded.setVisibility(View.VISIBLE);
-                expanded.requestFocus();
                 String channel = (preferences.getString("DP", ""));
-
                 assert channel != null;
-                if (channel.equals("1")){
-                Glide.with(CureProfile.this)
-                        .load(R.drawable.ic_male)
-                        .into(expanded);}
-                else if (channel.equals("2")){
-                    Glide.with(CureProfile.this)
-                            .load(R.drawable.ic_female)
-                            .into(expanded);}
-                else {
-                    Glide.with(CureProfile.this)
-                            .load(channel)
-                            .into(expanded);
+
+                final Dialog builder =new Dialog(CureProfile.this);
+                builder.setCancelable(true);
+                builder.setContentView(R.layout.dialog_view_user);
+
+                try {
+
+                    if (channel.equals("1")) {
+                        Glide.with(CureProfile.this)
+                                .load(R.drawable.ic_male)
+                                .into((ImageView) builder.findViewById(R.id.image_profile));
+                    } else if (channel.equals("2")) {
+                        Glide.with(CureProfile.this)
+                                .load(R.drawable.ic_female)
+                                .into((ImageView) builder.findViewById(R.id.image_profile));
+                    } else {
+                        Glide.with(CureProfile.this)
+                                .load(channel)
+                                .into((ImageView) builder.findViewById(R.id.image_profile));
+                    }
                 }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+                builder.show();
 
             }
         });
-        expanded.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (expanded.getVisibility()==View.VISIBLE){
-                    expanded.setVisibility(View.INVISIBLE);
-                }
 
-            }
-        });
 
         profileData.setVisibility(View.GONE);
         contact.setVisibility(View.GONE);
@@ -351,7 +357,7 @@ public class CureProfile extends AppCompatActivity {
         RecyclerView.LayoutManager manager = new GridLayoutManager(this, 3);
         bottomRecycle.setLayoutManager(manager);
         list=new ArrayList<>();
-        expanded = findViewById(R.id.expanded_image);
+
         adapter=new BotttomAdapter(this,list);
         bottomRecycle.setAdapter(adapter);
         preferences = getSharedPreferences("DP", Context.MODE_PRIVATE);

@@ -22,14 +22,6 @@
         android:background="#00000000"
         app:srcCompat="?attr/actionModeCloseDrawable" />
 
-    <ImageView
-        android:id="@+id/expanded_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:padding="30dp"
-        app:layout_anchor="@+id/include"
-        android:background="@drawable/backgroundimage"
-        app:layout_anchorGravity="center" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

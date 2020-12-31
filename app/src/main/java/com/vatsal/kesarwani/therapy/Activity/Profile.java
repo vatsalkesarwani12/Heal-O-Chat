@@ -1,5 +1,6 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -83,37 +84,39 @@ public class Profile extends AppCompatActivity {
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                expanded.setVisibility(View.VISIBLE);
-                expanded.requestFocus();
+
                 String channel = (pref.getString("DP", ""));
                 assert channel != null;
-                if (channel.equals("1")){
-                    Glide.with(Profile.this)
-                            .load(R.drawable.ic_male)
-                            .into(expanded);}
-                else if (channel.equals("2")){
-                    Glide.with(Profile.this)
-                            .load(R.drawable.ic_female)
-                            .into(expanded);}
-                else {
-                    Glide.with(Profile.this)
-                            .load(channel)
-                            .into(expanded);
+
+                final Dialog builder =new Dialog(Profile.this);
+                builder.setCancelable(true);
+                builder.setContentView(R.layout.dialog_view_user);
+
+                try {
+
+                    if (channel.equals("1")) {
+                        Glide.with(Profile.this)
+                                .load(R.drawable.ic_male)
+                                .into((ImageView) builder.findViewById(R.id.image_profile));
+                    } else if (channel.equals("2")) {
+                        Glide.with(Profile.this)
+                                .load(R.drawable.ic_female)
+                                .into((ImageView) builder.findViewById(R.id.image_profile));
+                    } else {
+                        Glide.with(Profile.this)
+                                .load(channel)
+                                .into((ImageView) builder.findViewById(R.id.image_profile));
+                    }
+                }
+                catch (Exception e){
+                    e.printStackTrace();
                 }
 
+
+                builder.show();
 
             }
         });
-        expanded.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (expanded.getVisibility()==View.VISIBLE){
-                    expanded.setVisibility(View.INVISIBLE);}
-
-
-
-                }
-            });
 
 
 
@@ -300,7 +303,7 @@ public class Profile extends AppCompatActivity {
         adapter=new BotttomAdapter(this,list);
         bottomRecycle.setAdapter(adapter);
         back=findViewById(R.id.imBack);
-        expanded = findViewById(R.id.expanded_image);
+
 
     }
 
