@@ -9,6 +9,12 @@
         app:showAsAction="never"
         android:visible="true"
         />
+    <item
+        android:id="@+id/clear_chat"
+        android:title="@string/clear_chat"
+        app:showAsAction="never"
+        android:visible="true"
+        />
 
     <item
         android:id="@+id/call"

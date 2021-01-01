@@ -31,4 +31,15 @@
         android:clickable="true"
         android:src="@drawable/ic_round_add_24" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/go_to_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:clickable="true"
+        android:src="@drawable/go_to_top"
+        android:visibility="gone"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="30dp"/>
+
 </FrameLayout>

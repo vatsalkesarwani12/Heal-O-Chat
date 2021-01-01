@@ -46,6 +46,7 @@
     <string name="block_user">Block User</string>
     <string name="blocked_user">Blocked User</string>
     <string name="block">Block</string>
+    <string name="clear_chat">Clear Chat</string>
     <string name="unblock">Unblock</string>
     <string name="send_mssg_button">send mssg button</string>
     <string name="xx_xx_am">xx:xx am</string>

@@ -1,12 +1,17 @@
 package com.vatsal.kesarwani.therapy.Activity;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -64,6 +69,7 @@ public class CureProfile extends AppCompatActivity {
     private ProgressBar progressBar;
     private LinearLayout profileData;
     private FirebaseFirestore db;
+    SharedPreferences preferences;
     private FirebaseAuth mAuth;
     private Intent intent,intent2;
     private int CODE =1;
@@ -73,6 +79,7 @@ public class CureProfile extends AppCompatActivity {
     private BotttomAdapter adapter;
     private List<PostModel> list;
     private View rootview;
+    private ImageView expanded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +90,45 @@ public class CureProfile extends AppCompatActivity {
         init();
         progressBar.setVisibility(View.VISIBLE);
         profile.setVisibility(View.GONE);
+
+        profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String channel = (preferences.getString("DP", ""));
+                assert channel != null;
+
+                final Dialog builder =new Dialog(CureProfile.this);
+                builder.setCancelable(true);
+                builder.setContentView(R.layout.dialog_view_user);
+
+                try {
+
+                    if (channel.equals("1")) {
+                        Glide.with(CureProfile.this)
+                                .load(R.drawable.ic_male)
+                                .into((ImageView) builder.findViewById(R.id.image_profile));
+                    } else if (channel.equals("2")) {
+                        Glide.with(CureProfile.this)
+                                .load(R.drawable.ic_female)
+                                .into((ImageView) builder.findViewById(R.id.image_profile));
+                    } else {
+                        Glide.with(CureProfile.this)
+                                .load(channel)
+                                .into((ImageView) builder.findViewById(R.id.image_profile));
+                    }
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+                builder.show();
+
+            }
+        });
+
+
         profileData.setVisibility(View.GONE);
         contact.setVisibility(View.GONE);
 
@@ -196,8 +242,16 @@ public class CureProfile extends AppCompatActivity {
                                 if (Objects.requireNonNull(map.get(AppConfig.PROFILE_DISPLAY)).toString().length()<5) {
                                     if (Objects.requireNonNull(map.get(AppConfig.SEX)).toString().equals("Male")) {
                                         profile.setImageDrawable(getResources().getDrawable(R.drawable.ic_male));
+                                        SharedPreferences.Editor editor = preferences.edit();
+                                        editor.putString("DP", "1");
+                                        editor.commit();
+                                        editor.apply();
                                     } else if (Objects.requireNonNull(map.get(AppConfig.SEX)).toString().equals("Female")) {
                                         profile.setImageDrawable(getResources().getDrawable(R.drawable.ic_female));
+                                        SharedPreferences.Editor editor = preferences.edit();
+                                        editor.putString("DP", "2");
+                                        editor.commit();
+                                        editor.apply();
                                     }
                                 }
                                 else {
@@ -210,6 +264,10 @@ public class CureProfile extends AppCompatActivity {
                                                     Glide.with(CureProfile.this)
                                                             .load(uri)
                                                             .into(profile);
+                                                    SharedPreferences.Editor editor = preferences.edit();
+                                                    editor.putString("DP", String.valueOf(uri));
+                                                    editor.commit();
+                                                    editor.apply();
 
                                                     Glide.with(CureProfile.this)
                                                             .load(uri)
@@ -299,8 +357,10 @@ public class CureProfile extends AppCompatActivity {
         RecyclerView.LayoutManager manager = new GridLayoutManager(this, 3);
         bottomRecycle.setLayoutManager(manager);
         list=new ArrayList<>();
+
         adapter=new BotttomAdapter(this,list);
         bottomRecycle.setAdapter(adapter);
+        preferences = getSharedPreferences("DP", Context.MODE_PRIVATE);
 
         db.collection("User")
                 .document(Objects.requireNonNull(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail()))

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
@@ -58,7 +59,7 @@ public class PostFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private FloatingActionButton addpost;
+    private FloatingActionButton addpost, go_to_top;
     private PostAdapter adapter;
     private RecyclerView postRecycler;
     private ArrayList<PostModel> list;
@@ -118,6 +119,28 @@ public class PostFragment extends Fragment {
 
         Toast.makeText(getContext(), "Press on the screen if it loads for more than 5 seconds.", Toast.LENGTH_SHORT).show();
         fetchData(root);
+
+        postRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!recyclerView.canScrollVertically(1)) {
+                    go_to_top.setVisibility(View.VISIBLE);
+                }else{
+                    go_to_top.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        go_to_top.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Going to Top!!", Toast.LENGTH_SHORT).show();
+                LinearLayoutManager layoutManager = (LinearLayoutManager)postRecycler.getLayoutManager();
+                layoutManager.scrollToPositionWithOffset(0, 0);
+                fetchData(root);
+            }
+        });
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -198,6 +221,7 @@ public class PostFragment extends Fragment {
 
     private void init(View root){
         addpost=root.findViewById(R.id.add_post);
+        go_to_top=root.findViewById(R.id.go_to_top);
         list=new ArrayList<>();
         mAuth=FirebaseAuth.getInstance();
         sr=FirebaseStorage.getInstance().getReference();
