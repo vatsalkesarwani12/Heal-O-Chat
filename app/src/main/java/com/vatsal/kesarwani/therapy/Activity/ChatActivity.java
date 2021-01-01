@@ -48,6 +48,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.vatsal.kesarwani.therapy.Adapter.MessageAdapter;
+import com.vatsal.kesarwani.therapy.Encryption.Encryption;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.MessageModel;
 import com.vatsal.kesarwani.therapy.R;
@@ -64,7 +65,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import es.dmoral.toasty.Toasty;
+
 
 public class ChatActivity extends AppCompatActivity {
     private static final int CODE = 125;
@@ -96,7 +97,8 @@ public class ChatActivity extends AppCompatActivity {
     private TextView username,online;
     private CircleImageView userdp;
     private Intent intent2;
-    private String sc;
+    private String sc,key,salt;
+    private byte[] iv;
     private boolean canCall= false;
     private boolean isonline=false;
     private ViewDialog dialog;
@@ -170,6 +172,7 @@ public class ChatActivity extends AppCompatActivity {
         //Objects.requireNonNull(getSupportActionBar()).setTitle(name);
 
 
+        final Encryption encryption = Encryption.getDefault(key, salt, iv);
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,13 +181,16 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 text.setText("");
                 map.put("user", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
-                map.put("mssg", mssg);
+                String encrypted = encryption.encryptOrNull(mssg);
+                map.put("mssg", encrypted);
                 map.put("sender", mAuth.getCurrentUser().getUid());
                 map.put("receiver", uid);
                 map.put("isseen", false);
                 map.put("img","");
                 map.put("time",getTime());
                 map.put("date",getDate());
+
+
 
                 refrehStatus();
 
@@ -672,6 +678,9 @@ public class ChatActivity extends AppCompatActivity {
         db1=FirebaseDatabase.getInstance();
         dr=db1.getReference();
         status= false;
+        key = "KhgJOhGFfKUh";
+        salt = "lKhIoQjUhRhj";
+        iv = new byte[16];
 
         v= findViewById(android.R.id.content);
 

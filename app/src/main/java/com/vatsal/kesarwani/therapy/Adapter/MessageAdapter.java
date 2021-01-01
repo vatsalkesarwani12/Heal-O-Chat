@@ -27,11 +27,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Activity.MainScreen;
+import com.vatsal.kesarwani.therapy.Encryption.Encryption;
 import com.vatsal.kesarwani.therapy.Model.MessageModel;
 import com.vatsal.kesarwani.therapy.R;
 
@@ -48,7 +48,8 @@ public class MessageAdapter extends RecyclerView.Adapter {
     final int YOU_IMAGE = 11;
     final int OTHER_IMAGE = 22;
     private View v;
-    private String uid, mail;
+    private String uid, mail,key,salt,decrypted="null";
+    private byte[] iv;
     private ArrayList<MessageModel> list2 = new ArrayList<>();
 
     public MessageAdapter(Context context, ArrayList<MessageModel> list, String uid, String mail) {
@@ -82,10 +83,18 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
+         key = "KhgJOhGFfKUh";
+         salt = "lKhIoQjUhRhj";
+         iv = new byte[16];
+
+
+        final Encryption encryption = Encryption.getDefault(key, salt, iv);
+
         MessageModel chat = list.get(position);
 
         if (list.get(position).getMssg().length() > 1) {
-            ((TextViewHolder) holder).mssg.setText(list.get(position).getMssg().trim() + "        ");  //8 spaces
+             decrypted= encryption.decryptOrNull(list.get(position).getMssg());
+            ((TextViewHolder) holder).mssg.setText(decrypted+ "        ");  //8 spaces
             ((TextViewHolder) holder).time.setText(list.get(position).getTime());
 
             if (getItemViewType(position) == YOU) {
