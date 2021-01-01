@@ -426,7 +426,7 @@ public class ChatActivity extends AppCompatActivity {
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    FirebaseDatabase.getInstance().getReference().child(mAuth.getCurrentUser().getUid()).removeValue();
+                    FirebaseDatabase.getInstance().getReference().child(mAuth.getCurrentUser().getUid()).child(uid).removeValue();
                 }
             })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
