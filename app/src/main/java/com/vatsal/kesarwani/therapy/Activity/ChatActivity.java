@@ -419,6 +419,29 @@ public class ChatActivity extends AppCompatActivity {
             item.setVisible(false);
             return true;
         }
+        if (item.getItemId() == R.id.clear_chat) {
+            AlertDialog.Builder builder= new AlertDialog.Builder(this);
+            builder.setTitle("Clear chat with "+name+" ?");
+            builder.setCancelable(true);
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    FirebaseDatabase.getInstance().getReference().child(mAuth.getCurrentUser().getUid()).removeValue();
+                }
+            })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+
+            AlertDialog dialog= builder.create();
+
+            dialog.show();
+            return true;
+        }
+
         else if (item.getItemId() == android.R.id.home){   //override the back button on the app bar
 
             onBackPressed();
