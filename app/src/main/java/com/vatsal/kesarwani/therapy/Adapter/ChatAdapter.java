@@ -19,19 +19,30 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Activity.ChatActivity;
+import com.vatsal.kesarwani.therapy.Encryption.Encryption;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.ChatModel;
 import com.vatsal.kesarwani.therapy.Model.ChatModelDetails;
+import com.vatsal.kesarwani.therapy.Model.MessageModel;
 import com.vatsal.kesarwani.therapy.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Queue;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -40,6 +51,17 @@ public class ChatAdapter extends RecyclerView.Adapter {
     Context context;
     ArrayList<ChatModelDetails> list;
     private View v;
+    String lastmssg ;
+
+
+
+    private String key = "KhgJOhGFfKUh",salt = "lKhIoQjUhRhj";
+    private byte[] iv = new byte[16];
+
+
+    final Encryption encryption = Encryption.getDefault(key, salt, iv);
+
+
 
     public ChatAdapter(Context context, ArrayList<ChatModelDetails> list) {
         this.context = context;
@@ -69,12 +91,19 @@ public class ChatAdapter extends RecyclerView.Adapter {
         final String uid = list.get(position).getUid();
         final String sex = list.get(position).getSex();
         final String dpLink = list.get(position).getDp();
-
         final String mail = list.get(position).getMail();
         final boolean online = list.get(position).isOnline();
 
+
+
+
+
+
+
         if(online){
             ((ON_ViewHolder) holder).profname.setText(sname);
+            lastMessage(uid,((ON_ViewHolder) holder).lastmssg );
+
 
             if (dpLink.length() > 1) {
 
@@ -116,6 +145,9 @@ public class ChatAdapter extends RecyclerView.Adapter {
             }
         }else{
             ((OFF_ViewHolder) holder).profname.setText(sname);
+            lastMessage(uid,((ON_ViewHolder) holder).lastmssg );
+
+
 
             if (dpLink.length() > 1) {
 
@@ -196,21 +228,23 @@ public class ChatAdapter extends RecyclerView.Adapter {
 
     public static class ON_ViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView dp;
-        private TextView profname;
+        private TextView profname,lastmssg;
         public ON_ViewHolder(@NonNull View itemView) {
             super(itemView);
             dp=itemView.findViewById(R.id.chat_profile_dp);
             profname=itemView.findViewById(R.id.chat_profile_name);
+            lastmssg = itemView.findViewById(R.id.last_mssg);
         }
     }
 
     public static class OFF_ViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView dp;
-        private TextView profname;
+        private TextView profname,lastmssg;
         public OFF_ViewHolder(@NonNull View itemView) {
             super(itemView);
             dp=itemView.findViewById(R.id.chat_profile_dp);
             profname=itemView.findViewById(R.id.chat_profile_name);
+            lastmssg = itemView.findViewById(R.id.last_mssg);
         }
     }
 
@@ -221,6 +255,38 @@ public class ChatAdapter extends RecyclerView.Adapter {
         }else{
             return 0;
         }
+    }
+    private void lastMessage(final String userid, final TextView last_mssg){
+        lastmssg = "default";
+        final FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot:snapshot.getChildren())
+                {
+                    MessageModel messageModel =dataSnapshot.getValue(MessageModel.class);
+                    if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) || messageModel.getReceiver().equals(userid) && messageModel.getSender().equals(firebaseUser.getUid()) ){
+                        lastmssg=messageModel.getMssg();
+                        
+
+                    }
+                }
+                switch (lastmssg){
+                    case "default":
+                        last_mssg.setText("");
+                    default:
+                        last_mssg.setText(encryption.decryptOrNull(lastmssg));
+                }
+                lastmssg = "default";
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
 }
