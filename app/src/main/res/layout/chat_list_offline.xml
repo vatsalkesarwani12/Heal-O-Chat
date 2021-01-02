@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/chat_profile_dp"
-                android:text="Name"
+                
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="5dp"
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/chat_profile_dp"
                 android:textColor="@color/colorPrimary"
-                android:text="mssg"
+
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="40dp"
