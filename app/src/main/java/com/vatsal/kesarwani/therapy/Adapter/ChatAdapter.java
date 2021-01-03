@@ -52,6 +52,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
     ArrayList<ChatModelDetails> list;
     private View v;
     String lastmssg ;
+    int unreadmssg=0;
 
 
 
@@ -102,7 +103,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
 
         if(online){
             ((ON_ViewHolder) holder).profname.setText(sname);
-            lastMessage(uid,((ON_ViewHolder) holder).lastmssg );
+            lastMessage(uid,((ON_ViewHolder) holder).lastmssg,((ON_ViewHolder) holder).chatcount );
 
 
             if (dpLink.length() > 1) {
@@ -145,7 +146,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
             }
         }else{
             ((OFF_ViewHolder) holder).profname.setText(sname);
-            lastMessage(uid,((ON_ViewHolder) holder).lastmssg );
+            lastMessage(uid,((OFF_ViewHolder) holder).lastmssg,((OFF_ViewHolder)holder).chatcount );
 
 
 
@@ -228,23 +229,25 @@ public class ChatAdapter extends RecyclerView.Adapter {
 
     public static class ON_ViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView dp;
-        private TextView profname,lastmssg;
+        private TextView profname,lastmssg,chatcount;
         public ON_ViewHolder(@NonNull View itemView) {
             super(itemView);
             dp=itemView.findViewById(R.id.chat_profile_dp);
             profname=itemView.findViewById(R.id.chat_profile_name);
             lastmssg = itemView.findViewById(R.id.last_mssg);
+            chatcount = itemView.findViewById(R.id.chat_count);
         }
     }
 
     public static class OFF_ViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView dp;
-        private TextView profname,lastmssg;
+        private TextView profname,lastmssg,chatcount;
         public OFF_ViewHolder(@NonNull View itemView) {
             super(itemView);
             dp=itemView.findViewById(R.id.chat_profile_dp);
             profname=itemView.findViewById(R.id.chat_profile_name);
             lastmssg = itemView.findViewById(R.id.last_mssg);
+            chatcount = itemView.findViewById(R.id.chat_count);
         }
     }
 
@@ -256,8 +259,11 @@ public class ChatAdapter extends RecyclerView.Adapter {
             return 0;
         }
     }
-    private void lastMessage(final String userid, final TextView last_mssg){
+    private void lastMessage(final String userid, final TextView last_mssg ,final TextView chatcnt  ){
         lastmssg = "default";
+        unreadmssg = 0;
+
+
         final FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
         reference.addValueEventListener(new ValueEventListener() {
@@ -271,14 +277,26 @@ public class ChatAdapter extends RecyclerView.Adapter {
                         
 
                     }
+                    if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) && !messageModel.isIsseen() ){
+                        unreadmssg++;
+                    }
                 }
+
                 switch (lastmssg){
                     case "default":
                         last_mssg.setText("");
                     default:
                         last_mssg.setText(encryption.decryptOrNull(lastmssg));
                 }
+                if (unreadmssg==0){
+                    chatcnt.setText("");
+
+                }
+                else {
+                    chatcnt.setText("[ "+unreadmssg+" ]");
+                }
                 lastmssg = "default";
+                unreadmssg=0;
             }
 
             @Override
