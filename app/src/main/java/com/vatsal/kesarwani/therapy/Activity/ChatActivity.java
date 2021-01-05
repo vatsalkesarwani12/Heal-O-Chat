@@ -79,7 +79,7 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private Map<String, Object> map;
     private Map<String, Object> map1;
-    private ImageButton send;
+    private ImageButton send , camera;
     private ImageView emoji;
     private View rootview;
     private EmojIconActions emojIcon;
@@ -134,6 +134,14 @@ public class ChatActivity extends AppCompatActivity {
         userprofile= findViewById(R.id.userprofile);
         userdp = findViewById(R.id.profile_image);
         online = findViewById(R.id.Onlineuser);
+
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attachPicture();
+            }
+        });
+
         userprofile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -464,10 +472,7 @@ public class ChatActivity extends AppCompatActivity {
             onBackPressed();
             return true;
         }
-        else if(item.getItemId() == R.id.attach){
-            attachPicture();
-            return true;
-        }
+
 //        else if(item.getItemId() == R.id.profile){
 //            Intent intent = new Intent(getApplicationContext(),CureProfile.class);
 //            intent.putExtra("mail",mail);
@@ -674,6 +679,7 @@ public class ChatActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         send = findViewById(R.id.send);
+        camera = findViewById(R.id.camera);
         text = findViewById(R.id.text_to_send);
         chats = findViewById(R.id.chats);
         chats.setHasFixedSize(true);

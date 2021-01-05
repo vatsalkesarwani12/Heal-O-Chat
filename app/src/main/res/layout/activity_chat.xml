@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="online"
-                android:textColor="@color/colorAccent"
+                android:textColor="#4FDACD"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -65,7 +65,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chats"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="60dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/card_mssg"
@@ -110,7 +110,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="45dp"
-                        android:layout_marginEnd="40dp"
+                        android:layout_marginEnd="100dp"
                         android:background="@android:color/transparent"
                         android:hint="@string/enter_message"
                         android:singleLine="true"
@@ -131,6 +131,18 @@
                         android:src="@drawable/ic_outline_send_24"
                         android:text="@string/send" />
 
+
+                    <ImageButton
+                        android:id="@+id/camera"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="60dp"
+                        android:background="#00000000"
+                        android:contentDescription="@string/send_mssg_button"
+                        android:src="@drawable/ic_camera"
+                        android:text="@string/send" />
 
                     <ImageView
                         android:id="@+id/emoji"

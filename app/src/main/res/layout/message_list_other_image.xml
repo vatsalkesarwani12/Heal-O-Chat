@@ -5,17 +5,16 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="2dp">
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="4dp"
-        app:cardBackgroundColor="#129A7F"
-        app:cardCornerRadius="5dp">
+
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/bg_receiver"
+            android:paddingStart="15dp"
+            >
 
             <ImageView
                 android:id="@+id/image"
@@ -47,6 +46,6 @@
 
         </RelativeLayout>
 
-    </androidx.cardview.widget.CardView>
+
 
 </RelativeLayout>

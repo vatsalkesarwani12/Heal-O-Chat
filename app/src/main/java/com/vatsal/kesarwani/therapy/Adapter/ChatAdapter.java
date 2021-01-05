@@ -31,6 +31,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Activity.ChatActivity;
+import com.vatsal.kesarwani.therapy.Activity.MainScreen;
 import com.vatsal.kesarwani.therapy.Encryption.Encryption;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.ChatModel;
@@ -270,6 +271,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot:snapshot.getChildren())
+                {try
                 {
                     MessageModel messageModel =dataSnapshot.getValue(MessageModel.class);
                     if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) || messageModel.getReceiver().equals(userid) && messageModel.getSender().equals(firebaseUser.getUid()) ){
@@ -280,6 +282,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
                     if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) && !messageModel.isIsseen() ){
                         unreadmssg++;
                     }
+                }catch (Exception ignored){}
                 }
 
                 switch (lastmssg){
@@ -297,7 +300,9 @@ public class ChatAdapter extends RecyclerView.Adapter {
                 }
                 lastmssg = "default";
                 unreadmssg=0;
+
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

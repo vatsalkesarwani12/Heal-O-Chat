@@ -6,18 +6,15 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="2dp">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_you"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="80dp"
-        app:cardBackgroundColor="#D0D1D2"
-        android:layout_marginEnd="4dp"
-        app:cardCornerRadius="5dp">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_sender"
+            android:paddingEnd="12dp"
+            android:layout_marginEnd="4dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="80dp"
             android:orientation="vertical">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -76,7 +73,7 @@
                 />
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+
 
 
 </RelativeLayout>

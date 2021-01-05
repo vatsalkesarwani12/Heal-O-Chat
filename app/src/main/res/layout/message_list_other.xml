@@ -5,19 +5,17 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="2dp">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_other"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginEnd="80dp"
-        app:cardBackgroundColor="#129A7F"
-        android:layout_marginStart="4dp"
-        app:cardCornerRadius="5dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout            android:background="@drawable/bg_receiver"
+            android:paddingStart="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginEnd="80dp"
+
+            android:layout_marginStart="4dp"
+          >
 
             <TextView
                 android:textIsSelectable="true"
@@ -60,6 +58,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+
 
 </RelativeLayout>
