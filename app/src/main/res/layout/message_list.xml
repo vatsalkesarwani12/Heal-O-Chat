@@ -7,21 +7,21 @@
     android:layout_marginTop="2dp">
 
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_sender"
-            android:paddingEnd="12dp"
-            android:layout_marginEnd="4dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="80dp"
-            android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/bg_sender"
+        android:orientation="vertical"
+        android:paddingEnd="12dp">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <TextView
-                android:textIsSelectable="true"
                 android:id="@+id/mssg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -39,6 +39,7 @@
                 android:text="you      "
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@android:color/black"
+                android:textIsSelectable="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -61,19 +62,17 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-            <TextView
-                android:id="@+id/isSent"
-                android:textSize="8sp"
-                android:textColor="#2196F3"
-                android:text="✔✔"
-                android:gravity="end"
-                android:textAlignment="textEnd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-        </LinearLayout>
 
-
+        <TextView
+            android:id="@+id/isSent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="✔✔"
+            android:textAlignment="textEnd"
+            android:textColor="#2196F3"
+            android:textSize="8sp" />
+    </LinearLayout>
 
 
 </RelativeLayout>

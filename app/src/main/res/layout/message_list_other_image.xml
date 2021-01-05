@@ -6,46 +6,43 @@
     android:layout_marginTop="2dp">
 
 
+    <RelativeLayout
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/bg_receiver"
+        android:paddingStart="15dp">
 
-        <RelativeLayout
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="4dp"
-            android:background="@drawable/bg_receiver"
-            android:paddingStart="15dp"
-            >
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="15dp"
+            android:scaleType="centerCrop" />
 
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="15dp" />
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="1dp"
+            android:text="@string/xx_xx_am"
+            android:textColor="#f8f8f8"
+            android:textSize="9dp" />
 
-            <TextView
-                android:id="@+id/time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/xx_xx_am"
-                android:textColor="#f8f8f8"
-                android:textSize="9dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="1dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="3dp"/>
+        <TextView
+            android:id="@+id/mssg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/mssg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-        </RelativeLayout>
-
+    </RelativeLayout>
 
 
 </RelativeLayout>
