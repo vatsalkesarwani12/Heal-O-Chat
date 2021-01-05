@@ -24,12 +24,6 @@
         android:visible="true"
         />
 
-    <item
-        android:id="@+id/attach"
-        android:title="@string/image"
-        android:icon="@drawable/ic_camera"
-        app:showAsAction="always"
-        android:visible="true"
-        />
+
 
 </menu>

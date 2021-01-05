@@ -1,66 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="2dp">
 
-    <androidx.cardview.widget.CardView
+
+    <RelativeLayout
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="4dp"
-        app:cardCornerRadius="5dp"
-        app:cardBackgroundColor="#D0D1D2">
+        android:background="@drawable/bg_sender"
+        android:paddingEnd="15dp">
 
-
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="15dp"
+            android:scaleType="centerCrop" />
 
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="15dp"/>
-            <TextView
-                android:id="@+id/isSent"
-                android:textSize="8sp"
-                android:textColor="#2196F3"
-                android:text="✔✔"
-                android:gravity="end"
-                android:textAlignment="textEnd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-            <TextView
-                android:id="@+id/time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/xx_xx_am"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="3dp"
-                android:textSize="9dp"
-                android:textColor="#272727"
-                android:layout_marginBottom="1dp"
-                android:layout_alignParentBottom="true"/>
+        <TextView
+            android:id="@+id/isSent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="✔✔"
+            android:textAlignment="textEnd"
+            android:textColor="#2196F3"
+            android:textSize="8sp" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="1dp"
+            android:text="@string/xx_xx_am"
+            android:textColor="#272727"
+            android:textSize="9dp" />
 
 
-            <TextView
-                android:id="@+id/mssg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"/>
+        <TextView
+            android:id="@+id/mssg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
 
+    </RelativeLayout>
 
-        </RelativeLayout>
-
-
-    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

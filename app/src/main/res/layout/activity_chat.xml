@@ -3,9 +3,9 @@
 
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rootview"
     android:background="@drawable/wallpaper"
     tools:context=".Activity.ChatActivity">
 
@@ -32,11 +32,11 @@
             app:civ_border_width="0.2dp" />
 
         <LinearLayout
+            android:id="@+id/userprofile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
             android:gravity="center"
-            android:id="@+id/userprofile"
             android:orientation="vertical">
 
             <TextView
@@ -53,23 +53,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="online"
-                android:textColor="@color/colorAccent"
+                android:textColor="#4FDACD"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
 
         </LinearLayout>
 
-
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chats"
-        android:layout_marginBottom="80dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/card_mssg"
         android:layout_marginTop="?android:attr/actionBarSize"
+        android:layout_marginBottom="60dp"
         android:paddingTop="10dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/card_mssg"
@@ -110,8 +109,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="45dp"
-                        android:layout_marginEnd="40dp"
-                        android:background="@android:color/transparent"
+                        android:layout_marginEnd="100dp"                                                 android:background="@android:color/transparent"
                         android:hint="@string/enter_message"
                         android:singleLine="true"
                         android:textColor="@android:color/white"
@@ -132,17 +130,27 @@
                         android:text="@string/send" />
 
 
+                    <ImageButton
+                        android:id="@+id/camera"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="60dp"
+                        android:background="#00000000"
+                        android:src="@drawable/ic_camera" />
+
+
                     <ImageView
                         android:id="@+id/emoji"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
+                        android:layout_margin="2dp"
                         android:layout_marginEnd="8dp"
                         android:background="#00000000"
-                        android:layout_margin="2dp"
-                        android:src="@drawable/ic_baseline_insert_emoticon_24"
-                        android:text="@string/send" />
+                        android:src="@drawable/ic_baseline_insert_emoticon_24" />
 
 
                 </RelativeLayout>
