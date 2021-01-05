@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +66,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
+import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
+import hani.momanii.supernova_emoji_library.emoji.Emojicon;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -76,7 +80,10 @@ public class ChatActivity extends AppCompatActivity {
     private Map<String, Object> map;
     private Map<String, Object> map1;
     private ImageButton send;
-    private EditText text;
+    private ImageView emoji;
+    private View rootview;
+    private EmojIconActions emojIcon;
+    private EmojiconEditText text;
     private RecyclerView chats;
     private MessageAdapter adapter;
     private ArrayList<MessageModel> list;
@@ -115,6 +122,10 @@ public class ChatActivity extends AppCompatActivity {
 
         dialog = new ViewDialog(this);
         init();
+        rootview = findViewById(R.id.rootview);
+        emoji = findViewById(R.id.emoji);
+        emojIcon = new EmojIconActions(this,rootview,text,emoji);
+        emojIcon.ShowEmojIcon();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
