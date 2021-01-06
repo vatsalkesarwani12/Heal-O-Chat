@@ -20,6 +20,12 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -41,12 +47,12 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.view.View.GONE;
+
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     Context context;
     ArrayList<PostModel> list;
-    final int LIKE = 1;
-    final int DISLIKE = 0;
 
     public PostAdapter(Context context, ArrayList<PostModel> list) {
         this.context = context;
@@ -56,14 +62,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == DISLIKE) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_list, parent, false);
-            return new ViewHolder(v);
-        }
-        else {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_list_like, parent, false);
-            return new ViewHolder(v);
-        }
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_list_like, parent, false);
+        return new ViewHolder(v);
     }
 
     @SuppressLint("SetTextI18n")
@@ -150,10 +150,49 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 context.startActivity(intent);
             }
         });
+
+        final boolean[] contains = {false};
+        final ArrayList<String> likes_uid = new ArrayList<>();
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference rf = db.getReference();
+        rf.child("Likes").child(list.get(position).getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    for(DataSnapshot snap: snapshot.getChildren()){
+                        likes_uid.add(String.valueOf(snap.getValue()));
+                    }
+
+                    if(likes_uid.contains(String.valueOf(FirebaseAuth.getInstance().getCurrentUser().getUid()))){
+                        holder.like.setVisibility(View.GONE);
+                        holder.liked.setVisibility(View.VISIBLE);
+                        contains[0] = true;
+                    }else{
+                        holder.like.setVisibility(View.VISIBLE);
+                        holder.liked.setVisibility(View.GONE);
+                        contains[0] = false;
+                    }
+
+                }else{
+                    holder.like.setVisibility(View.VISIBLE);
+                    holder.liked.setVisibility(GONE);
+                    contains[0] = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         holder.like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 x[0]++;
+                likes_uid.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                holder.like.setVisibility(View.GONE);
+                holder.liked.setVisibility(View.VISIBLE);
 
                 FirebaseFirestore.getInstance().collection("Posts")
                         .document(list.get(position).getId())
@@ -172,6 +211,47 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                     m.put(AppConfig.TIME,getDate());
                                     m.put(AppConfig.TRACKNAME,"Liked "+name[0]+" post");
                                     new Util().track(m);
+                                    DatabaseReference rf = FirebaseDatabase.getInstance().getReference();
+                                    for(int i = 0; i < likes_uid.size(); i++){
+                                        Log.e("this1", String.valueOf(likes_uid.get(i)));
+                                    }
+                                    rf.child("Likes").child(list.get(position).getId()).setValue(likes_uid);
+                                }
+                            }
+                        });
+            }
+        });
+
+        holder.liked.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                x[0]--;
+                likes_uid.remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                holder.like.setVisibility(View.VISIBLE);
+                holder.liked.setVisibility(View.GONE);
+
+                FirebaseFirestore.getInstance().collection("Posts")
+                        .document(list.get(position).getId())
+                        .update(AppConfig.LIKES,x[0])
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    holder.likes.setText(x[0] +" Likes");
+                                    Log.d("ClickRecycler",list.get(position).getBy());
+                                    list.get(position).setClicked(false);
+                                    list.get(position).setLikes(x[0]);
+
+                                    //update track
+                                    Map<String,Object> m = new HashMap<>();
+                                    m.put(AppConfig.TIME,getDate());
+                                    m.put(AppConfig.TRACKNAME,"Disliked "+name[0]+" post");
+                                    new Util().track(m);
+                                    DatabaseReference rf = FirebaseDatabase.getInstance().getReference();
+                                    for(int i = 0; i < likes_uid.size(); i++){
+                                        Log.e("this2", String.valueOf(likes_uid.get(i)));
+                                    }
+                                    rf.child("Likes").child(list.get(position).getId()).setValue(likes_uid);
                                 }
                             }
                         });
@@ -246,11 +326,4 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         }
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        if (list.get(position).isClicked()){
-            return LIKE;
-        }
-        else return DISLIKE;
-    }
 }
