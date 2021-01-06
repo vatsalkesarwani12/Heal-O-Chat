@@ -55,7 +55,6 @@ public class MainScreen extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("Cure"));
         tabLayout.addTab(tabLayout.newTab().setText("Chat"));
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
-        Query query = reference.orderByChild("isseen").equalTo(false).limitToFirst(1);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
