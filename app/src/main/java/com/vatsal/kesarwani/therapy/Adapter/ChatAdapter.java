@@ -264,25 +264,32 @@ public class ChatAdapter extends RecyclerView.Adapter {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    try {
-                        MessageModel messageModel = dataSnapshot.getValue(MessageModel.class);
-                        if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) || messageModel.getReceiver().equals(userid) && messageModel.getSender().equals(firebaseUser.getUid())) {
-                            lastmssg = messageModel.getMssg();
+
+                    MessageModel messageModel = dataSnapshot.getValue(MessageModel.class);
+                    if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) || messageModel.getReceiver().equals(userid) && messageModel.getSender().equals(firebaseUser.getUid())) {
+                        lastmssg = messageModel.getMssg();
+//                            if (!messageModel.getImg().equals("")) {
+//                                lastmssg = "image";
+//                            }
 
 
-                        }
-                        if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) && !messageModel.isIsseen()) {
-                            unreadmssg++;
-                        }
-                    } catch (Exception ignored) {
                     }
+                    if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) && !messageModel.isIsseen()) {
+                        unreadmssg++;
+                    }
+
                 }
 
                 switch (lastmssg) {
                     case "default":
                         last_mssg.setText("");
+
                     default:
-                        last_mssg.setText(encryption.decryptOrNull(lastmssg));
+                        if (last_mssg.length() > 1)
+                            last_mssg.setText(encryption.decryptOrNull(lastmssg));
+                        else
+                            last_mssg.setText("image");
+                        
                 }
                 if (unreadmssg == 0) {
                     chatcnt.setText("");

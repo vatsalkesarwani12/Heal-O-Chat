@@ -133,7 +133,7 @@ public class ChatActivity extends AppCompatActivity {
 
         dialog = new ViewDialog(this);
         init();
-        apiService= Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         rootview = findViewById(R.id.rootview);
         emoji = findViewById(R.id.emoji);
         emojIcon = new EmojIconActions(this, rootview, text, emoji);
@@ -555,6 +555,9 @@ public class ChatActivity extends AppCompatActivity {
     private void attachPicture() {
         map.put("user", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
         map.put("mssg", "");
+        map.put("sender", mAuth.getCurrentUser().getUid());
+        map.put("receiver", uid);
+
 
         ImagePicker.Companion.with(ChatActivity.this)
                 .crop()
@@ -660,41 +663,42 @@ public class ChatActivity extends AppCompatActivity {
                 .push()
                 .setValue(map);
         dr.child("Chats").push().setValue(map);
-        final String msg=mssg;
-reference=FirebaseDatabase.getInstance().getReference("Users").child(mAuth.getCurrentUser().getUid());
-reference.addValueEventListener(new ValueEventListener() {
-    @Override
-    public void onDataChange(@NonNull DataSnapshot snapshot) {
-        //User user = snapshot.getValue(User.class);
-        if (notify){
-            sendNotification(uid,name,msg);}
-        notify=false;
+        final String msg = mssg;
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(mAuth.getCurrentUser().getUid());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //User user = snapshot.getValue(User.class);
+                if (notify) {
+                    sendNotification(uid, name, msg);
+                }
+                notify = false;
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
-    @Override
-    public void onCancelled(@NonNull DatabaseError error) {
-
-    }
-});
-    }
-
-    private void sendNotification(String receiver,final String name,  final String msg) {
+    private void sendNotification(String receiver, final String name, final String msg) {
         DatabaseReference token = FirebaseDatabase.getInstance().getReference("Tokens");
-        Query query=token.orderByKey().equalTo(receiver);
+        Query query = token.orderByKey().equalTo(receiver);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Token token=snapshot.getValue(Token.class);
-                    Data data = new Data(uid,R.mipmap.ic_launcher,name+": "+msg,"New Message",mAuth.getCurrentUser().getUid());
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(uid, R.mipmap.ic_launcher, name + ": " + msg, "New Message", mAuth.getCurrentUser().getUid());
 
-                    Sender sender = new Sender(data,token.getToken());
+                    Sender sender = new Sender(data, token.getToken());
                     apiService.sendNotifications(sender).enqueue(new Callback<MyResponse>() {
                         @Override
                         public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
-                            if (response.code()==200){
-                                if (response.body().success!=1){
+                            if (response.code() == 200) {
+                                if (response.body().success != 1) {
                                     Toast.makeText(ChatActivity.this, "Failed!!", Toast.LENGTH_SHORT).show();
                                 }
                             }

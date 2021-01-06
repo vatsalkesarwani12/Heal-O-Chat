@@ -48,7 +48,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
     final int YOU_IMAGE = 11;
     final int OTHER_IMAGE = 22;
     private View v;
-    private String uid, mail,key,salt,decrypted="null";
+    private String uid, mail, key, salt, decrypted = "null";
     private byte[] iv;
     private ArrayList<MessageModel> list2 = new ArrayList<>();
 
@@ -83,9 +83,9 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
-         key = "KhgJOhGFfKUh";
-         salt = "lKhIoQjUhRhj";
-         iv = new byte[16];
+        key = "KhgJOhGFfKUh";
+        salt = "lKhIoQjUhRhj";
+        iv = new byte[16];
 
 
         final Encryption encryption = Encryption.getDefault(key, salt, iv);
@@ -93,8 +93,8 @@ public class MessageAdapter extends RecyclerView.Adapter {
         MessageModel chat = list.get(position);
 
         if (list.get(position).getMssg().length() > 1) {
-             decrypted= encryption.decryptOrNull(list.get(position).getMssg());
-            ((TextViewHolder) holder).mssg.setText(decrypted+ "        ");  //8 spaces
+            decrypted = encryption.decryptOrNull(list.get(position).getMssg());
+            ((TextViewHolder) holder).mssg.setText(decrypted + "        ");  //8 spaces
             ((TextViewHolder) holder).time.setText(list.get(position).getTime());
 
             if (getItemViewType(position) == YOU) {
