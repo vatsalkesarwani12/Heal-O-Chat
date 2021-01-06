@@ -42,6 +42,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -50,8 +51,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.vatsal.kesarwani.therapy.Adapter.MessageAdapter;
 import com.vatsal.kesarwani.therapy.Encryption.Encryption;
+import com.vatsal.kesarwani.therapy.Fragment.APIService;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.MessageModel;
+import com.vatsal.kesarwani.therapy.Notifications.Client;
+import com.vatsal.kesarwani.therapy.Notifications.Data;
+import com.vatsal.kesarwani.therapy.Notifications.MyResponse;
+import com.vatsal.kesarwani.therapy.Notifications.Sender;
+import com.vatsal.kesarwani.therapy.Notifications.Token;
 import com.vatsal.kesarwani.therapy.R;
 import com.vatsal.kesarwani.therapy.Utility.Util;
 import com.vatsal.kesarwani.therapy.Utility.ViewDialog;
@@ -69,6 +76,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 import hani.momanii.supernova_emoji_library.emoji.Emojicon;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -108,8 +118,10 @@ public class ChatActivity extends AppCompatActivity {
     private byte[] iv;
     private boolean canCall = false;
     private boolean isonline = false;
+    boolean notify = false;
     private ViewDialog dialog;
     ValueEventListener seenListener, listener1, listener2;
+    APIService apiService;
 
 
     @Override
@@ -121,6 +133,7 @@ public class ChatActivity extends AppCompatActivity {
 
         dialog = new ViewDialog(this);
         init();
+        apiService= Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         rootview = findViewById(R.id.rootview);
         emoji = findViewById(R.id.emoji);
         emojIcon = new EmojIconActions(this, rootview, text, emoji);
@@ -647,6 +660,61 @@ public class ChatActivity extends AppCompatActivity {
                 .push()
                 .setValue(map);
         dr.child("Chats").push().setValue(map);
+        final String msg=mssg;
+reference=FirebaseDatabase.getInstance().getReference("Users").child(mAuth.getCurrentUser().getUid());
+reference.addValueEventListener(new ValueEventListener() {
+    @Override
+    public void onDataChange(@NonNull DataSnapshot snapshot) {
+        //User user = snapshot.getValue(User.class);
+        if (notify){
+            sendNotification(uid,name,msg);}
+        notify=false;
+
+    }
+
+    @Override
+    public void onCancelled(@NonNull DatabaseError error) {
+
+    }
+});
+    }
+
+    private void sendNotification(String receiver,final String name,  final String msg) {
+        DatabaseReference token = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query=token.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Token token=snapshot.getValue(Token.class);
+                    Data data = new Data(uid,R.mipmap.ic_launcher,name+": "+msg,"New Message",mAuth.getCurrentUser().getUid());
+
+                    Sender sender = new Sender(data,token.getToken());
+                    apiService.sendNotifications(sender).enqueue(new Callback<MyResponse>() {
+                        @Override
+                        public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                            if (response.code()==200){
+                                if (response.body().success!=1){
+                                    Toast.makeText(ChatActivity.this, "Failed!!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
 
