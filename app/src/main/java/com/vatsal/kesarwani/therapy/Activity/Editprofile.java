@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -77,6 +79,8 @@ public class Editprofile extends AppCompatActivity implements AdapterView.OnItem
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Animation animation = AnimationUtils.loadAnimation(Editprofile.this,R.anim.blink_anim);
+                save.startAnimation(animation);
                 if(!check()){
                     return;
                 }
