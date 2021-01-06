@@ -52,17 +52,15 @@ public class ChatAdapter extends RecyclerView.Adapter {
     Context context;
     ArrayList<ChatModelDetails> list;
     private View v;
-    String lastmssg ;
-    int unreadmssg=0;
+    String lastmssg;
+    int unreadmssg = 0;
 
 
-
-    private String key = "KhgJOhGFfKUh",salt = "lKhIoQjUhRhj";
+    private String key = "KhgJOhGFfKUh", salt = "lKhIoQjUhRhj";
     private byte[] iv = new byte[16];
 
 
     final Encryption encryption = Encryption.getDefault(key, salt, iv);
-
 
 
     public ChatAdapter(Context context, ArrayList<ChatModelDetails> list) {
@@ -73,16 +71,16 @@ public class ChatAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        switch (viewType){
+        switch (viewType) {
             case 0:
-                v= LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_offline,parent,false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_offline, parent, false);
                 return new OFF_ViewHolder(v);
             case 1:
-                v= LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_online,parent,false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_online, parent, false);
                 return new ON_ViewHolder(v);
 
             default:
-                v= LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_offline,parent,false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_offline, parent, false);
                 return new OFF_ViewHolder(v);
         }
     }
@@ -97,19 +95,14 @@ public class ChatAdapter extends RecyclerView.Adapter {
         final boolean online = list.get(position).isOnline();
 
 
-
-
-
-
-
-        if(online){
+        if (online) {
             ((ON_ViewHolder) holder).profname.setText(sname);
-            lastMessage(uid,((ON_ViewHolder) holder).lastmssg,((ON_ViewHolder) holder).chatcount );
+            lastMessage(uid, ((ON_ViewHolder) holder).lastmssg, ((ON_ViewHolder) holder).chatcount);
 
 
             if (dpLink.length() > 1) {
 
-                StorageReference sr= FirebaseStorage.getInstance().getReference();
+                StorageReference sr = FirebaseStorage.getInstance().getReference();
                 try {
                     sr.child(dpLink)
                             .getDownloadUrl()
@@ -122,8 +115,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
                                             .into(((ON_ViewHolder) holder).dp);
                                 }
                             });
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 //                try {
@@ -145,15 +137,14 @@ public class ChatAdapter extends RecyclerView.Adapter {
                             .into(((ON_ViewHolder) holder).dp);
                 }
             }
-        }else{
+        } else {
             ((OFF_ViewHolder) holder).profname.setText(sname);
-            lastMessage(uid,((OFF_ViewHolder) holder).lastmssg,((OFF_ViewHolder)holder).chatcount );
-
+            lastMessage(uid, ((OFF_ViewHolder) holder).lastmssg, ((OFF_ViewHolder) holder).chatcount);
 
 
             if (dpLink.length() > 1) {
 
-                StorageReference sr= FirebaseStorage.getInstance().getReference();
+                StorageReference sr = FirebaseStorage.getInstance().getReference();
                 try {
                     sr.child(dpLink)
                             .getDownloadUrl()
@@ -165,8 +156,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
                                             .into(((OFF_ViewHolder) holder).dp);
                                 }
                             });
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -194,13 +184,13 @@ public class ChatAdapter extends RecyclerView.Adapter {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(context, ChatActivity.class);
-                intent.putExtra("mail",mail);
+                Intent intent = new Intent(context, ChatActivity.class);
+                intent.putExtra("mail", mail);
                 intent.putExtra("name", sname);
-                intent.putExtra("uid",uid);
-                intent.putExtra("dp",dpLink);
-                intent.putExtra("online",online);
-                intent.putExtra("sex",sex);
+                intent.putExtra("uid", uid);
+                intent.putExtra("dp", dpLink);
+                intent.putExtra("online", online);
+                intent.putExtra("sex", sex);
                 final boolean[] status = new boolean[1];
                 FirebaseFirestore.getInstance().collection("User")
                         .document(mail)
@@ -210,15 +200,15 @@ public class ChatAdapter extends RecyclerView.Adapter {
                         .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                DocumentSnapshot document= task.getResult();
+                                DocumentSnapshot document = task.getResult();
                                 assert document != null;
                                 status[0] = (boolean) document.get("Block");
                             }
                         });
-                if(!status[0])
+                if (!status[0])
                     context.startActivity(intent);
                 else
-                    Snackbar.make(v,"You cannot message the person",Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(v, "You cannot message the person", Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -230,11 +220,12 @@ public class ChatAdapter extends RecyclerView.Adapter {
 
     public static class ON_ViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView dp;
-        private TextView profname,lastmssg,chatcount;
+        private TextView profname, lastmssg, chatcount;
+
         public ON_ViewHolder(@NonNull View itemView) {
             super(itemView);
-            dp=itemView.findViewById(R.id.chat_profile_dp);
-            profname=itemView.findViewById(R.id.chat_profile_name);
+            dp = itemView.findViewById(R.id.chat_profile_dp);
+            profname = itemView.findViewById(R.id.chat_profile_name);
             lastmssg = itemView.findViewById(R.id.last_mssg);
             chatcount = itemView.findViewById(R.id.chat_count);
         }
@@ -242,11 +233,12 @@ public class ChatAdapter extends RecyclerView.Adapter {
 
     public static class OFF_ViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView dp;
-        private TextView profname,lastmssg,chatcount;
+        private TextView profname, lastmssg, chatcount;
+
         public OFF_ViewHolder(@NonNull View itemView) {
             super(itemView);
-            dp=itemView.findViewById(R.id.chat_profile_dp);
-            profname=itemView.findViewById(R.id.chat_profile_name);
+            dp = itemView.findViewById(R.id.chat_profile_dp);
+            profname = itemView.findViewById(R.id.chat_profile_name);
             lastmssg = itemView.findViewById(R.id.last_mssg);
             chatcount = itemView.findViewById(R.id.chat_count);
         }
@@ -254,52 +246,52 @@ public class ChatAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if(list.get(position).isOnline()){
+        if (list.get(position).isOnline()) {
             return 1;
-        }else{
+        } else {
             return 0;
         }
     }
-    private void lastMessage(final String userid, final TextView last_mssg ,final TextView chatcnt  ){
+
+    private void lastMessage(final String userid, final TextView last_mssg, final TextView chatcnt) {
         lastmssg = "default";
         unreadmssg = 0;
 
 
-        final FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child(firebaseUser.getUid()).child(userid);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot:snapshot.getChildren())
-                {try
-                {
-                    MessageModel messageModel =dataSnapshot.getValue(MessageModel.class);
-                    if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) || messageModel.getReceiver().equals(userid) && messageModel.getSender().equals(firebaseUser.getUid()) ){
-                        lastmssg=messageModel.getMssg();
-                        
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    try {
+                        MessageModel messageModel = dataSnapshot.getValue(MessageModel.class);
+                        if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) || messageModel.getReceiver().equals(userid) && messageModel.getSender().equals(firebaseUser.getUid())) {
+                            lastmssg = messageModel.getMssg();
 
+
+                        }
+                        if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) && !messageModel.isIsseen()) {
+                            unreadmssg++;
+                        }
+                    } catch (Exception ignored) {
                     }
-                    if (messageModel.getReceiver().equals(firebaseUser.getUid()) && messageModel.getSender().equals(userid) && !messageModel.isIsseen() ){
-                        unreadmssg++;
-                    }
-                }catch (Exception ignored){}
                 }
 
-                switch (lastmssg){
+                switch (lastmssg) {
                     case "default":
                         last_mssg.setText("");
                     default:
                         last_mssg.setText(encryption.decryptOrNull(lastmssg));
                 }
-                if (unreadmssg==0){
+                if (unreadmssg == 0) {
                     chatcnt.setText("");
 
-                }
-                else {
-                    chatcnt.setText("[ "+unreadmssg+" ]");
+                } else {
+                    chatcnt.setText("[ " + unreadmssg + " ]");
                 }
                 lastmssg = "default";
-                unreadmssg=0;
+                unreadmssg = 0;
 
             }
 
