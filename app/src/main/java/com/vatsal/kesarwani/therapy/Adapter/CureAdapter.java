@@ -37,7 +37,7 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
     @NonNull
     @Override
     public CureAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.cure_list,parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cure_list, parent, false);
         return new ViewHolder(v);
     }
 
@@ -45,7 +45,7 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final CureAdapter.ViewHolder holder, final int position) {
         holder.name.setText(list.get(position).getName());
         holder.desc.setText(list.get(position).getDesc());
-        if (list.get(position).getUri().length()<5) {
+        if (list.get(position).getUri().length() < 5) {
             if (Objects.equals(list.get(position).getSex(), "Male")) {
                 Glide.with(context.getApplicationContext())
                         .load(R.drawable.ic_male)
@@ -55,10 +55,10 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
                         .load(R.drawable.ic_female)
                         .into(holder.dp);
             }
-        }
-        else{
-            StorageReference sr= FirebaseStorage.getInstance().getReference();
+        } else {
+            StorageReference sr = FirebaseStorage.getInstance().getReference();
             try {
+
                 sr.child(list.get(position).getUri())
                         .getDownloadUrl()
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -69,8 +69,7 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
                                         .into(holder.dp);
                             }
                         });
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -78,11 +77,13 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =new Intent(context, CureProfile.class);
-                intent.putExtra("mail",list.get(position).getMail());
-                intent.putExtra("name",list.get(position).getName());
-                intent.putExtra("uid",list.get(position).getUID());
-                Log.d("ID: ",list.get(position).getMail());
+                Intent intent = new Intent(context, CureProfile.class);
+                intent.putExtra("mail", list.get(position).getMail());
+                intent.putExtra("name", list.get(position).getName());
+                intent.putExtra("uid", list.get(position).getUID());
+                intent.putExtra("dp", list.get(position).getUri());
+                intent.putExtra("sex", list.get(position).getSex());
+                Log.d("ID: ", list.get(position).getMail());
                 context.startActivity(intent);
             }
         });
@@ -94,13 +95,14 @@ public class CureAdapter extends RecyclerView.Adapter<CureAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView name,desc;
+        private TextView name, desc;
         private CircleImageView dp;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            name=itemView.findViewById(R.id.name);
-            desc=itemView.findViewById(R.id.description);
-            dp=itemView.findViewById(R.id.dp);
+            name = itemView.findViewById(R.id.name);
+            desc = itemView.findViewById(R.id.description);
+            dp = itemView.findViewById(R.id.dp);
         }
     }
 }
