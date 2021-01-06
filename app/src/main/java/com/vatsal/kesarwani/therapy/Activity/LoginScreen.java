@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.internal.SignInButtonImpl;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -40,9 +41,9 @@ import es.dmoral.toasty.Toasty;
 public class LoginScreen extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 10;
-    private Button google;
+    private SignInButtonImpl google;
     private FirebaseAuth mAuth;
-    private GoogleSignInClient mGoogleSignInClient ;
+    private GoogleSignInClient mGoogleSignInClient;
     private static final String TAG = "LoginScreen";
     private SharedPreferences sharedPreferences;
     private ArrayList<String> list;
@@ -60,11 +61,10 @@ public class LoginScreen extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (mAuth.getCurrentUser()!=null && sharedPreferences.getString(AppConfig.PROFILE_STATE,"com.vatsal.kesarwani.theraphy.PROFILE_STATE").equals("com.vatsal.kesarwani.theraphy.PROFILE_STATE")){
-            startActivity(new Intent(getApplicationContext(),Editprofile.class));
-        }
-        else if(mAuth.getCurrentUser()!=null){
-            startActivity(new Intent(getApplicationContext(),MainScreen.class));
+        if (mAuth.getCurrentUser() != null && sharedPreferences.getString(AppConfig.PROFILE_STATE, "com.vatsal.kesarwani.theraphy.PROFILE_STATE").equals("com.vatsal.kesarwani.theraphy.PROFILE_STATE")) {
+            startActivity(new Intent(getApplicationContext(), Editprofile.class));
+        } else if (mAuth.getCurrentUser() != null) {
+            startActivity(new Intent(getApplicationContext(), MainScreen.class));
         }
 
         google.setOnClickListener(new View.OnClickListener() {
@@ -109,17 +109,17 @@ public class LoginScreen extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            Toasty.success(LoginScreen.this,""+mAuth.getCurrentUser().getDisplayName(),Toast.LENGTH_LONG).show();
+                            Toasty.success(LoginScreen.this, "" + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_LONG).show();
 
                             boolean cond = checkEmail(mAuth.getCurrentUser().getEmail());
 
-                            if (!sharedPreferences.getString(AppConfig.PROFILE_STATE,"com.vatsal.kesarwani.theraphy.PROFILE_STATE")
+                            if (!sharedPreferences.getString(AppConfig.PROFILE_STATE, "com.vatsal.kesarwani.theraphy.PROFILE_STATE")
                                     .equals("com.vatsal.kesarwani.theraphy.PROFILE_STATE"))
-                                startActivity(new Intent(getApplicationContext(),MainScreen.class));
+                                startActivity(new Intent(getApplicationContext(), MainScreen.class));
                             else {
-                                if(cond){
-                                    startActivity(new Intent(getApplicationContext(),MainScreen.class));
-                                }else {
+                                if (cond) {
+                                    startActivity(new Intent(getApplicationContext(), MainScreen.class));
+                                } else {
                                     startActivity(new Intent(getApplicationContext(), Editprofile.class));
                                 }
                             }
@@ -128,7 +128,7 @@ public class LoginScreen extends AppCompatActivity {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Alerter.create(LoginScreen.this)
                                     .setTitle("Sign In Failed")
-                                    .setText(""+task.getException())
+                                    .setText("" + task.getException())
                                     .setDuration(2000)
                                     .show();
                         }
@@ -139,8 +139,8 @@ public class LoginScreen extends AppCompatActivity {
     }
 
     private boolean checkEmail(String email) {
-        for(int i = 0; i < list.size(); i++){
-            if(list.get(i).equals(email)){
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).equals(email)) {
                 return true;
             }
         }
@@ -149,9 +149,9 @@ public class LoginScreen extends AppCompatActivity {
 
     private void init() {
         list = new ArrayList<>();
-        db=FirebaseFirestore.getInstance();
-        mAuth=FirebaseAuth.getInstance();
-        google=findViewById(R.id.google);
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        google = findViewById(R.id.googlebtn);
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -159,20 +159,20 @@ public class LoginScreen extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        sharedPreferences=getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(AppConfig.SHARED_PREF, Context.MODE_PRIVATE);
         getUsers();
     }
 
-    private void getUsers(){
+    private void getUsers() {
         list.clear();
         db.collection("User")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             list.clear();
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 list.add(new String(document.getId()));
                             }
                         }
@@ -180,7 +180,6 @@ public class LoginScreen extends AppCompatActivity {
                 });
     }
 
-    
 
     @Override
     public void onBackPressed() {

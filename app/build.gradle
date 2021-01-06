@@ -71,4 +71,7 @@ dependencies {
     //Emoji
     implementation 'com.github.hani-momanii:SuperNova-Emoji:1.1'
 
+    //Animation
+    implementation 'com.airbnb.android:lottie:3.4.0'
+
 }
