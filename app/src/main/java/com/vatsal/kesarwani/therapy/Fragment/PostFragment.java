@@ -192,7 +192,6 @@ public class PostFragment extends Fragment {
                                 }
                             }
                             dialog.hideDialog();
-                            Log.e("this", String.valueOf(list.size()));
 
                             Collections.sort(list, new Comparator<PostModel>() {
                                 @Override
