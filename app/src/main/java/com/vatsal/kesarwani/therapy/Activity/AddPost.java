@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -136,6 +138,8 @@ public class AddPost extends AppCompatActivity {
                     return;
                 }
                 post.setEnabled(false);
+                Animation animation = AnimationUtils.loadAnimation(AddPost.this,R.anim.blink_anim);
+                post.startAnimation(animation);
                 dataUpload();
             }
         });

@@ -24,16 +24,20 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.vatsal.kesarwani.therapy.Adapter.ChatAdapter;
 import com.vatsal.kesarwani.therapy.Model.AppConfig;
 import com.vatsal.kesarwani.therapy.Model.ChatModel;
 import com.vatsal.kesarwani.therapy.Model.ChatModelDetails;
+import com.vatsal.kesarwani.therapy.Notifications.Token;
 import com.vatsal.kesarwani.therapy.R;
 import com.vatsal.kesarwani.therapy.Utility.ViewDialog;
 
@@ -122,7 +126,7 @@ public class ChatFragment extends Fragment {
                 fetchData();
             }
         });*/
-
+        updateToken(FirebaseInstanceId.getInstance().getToken());
         return root;
     }
 
@@ -131,6 +135,7 @@ public class ChatFragment extends Fragment {
         super.onResume();
         Log.e("this", "resume");
         dialog = new ViewDialog(getActivity());
+        updateToken(FirebaseInstanceId.getInstance().getToken());
         fetchData(root);
     }
 
@@ -184,6 +189,7 @@ public class ChatFragment extends Fragment {
                             dialog.hideDialog();
 
                             list2.clear();
+                            updateToken(FirebaseInstanceId.getInstance().getToken());
                             fetch2();
                         } else {
                             dialog.hideDialog();
@@ -191,6 +197,7 @@ public class ChatFragment extends Fragment {
                                     .setAction("Try Again", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
+                                            updateToken(FirebaseInstanceId.getInstance().getToken());
                                             fetchData(root);
                                         }
                                     })
@@ -200,11 +207,11 @@ public class ChatFragment extends Fragment {
                 });
     }
 
-    private void fetch2(){
+    private void fetch2() {
         List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        for(int i = 0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             tasks.add(db.collection("User").document(list.get(i).getMail()).get());
         }
 
@@ -253,6 +260,14 @@ public class ChatFragment extends Fragment {
         });
 
     }
+
+    private void updateToken(String token) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        reference.child(mAuth.getCurrentUser().getUid()).setValue(token1);
+
+    }
+
 
     private void init(View root) {
         chatRecycle = root.findViewById(R.id.chat_recycler);

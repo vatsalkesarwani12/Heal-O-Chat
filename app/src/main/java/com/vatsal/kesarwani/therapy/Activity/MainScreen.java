@@ -22,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.vatsal.kesarwani.therapy.Adapter.MyAdapter;
 import com.vatsal.kesarwani.therapy.Model.MessageModel;
@@ -30,6 +31,7 @@ import com.vatsal.kesarwani.therapy.Utility.Util;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Queue;
 
 public class MainScreen extends AppCompatActivity {
 
@@ -66,22 +68,22 @@ public class MainScreen extends AppCompatActivity {
                             lis.add(chatModel.getSender());
                             Log.d("MAINSCREEN", "onDataChangeLIST: " + lis);
 
-                        } else {
-                            lis.clear();
                         }
+                        
+
+
                     } catch (Exception e) {
                         Log.d("MAINSCREEN", "onDataChange: " + e);
+
                     }
+                    show(unread);
+
 
                 }
 
-                if (unread == 0) {
-                    Objects.requireNonNull(tabLayout.getTabAt(2)).setText("Chat");
-                } else {
-                    Objects.requireNonNull(tabLayout.getTabAt(2)).setText("[" + unread + "]  Chat");
-                }
 
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -133,6 +135,15 @@ public class MainScreen extends AppCompatActivity {
         tabLayout = findViewById(R.id.tablayout);
         viewPager = findViewById(R.id.viewpager);
         mainlayout = findViewById(R.id.mainlayout);
+    }
+
+    private void show(int cnt) {
+        if (cnt == 0) {
+            Objects.requireNonNull(tabLayout.getTabAt(2)).setText("Chat");
+        } else {
+
+            Objects.requireNonNull(tabLayout.getTabAt(2)).setText("[" + cnt + "]  Chat");
+        }
     }
 
     @Override
