@@ -170,7 +170,7 @@ To sync your fork, from the directory of your local repository in a terminal win
 > **_Need help?_** 
 > **_Feel free to contact me @ [vatsalkesarwani12@gmail.com](mailto:vatsalkesarwani12@gmail@gmail.com?Subject=Heal-O-Chat (NJACK Contributor))_**
 
-## You just made your Firt pull request to Heal-O-Chat
+## You just made your First pull request to Heal-O-Chat
 ## Do Star ⭐ this Repo.
 ### Check the Leaderboard at:
 https://njackwinterofcode.github.io/leaderboard.html
